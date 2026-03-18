@@ -9,11 +9,11 @@
 <div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center">
         <div>
-            <h2>发布新职位（演示页面）</h2>
-            <p class="text-muted">MO 可以在这里填写职位信息并发布到系统中。</p>
+            <h2>Post New Position (Demo)</h2>
+            <p class="text-muted">MO can fill position details here and publish them to the system.</p>
         </div>
         <div>
-            <a class="btn btn-outline-secondary" href="<%= request.getContextPath() %>/secure/mo/dashboard.jsp">返回 MO 仪表盘</a>
+            <a class="btn btn-outline-secondary" href="<%= request.getContextPath() %>/secure/mo/dashboard.jsp">Back to MO Dashboard</a>
         </div>
     </div>
 
@@ -21,22 +21,22 @@
         <div class="card-body">
             <form>
                 <div class="mb-3">
-                    <label class="form-label">职位名称</label>
-                    <input type="text" class="form-control" placeholder="如：计算机网络助教">
+                    <label class="form-label">Position Title</label>
+                    <input type="text" class="form-control" placeholder="e.g., Computer Networks TA">
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">所属模块</label>
-                    <input type="text" class="form-control" placeholder="如：CS301">
+                    <label class="form-label">Module</label>
+                    <input type="text" class="form-control" placeholder="e.g., CS301">
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">截止日期</label>
+                    <label class="form-label">Deadline</label>
                     <input type="date" class="form-control">
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">职位描述</label>
-                    <textarea class="form-control" rows="4" placeholder="简要说明职责和要求"></textarea>
+                    <label class="form-label">Position Description</label>
+                    <textarea class="form-control" rows="4" placeholder="Briefly describe responsibilities and requirements"></textarea>
                 </div>
-                <button type="button" class="btn btn-primary">发布职位（演示）</button>
+                <button type="button" class="btn btn-primary">Post Position (Demo)</button>
             </form>
         </div>
     </div>

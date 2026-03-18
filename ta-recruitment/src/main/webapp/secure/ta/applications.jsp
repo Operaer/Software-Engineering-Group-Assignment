@@ -48,9 +48,9 @@
             <table id="appListTable" class="table table-hover">
                 <thead>
                 <tr>
-                    <th>岗位</th>
-                    <th>申请时间</th>
-                    <th>状态</th>
+                    <th>Position</th>
+                    <th>Applied At</th>
+                    <th>Status</th>
                 </tr>
                 </thead>
                 <tbody>

@@ -9,11 +9,11 @@
 <div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center">
         <div>
-            <h2>MO 仪表盘</h2>
-            <p class="text-muted">欢迎, <strong><%= currentUser.getEmail() %></strong>！这里是模块组织者的管理入口。</p>
+            <h2>MO Dashboard</h2>
+            <p class="text-muted">Welcome, <strong><%= currentUser.getEmail() %></strong>! This is the Module Organizer (MO) workspace.</p>
         </div>
         <div>
-            <a class="btn btn-outline-secondary" href="<%= request.getContextPath() %>/logout">退出登录</a>
+            <a class="btn btn-outline-secondary" href="<%= request.getContextPath() %>/logout">Logout</a>
         </div>
     </div>
 
@@ -21,25 +21,25 @@
         <div class="col-md-4">
             <div class="card mb-3">
                 <div class="card-body">
-                    <h5 class="card-title">发布/管理职位</h5>
-                    <p class="card-text">发布新的 TA 职位信息或编辑已有职位。</p>
-                    <a href="<%= request.getContextPath() %>/secure/mo/post_position.jsp" class="btn btn-sm btn-primary">发布新职位</a>
+                    <h5 class="card-title">Post / Manage Positions</h5>
+                    <p class="card-text">Create new TA positions or update existing postings.</p>
+                    <a href="<%= request.getContextPath() %>/secure/mo/post_position.jsp" class="btn btn-sm btn-primary">Post New Position</a>
                 </div>
             </div>
 
             <div class="card mb-3">
                 <div class="card-body">
-                    <h5 class="card-title">查看申请</h5>
-                    <p class="card-text">浏览各职位的申请人并更新筛选状态。</p>
-                    <a href="<%= request.getContextPath() %>/secure/mo/application_list.jsp" class="btn btn-sm btn-primary">查看申请列表</a>
+                    <h5 class="card-title">View Applications</h5>
+                    <p class="card-text">Browse applicants for each position and update screening status.</p>
+                    <a href="<%= request.getContextPath() %>/secure/mo/application_list.jsp" class="btn btn-sm btn-primary">View Application List</a>
                 </div>
             </div>
 
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">招聘进度</h5>
-                    <p class="card-text">查看各职位招募进度与已招聘人数。</p>
-                    <a href="<%= request.getContextPath() %>/secure/mo/progress.jsp" class="btn btn-sm btn-primary">查看进度</a>
+                    <h5 class="card-title">Recruitment Progress</h5>
+                    <p class="card-text">Track recruitment progress and number of hires for each position.</p>
+                    <a href="<%= request.getContextPath() %>/secure/mo/progress.jsp" class="btn btn-sm btn-primary">View Progress</a>
                 </div>
             </div>
         </div>
@@ -47,61 +47,61 @@
         <div class="col-md-8">
             <div class="card mb-4">
                 <div class="card-body">
-                    <h5 class="card-title">最近发布的职位</h5>
-                    <p class="text-muted">展示你最近发布的职位及当前申请情况。</p>
+                    <h5 class="card-title">Recently Posted Positions</h5>
+                    <p class="text-muted">Showing your most recent postings and current application counts.</p>
 
                     <div class="row g-2 mb-3">
                         <div class="col-md-4">
-                            <input id="jobFilterKeyword" type="text" class="form-control" placeholder="关键字（职位/模块）" />
+                            <input id="jobFilterKeyword" type="text" class="form-control" placeholder="Keyword (position/module)" />
                         </div>
                         <div class="col-md-3">
                             <select id="jobFilterStatus" class="form-select">
-                                <option value="">全部状态</option>
-                                <option value="进行中">进行中</option>
-                                <option value="已筛选">已筛选</option>
-                                <option value="已完成">已完成</option>
+                                <option value="">All statuses</option>
+                                <option value="Ongoing">Ongoing</option>
+                                <option value="Shortlisted">Shortlisted</option>
+                                <option value="Completed">Completed</option>
                             </select>
                         </div>
                         <div class="col-md-2">
-                            <button id="jobFilterClear" class="btn btn-outline-secondary w-100">清除</button>
+                            <button id="jobFilterClear" class="btn btn-outline-secondary w-100">Clear</button>
                         </div>
                     </div>
 
                     <table id="jobListTable" class="table table-hover">
                         <thead>
                         <tr>
-                            <th>职位</th>
-                            <th>模块</th>
-                            <th>申请人数</th>
-                            <th>截止</th>
-                            <th>状态</th>
-                            <th class="text-end">操作</th>
+                            <th>Position</th>
+                            <th>Module</th>
+                            <th>Applicants</th>
+                            <th>Deadline</th>
+                            <th>Status</th>
+                            <th class="text-end">Action</th>
                         </tr>
                         </thead>
                         <tbody>
                         <tr>
-                            <td>数据结构助教</td>
+                            <td>Data Structures TA</td>
                             <td>CS201</td>
                             <td>12</td>
                             <td>2026-04-10</td>
-                            <td><span class="badge status-pending">进行中</span></td>
-                            <td class="text-end"><a class="btn btn-sm btn-secondary" href="#">查看申请</a></td>
+                            <td><span class="badge status-pending">Ongoing</span></td>
+                            <td class="text-end"><a class="btn btn-sm btn-secondary" href="#">View Applications</a></td>
                         </tr>
                         <tr>
-                            <td>操作系统辅导</td>
+                            <td>Operating Systems Tutor</td>
                             <td>CS303</td>
                             <td>6</td>
                             <td>2026-03-28</td>
-                            <td><span class="badge status-shortlisted">已筛选</span></td>
-                            <td class="text-end"><a class="btn btn-sm btn-secondary" href="#">查看申请</a></td>
+                            <td><span class="badge status-shortlisted">Shortlisted</span></td>
+                            <td class="text-end"><a class="btn btn-sm btn-secondary" href="#">View Applications</a></td>
                         </tr>
                         <tr>
-                            <td>学术写作指导</td>
+                            <td>Academic Writing Mentor</td>
                             <td>EN302</td>
                             <td>3</td>
                             <td>2026-03-20</td>
-                            <td><span class="badge status-accepted">已完成</span></td>
-                            <td class="text-end"><a class="btn btn-sm btn-secondary" href="#">查看申请</a></td>
+                            <td><span class="badge status-accepted">Completed</span></td>
+                            <td class="text-end"><a class="btn btn-sm btn-secondary" href="#">View Applications</a></td>
                         </tr>
                         </tbody>
                     </table>

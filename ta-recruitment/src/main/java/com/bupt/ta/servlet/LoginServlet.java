@@ -19,9 +19,9 @@ public class LoginServlet extends HttpServlet {
         String password = req.getParameter("password");
         String role = req.getParameter("role");
 
-        // 这里的登录逻辑仅用于原型演示：任何邮箱/密码均可登录。
+        // This login logic is only for prototype/demo purposes: any email/password is accepted.
         if (email == null || email.isBlank() || password == null || password.isBlank()) {
-            req.setAttribute("error", "请输入有效的邮箱和密码。");
+            req.setAttribute("error", "Please enter a valid email and password.");
             req.getRequestDispatcher("/index.jsp").forward(req, resp);
             return;
         }

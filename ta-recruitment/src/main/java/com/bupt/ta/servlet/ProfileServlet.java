@@ -90,9 +90,9 @@ public class ProfileServlet extends HttpServlet {
             try {
                 Files.copy(resumePart.getInputStream(), dest.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 profile.setResumeFileName(fileName);
-                req.setAttribute("uploadMessage", "简历上传成功：" + fileName);
+                req.setAttribute("uploadMessage", "Resume uploaded successfully: " + fileName);
             } catch (IOException e) {
-                req.setAttribute("uploadError", "简历上传失败，请重试。");
+                req.setAttribute("uploadError", "Resume upload failed. Please try again.");
             }
         }
 
@@ -100,7 +100,7 @@ public class ProfileServlet extends HttpServlet {
         storage.save(profile);
 
         req.setAttribute("profile", profile);
-        req.setAttribute("success", "保存成功。");
+        req.setAttribute("success", "Profile saved successfully.");
         req.getRequestDispatcher("/secure/ta/profile.jsp").forward(req, resp);
     }
 }

@@ -8,7 +8,7 @@
     <packaging>war</packaging>
 
     <name>TA Recruitment</name>
-    <description>轻量级 TA 招聘管理系统（Servlet/JSP + 文本存储）</description>
+    <description>Lightweight TA recruitment system (Servlet/JSP + file-based storage)</description>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>

@@ -14,7 +14,7 @@ public class AuthFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) {
-        // 可用于读取过滤器初始化参数，当前原型不需要。
+        // Can be used to read filter init parameters; not needed for this prototype.
     }
 
     @Override
@@ -44,6 +44,6 @@ public class AuthFilter implements Filter {
 
     @Override
     public void destroy() {
-        // 释放资源（如有）。当前原型无需特殊处理。
+        // Release resources if needed. No special cleanup required for this prototype.
     }
 }

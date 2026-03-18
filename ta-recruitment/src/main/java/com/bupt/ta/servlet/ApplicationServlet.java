@@ -51,7 +51,7 @@ public class ApplicationServlet extends HttpServlet {
         ApplicationStorage storage = new ApplicationStorage(getServletContext());
         Application application = storage.createNew(user.getEmail(), positionId, positionTitle);
 
-        req.setAttribute("success", "申请已提交：" + application.getPositionTitle());
+        req.setAttribute("success", "Application submitted: " + application.getPositionTitle());
         doGet(req, resp);
     }
 }
