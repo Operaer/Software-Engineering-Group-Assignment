@@ -1,5 +1,5 @@
 # Software-Engineering-Group-Assignment
-| GitHub Username | QMID Name |
+| GitHub Username | QMID |
 | --- | --- |
 | qin204 | 231223380 |
 | Cloudiers1 | 231223405 |
