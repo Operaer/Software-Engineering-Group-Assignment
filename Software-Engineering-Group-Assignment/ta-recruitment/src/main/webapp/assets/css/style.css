@@ -1,0 +1,41 @@
+/* Simple styling for the TA recruitment prototype */
+
+body {
+  font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+}
+
+.card {
+  border-radius: 0.75rem;
+}
+
+.badge-status {
+  min-width: 90px;
+}
+
+.status-pending {
+  background: #f7d794;
+  color: #5a3e00;
+}
+
+.status-accepted {
+  background: #4cd137;
+  color: #0f2d14;
+}
+
+.status-rejected {
+  background: #e84118;
+  color: #fff;
+}
+
+.status-shortlisted {
+  background: #00a8ff;
+  color: #0f2d14;
+}
+
+.table thead th {
+  border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+}
+
+.table tbody tr:hover {
+  background-color: rgba(0, 123, 255, 0.08);
+}
