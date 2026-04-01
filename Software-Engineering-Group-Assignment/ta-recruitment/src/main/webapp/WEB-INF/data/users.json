@@ -1,0 +1,20 @@
+{
+  "ta@example.com": {
+    "email": "ta@example.com",
+    "password": "password",
+    "role": "TA",
+    "active": true
+  },
+  "mo@example.com": {
+    "email": "mo@example.com",
+    "password": "password",
+    "role": "MO",
+    "active": true
+  },
+  "admin@example.com": {
+    "email": "admin@example.com",
+    "password": "password",
+    "role": "ADMIN",
+    "active": true
+  }
+}
