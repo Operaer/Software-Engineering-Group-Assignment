@@ -20,17 +20,13 @@ import java.time.Instant;
 
 @WebServlet(name = "ProfileServlet", urlPatterns = "/secure/ta/profile")
 @MultipartConfig(fileSizeThreshold = 1024 * 512, maxFileSize = 5 * 1024 * 1024, maxRequestSize = 6 * 1024 * 1024)
-public class ProfileServlet extends HttpServlet {
+public class ProfileServlet extends BaseServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        HttpSession session = req.getSession(false);
-        User user = session == null ? null : (User) session.getAttribute("currentUser");
-        if (user == null) {
-            resp.sendRedirect(req.getContextPath() + "/");
-            return;
-        }
+        requireLogin(req, resp);
 
+        User user = getCurrentUser(req);
         ProfileStorage storage = new ProfileStorage(getServletContext());
         TAProfile profile = storage.load(user.getEmail());
         if (profile == null) {
@@ -38,18 +34,14 @@ public class ProfileServlet extends HttpServlet {
         }
 
         req.setAttribute("profile", profile);
-        req.getRequestDispatcher("/secure/ta/profile.jsp").forward(req, resp);
+        forwardTo(req, resp, "/secure/ta/profile.jsp");
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        HttpSession session = req.getSession(false);
-        User user = session == null ? null : (User) session.getAttribute("currentUser");
-        if (user == null) {
-            resp.sendRedirect(req.getContextPath() + "/");
-            return;
-        }
+        requireLogin(req, resp);
 
+        User user = getCurrentUser(req);
         String name = req.getParameter("name");
         String major = req.getParameter("major");
         String phone = req.getParameter("phone");
@@ -101,6 +93,6 @@ public class ProfileServlet extends HttpServlet {
 
         req.setAttribute("profile", profile);
         req.setAttribute("success", "Profile saved successfully.");
-        req.getRequestDispatcher("/secure/ta/profile.jsp").forward(req, resp);
+        forwardTo(req, resp, "/secure/ta/profile.jsp");
     }
 }

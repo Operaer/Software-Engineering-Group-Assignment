@@ -17,17 +17,13 @@ import java.io.OutputStream;
  * Streams uploaded resume files for authenticated TA users.
  */
 @WebServlet(name = "ResumeDownloadServlet", urlPatterns = "/secure/ta/resume")
-public class ResumeDownloadServlet extends HttpServlet {
+public class ResumeDownloadServlet extends BaseServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        HttpSession session = req.getSession(false);
-        User user = session == null ? null : (User) session.getAttribute("currentUser");
-        if (user == null) {
-            resp.sendRedirect(req.getContextPath() + "/");
-            return;
-        }
+        requireLogin(req, resp);
 
+        User user = getCurrentUser(req);
         String fileName = req.getParameter("file");
         if (fileName == null || fileName.isBlank()) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST);

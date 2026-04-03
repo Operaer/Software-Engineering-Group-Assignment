@@ -13,7 +13,7 @@
             <p class="text-muted">Adjust demo settings within the application (real production would connect to a config service or database).</p>
         </div>
         <div>
-            <a class="btn btn-outline-secondary" href="<%= request.getContextPath() %>/secure/admin/dashboard.jsp">Back to Admin Dashboard</a>
+            <a class="btn btn-outline-secondary" href="<%= request.getContextPath() %>/dashboard">Back to Dashboard</a>
         </div>
     </div>
 

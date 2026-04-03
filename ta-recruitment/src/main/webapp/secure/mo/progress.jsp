@@ -13,7 +13,7 @@
             <p class="text-muted">View the current recruitment status for all positions here.</p>
         </div>
         <div>
-            <a class="btn btn-outline-secondary" href="<%= request.getContextPath() %>/secure/mo/dashboard.jsp">Back to MO Dashboard</a>
+            <a class="btn btn-outline-secondary" href="<%= request.getContextPath() %>/dashboard">Back to Dashboard</a>
         </div>
     </div>
 

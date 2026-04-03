@@ -1,14 +1,21 @@
-D:\java\qm\ta-recruitment\src\main\java\com\bupt\ta\servlet\ProfileServlet.java
-D:\java\qm\ta-recruitment\src\main\java\com\bupt\ta\model\Application.java
-D:\java\qm\ta-recruitment\src\main\java\com\bupt\ta\servlet\DashboardServlet.java
-D:\java\qm\ta-recruitment\src\main\java\com\bupt\ta\servlet\LogoutServlet.java
-D:\java\qm\ta-recruitment\src\main\java\com\bupt\ta\EmbeddedTomcat.java
-D:\java\qm\ta-recruitment\src\main\java\com\bupt\ta\servlet\LoginServlet.java
-D:\java\qm\ta-recruitment\src\main\java\com\bupt\ta\servlet\ResumeDownloadServlet.java
-D:\java\qm\ta-recruitment\src\main\java\com\bupt\ta\filter\AuthFilter.java
-D:\java\qm\ta-recruitment\src\main\java\com\bupt\ta\storage\ApplicationStorage.java
-D:\java\qm\ta-recruitment\src\main\java\com\bupt\ta\model\TAProfile.java
-D:\java\qm\ta-recruitment\src\main\java\com\bupt\ta\filter\EncodingFilter.java
-D:\java\qm\ta-recruitment\src\main\java\com\bupt\ta\model\User.java
-D:\java\qm\ta-recruitment\src\main\java\com\bupt\ta\servlet\ApplicationServlet.java
-D:\java\qm\ta-recruitment\src\main\java\com\bupt\ta\storage\ProfileStorage.java
+C:\Users\31435\Desktop\BUPT\大三下\Software Engineering\小组project\Software-Engineering-Group-Assignment-Zitai-Framework-US02\ta-recruitment\src\main\java\com\bupt\ta\storage\ProfileStorage.java
+C:\Users\31435\Desktop\BUPT\大三下\Software Engineering\小组project\Software-Engineering-Group-Assignment-Zitai-Framework-US02\ta-recruitment\src\main\java\com\bupt\ta\model\Application.java
+C:\Users\31435\Desktop\BUPT\大三下\Software Engineering\小组project\Software-Engineering-Group-Assignment-Zitai-Framework-US02\ta-recruitment\src\main\java\com\bupt\ta\filter\EncodingFilter.java
+C:\Users\31435\Desktop\BUPT\大三下\Software Engineering\小组project\Software-Engineering-Group-Assignment-Zitai-Framework-US02\ta-recruitment\src\main\java\com\bupt\ta\servlet\ApplicationServlet.java
+C:\Users\31435\Desktop\BUPT\大三下\Software Engineering\小组project\Software-Engineering-Group-Assignment-Zitai-Framework-US02\ta-recruitment\src\main\java\com\bupt\ta\servlet\ResumeDownloadServlet.java
+C:\Users\31435\Desktop\BUPT\大三下\Software Engineering\小组project\Software-Engineering-Group-Assignment-Zitai-Framework-US02\ta-recruitment\src\main\java\com\bupt\ta\servlet\UserManagementServlet.java
+C:\Users\31435\Desktop\BUPT\大三下\Software Engineering\小组project\Software-Engineering-Group-Assignment-Zitai-Framework-US02\ta-recruitment\src\main\java\com\bupt\ta\servlet\ProfileServlet.java
+C:\Users\31435\Desktop\BUPT\大三下\Software Engineering\小组project\Software-Engineering-Group-Assignment-Zitai-Framework-US02\ta-recruitment\src\main\java\com\bupt\ta\servlet\LoginServlet.java
+C:\Users\31435\Desktop\BUPT\大三下\Software Engineering\小组project\Software-Engineering-Group-Assignment-Zitai-Framework-US02\ta-recruitment\src\main\java\com\bupt\ta\servlet\BaseServlet.java
+C:\Users\31435\Desktop\BUPT\大三下\Software Engineering\小组project\Software-Engineering-Group-Assignment-Zitai-Framework-US02\ta-recruitment\src\main\java\com\bupt\ta\storage\UserStorage.java
+C:\Users\31435\Desktop\BUPT\大三下\Software Engineering\小组project\Software-Engineering-Group-Assignment-Zitai-Framework-US02\ta-recruitment\src\main\java\com\bupt\ta\model\TAProfile.java
+C:\Users\31435\Desktop\BUPT\大三下\Software Engineering\小组project\Software-Engineering-Group-Assignment-Zitai-Framework-US02\ta-recruitment\src\main\java\com\bupt\ta\filter\AuthFilter.java
+C:\Users\31435\Desktop\BUPT\大三下\Software Engineering\小组project\Software-Engineering-Group-Assignment-Zitai-Framework-US02\ta-recruitment\src\main\java\com\bupt\ta\model\User.java
+C:\Users\31435\Desktop\BUPT\大三下\Software Engineering\小组project\Software-Engineering-Group-Assignment-Zitai-Framework-US02\ta-recruitment\src\main\java\com\bupt\ta\servlet\ApplicationManagementServlet.java
+C:\Users\31435\Desktop\BUPT\大三下\Software Engineering\小组project\Software-Engineering-Group-Assignment-Zitai-Framework-US02\ta-recruitment\src\main\java\com\bupt\ta\servlet\AdminApplicationManagementServlet.java
+C:\Users\31435\Desktop\BUPT\大三下\Software Engineering\小组project\Software-Engineering-Group-Assignment-Zitai-Framework-US02\ta-recruitment\src\main\java\com\bupt\ta\servlet\DashboardServlet.java
+C:\Users\31435\Desktop\BUPT\大三下\Software Engineering\小组project\Software-Engineering-Group-Assignment-Zitai-Framework-US02\ta-recruitment\src\main\java\com\bupt\ta\servlet\LogoutServlet.java
+C:\Users\31435\Desktop\BUPT\大三下\Software Engineering\小组project\Software-Engineering-Group-Assignment-Zitai-Framework-US02\ta-recruitment\src\main\java\com\bupt\ta\storage\ApplicationStorage.java
+C:\Users\31435\Desktop\BUPT\大三下\Software Engineering\小组project\Software-Engineering-Group-Assignment-Zitai-Framework-US02\ta-recruitment\src\main\java\com\bupt\ta\security\PermissionChecker.java
+C:\Users\31435\Desktop\BUPT\大三下\Software Engineering\小组project\Software-Engineering-Group-Assignment-Zitai-Framework-US02\ta-recruitment\src\main\java\com\bupt\ta\config\AppConfig.java
+C:\Users\31435\Desktop\BUPT\大三下\Software Engineering\小组project\Software-Engineering-Group-Assignment-Zitai-Framework-US02\ta-recruitment\src\main\java\com\bupt\ta\EmbeddedTomcat.java

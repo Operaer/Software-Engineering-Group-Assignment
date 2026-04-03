@@ -13,11 +13,13 @@ public class EmbeddedTomcat {
     public static void main(String[] args) throws Exception {
         // Use port 8080 by default.
         int port = 8080;
-        String webappDirLocation = "src/main/webapp";
+        // Use absolute path to webapp directory
+        String webappDirLocation = new File("src/main/webapp").getAbsolutePath();
 
         Tomcat tomcat = new Tomcat();
+        tomcat.setHostname("127.0.0.1");
         tomcat.setPort(port);
-        tomcat.getConnector(); // Ensure the connector is created
+        tomcat.getConnector().setProperty("address", "127.0.0.1"); // Ensure the connector is created and bound to localhost
 
         File webappDir = new File(webappDirLocation);
         if (!webappDir.exists()) {
