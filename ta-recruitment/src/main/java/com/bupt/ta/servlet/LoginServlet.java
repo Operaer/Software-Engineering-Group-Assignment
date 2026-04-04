@@ -14,33 +14,61 @@ import java.io.IOException;
 public class LoginServlet extends BaseServlet {
 
     @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        if (isLoggedIn(req)) {
+            resp.sendRedirect(req.getContextPath() + "/dashboard");
+            return;
+        }
+        forwardTo(req, resp, "/index.jsp");
+    }
+
+    @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String email = req.getParameter("email");
         String password = req.getParameter("password");
 
-        if (email == null || email.isBlank() || password == null || password.isBlank()) {
-            req.setAttribute("error", "Please enter a valid email and password.");
+        email = email == null ? "" : email.trim().toLowerCase();
+        password = password == null ? "" : password.trim();
+
+        if (email.isBlank() || password.isBlank()) {
+            req.setAttribute("error", "Please enter both email and password.");
+            req.setAttribute("email", email);
             forwardTo(req, resp, "/index.jsp");
             return;
         }
 
         UserStorage userStorage = new UserStorage(getServletContext());
-        User user = userStorage.authenticate(email, password);
+        User user = userStorage.findByEmail(email);
 
         if (user == null) {
-            req.setAttribute("error", "Invalid email or password, or account is disabled.");
+            req.setAttribute("error", "Account does not exist.");
+            req.setAttribute("email", email);
             forwardTo(req, resp, "/index.jsp");
             return;
+        }
+
+        if (!user.isActive()) {
+            req.setAttribute("error", "This account has been disabled.");
+            req.setAttribute("email", email);
+            forwardTo(req, resp, "/index.jsp");
+            return;
+        }
+
+        if (!user.passwordMatches(password)) {
+            req.setAttribute("error", "Incorrect password.");
+            req.setAttribute("email", email);
+            forwardTo(req, resp, "/index.jsp");
+            return;
+        }
+
+        HttpSession oldSession = req.getSession(false);
+        if (oldSession != null) {
+            oldSession.invalidate();
         }
 
         HttpSession session = req.getSession(true);
         session.setAttribute("currentUser", user);
 
         resp.sendRedirect(req.getContextPath() + "/dashboard");
-    }
-
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.sendRedirect(req.getContextPath() + "/");
     }
 }

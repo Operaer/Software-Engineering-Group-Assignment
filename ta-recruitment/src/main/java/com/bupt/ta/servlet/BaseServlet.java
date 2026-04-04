@@ -3,6 +3,7 @@ package com.bupt.ta.servlet;
 import com.bupt.ta.model.User;
 import com.bupt.ta.security.PermissionChecker;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -13,7 +14,8 @@ public abstract class BaseServlet extends HttpServlet {
 
     protected User getCurrentUser(HttpServletRequest req) {
         HttpSession session = req.getSession(false);
-        return session != null ? (User) session.getAttribute("currentUser") : null;
+        Object value = session != null ? session.getAttribute("currentUser") : null;
+        return value instanceof User ? (User) value : null;
     }
 
     protected boolean isLoggedIn(HttpServletRequest req) {
@@ -21,21 +23,25 @@ public abstract class BaseServlet extends HttpServlet {
         return user != null && user.isActive();
     }
 
-    protected void requireLogin(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    protected boolean requireLogin(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         if (!isLoggedIn(req)) {
             resp.sendRedirect(req.getContextPath() + "/");
+            return false;
         }
+        return true;
     }
 
-    protected void requirePermission(HttpServletRequest req, HttpServletResponse resp, User.Role requiredRole) throws IOException {
+    protected boolean requirePermission(HttpServletRequest req, HttpServletResponse resp, User.Role requiredRole) throws IOException {
         User user = getCurrentUser(req);
         if (!PermissionChecker.hasPermission(user, requiredRole)) {
             resp.sendError(HttpServletResponse.SC_FORBIDDEN, "Insufficient permissions");
-            return;
+            return false;
         }
+        return true;
     }
 
-    protected void forwardTo(HttpServletRequest req, HttpServletResponse resp, String path) throws IOException, javax.servlet.ServletException {
+    protected void forwardTo(HttpServletRequest req, HttpServletResponse resp, String path)
+            throws IOException, ServletException {
         req.getRequestDispatcher(path).forward(req, resp);
     }
 }
