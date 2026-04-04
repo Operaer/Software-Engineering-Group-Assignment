@@ -1,10 +1,11 @@
 package com.bupt.ta.storage;
 
+import com.bupt.ta.config.AppConfig;
 import com.bupt.ta.model.TAProfile;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.MapType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-
 import javax.servlet.ServletContext;
 import java.io.File;
 import java.io.IOException;
@@ -17,7 +18,7 @@ import java.util.Map;
  * Simple JSON-based storage for TA profiles.
  */
 public class ProfileStorage {
-    private static final String PROFILE_FILE_NAME = "/WEB-INF/data/ta_profiles.json";
+    private static final String PROFILE_FILE_NAME = AppConfig.PROFILES_FILE;
     private final ObjectMapper mapper = new ObjectMapper();
 
     private final File storageFile;

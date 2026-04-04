@@ -40,7 +40,7 @@
                 <div class="card-body">
                     <h5 class="card-title">MO Portal</h5>
                     <p class="card-text">Go to the Module Organizer (MO) dashboard to view applications and post positions.</p>
-                    <a href="<%= request.getContextPath() %>/secure/mo/dashboard.jsp" class="btn btn-sm btn-warning">Go to MO Dashboard</a>
+                    <a href="<%= request.getContextPath() %>/dashboard" class="btn btn-sm btn-warning">Go to MO Dashboard</a>
                 </div>
             </div>
             <% } %>
@@ -49,7 +49,7 @@
                 <div class="card-body">
                     <h5 class="card-title">Admin Portal</h5>
                     <p class="card-text">Go to the Admin console to view system metrics, user management, and audit logs.</p>
-                    <a href="<%= request.getContextPath() %>/secure/admin/dashboard.jsp" class="btn btn-sm btn-danger">Go to Admin Console</a>
+                    <a href="<%= request.getContextPath() %>/dashboard" class="btn btn-sm btn-danger">Go to Admin Console</a>
                 </div>
             </div>
             <% } %>

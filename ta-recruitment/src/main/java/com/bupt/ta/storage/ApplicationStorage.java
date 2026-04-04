@@ -1,10 +1,11 @@
 package com.bupt.ta.storage;
 
+import com.bupt.ta.config.AppConfig;
 import com.bupt.ta.model.Application;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-
 import javax.servlet.ServletContext;
 import java.io.File;
 import java.io.IOException;
@@ -19,7 +20,7 @@ import java.util.stream.Collectors;
  * JSON-backed storage for TA applications.
  */
 public class ApplicationStorage {
-    private static final String STORAGE_PATH = "/WEB-INF/data/applications.json";
+    private static final String STORAGE_PATH = AppConfig.APPLICATIONS_FILE;
     private final ObjectMapper mapper = new ObjectMapper();
     private final File storageFile;
 
@@ -87,5 +88,20 @@ public class ApplicationStorage {
         app.setStatus("Pending");
         save(app);
         return app;
+    }
+
+    public void updateStatus(String applicationId, Application.Status status) {
+        List<Application> apps = loadAll();
+        for (Application app : apps) {
+            if (app.getId().equals(applicationId)) {
+                app.setStatus(status.name());
+                break;
+            }
+        }
+        saveAll(apps);
+    }
+
+    public List<Application> findAll() {
+        return loadAll();
     }
 }

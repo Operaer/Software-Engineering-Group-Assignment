@@ -13,7 +13,7 @@
             <p class="text-muted">MO can fill position details here and publish them to the system.</p>
         </div>
         <div>
-            <a class="btn btn-outline-secondary" href="<%= request.getContextPath() %>/secure/mo/dashboard.jsp">Back to MO Dashboard</a>
+            <a class="btn btn-outline-secondary" href="<%= request.getContextPath() %>/dashboard">Back to Dashboard</a>
         </div>
     </div>
 

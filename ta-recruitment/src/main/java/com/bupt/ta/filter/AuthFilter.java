@@ -1,6 +1,7 @@
 package com.bupt.ta.filter;
 
 import com.bupt.ta.model.User;
+import com.bupt.ta.security.PermissionChecker;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
@@ -34,8 +35,15 @@ public class AuthFilter implements Filter {
         }
 
         User user = (User) session.getAttribute("currentUser");
-        if (user == null) {
+        if (user == null || !user.isActive()) {
             resp.sendRedirect(req.getContextPath() + "/");
+            return;
+        }
+
+        // 检查用户是否有权限访问当前资源
+        String requestURI = req.getRequestURI().substring(req.getContextPath().length());
+        if (!PermissionChecker.canAccessResource(user, requestURI)) {
+            resp.sendError(HttpServletResponse.SC_FORBIDDEN, "Insufficient permissions to access this resource");
             return;
         }
 

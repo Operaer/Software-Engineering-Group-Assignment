@@ -69,14 +69,31 @@
         <url-pattern>/secure/ta/applications/*</url-pattern>
     </servlet-mapping>
 
-    <!-- Filter to protect authenticated pages -->
-    <filter>
-        <filter-name>AuthFilter</filter-name>
-        <filter-class>com.bupt.ta.filter.AuthFilter</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>AuthFilter</filter-name>
-        <url-pattern>/secure/*</url-pattern>
-    </filter-mapping>
+    <servlet>
+        <servlet-name>ApplicationManagementServlet</servlet-name>
+        <servlet-class>com.bupt.ta.servlet.ApplicationManagementServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ApplicationManagementServlet</servlet-name>
+        <url-pattern>/secure/mo/application-management</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>UserManagementServlet</servlet-name>
+        <servlet-class>com.bupt.ta.servlet.UserManagementServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>UserManagementServlet</servlet-name>
+        <url-pattern>/secure/admin/user-management</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AdminApplicationManagementServlet</servlet-name>
+        <servlet-class>com.bupt.ta.servlet.AdminApplicationManagementServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AdminApplicationManagementServlet</servlet-name>
+        <url-pattern>/secure/admin/application-management</url-pattern>
+    </servlet-mapping>
 
 </web-app>

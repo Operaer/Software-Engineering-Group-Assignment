@@ -13,7 +13,7 @@
             <p class="text-muted">MO can review applications for all positions and filter results here.</p>
         </div>
         <div>
-            <a class="btn btn-outline-secondary" href="<%= request.getContextPath() %>/secure/mo/dashboard.jsp">Back to MO Dashboard</a>
+            <a class="btn btn-outline-secondary" href="<%= request.getContextPath() %>/dashboard">Back to Dashboard</a>
         </div>
     </div>
 

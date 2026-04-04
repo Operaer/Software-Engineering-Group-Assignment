@@ -30,11 +30,16 @@
                         </div>
                     </form>
 
-                    <c:if test="${not empty error}">
+                    <%
+                        String error = (String) request.getAttribute("error");
+                        if (error != null && !error.isEmpty()) {
+                    %>
                         <div class="alert alert-danger mt-3" role="alert">
-                            ${error}
+                            <%= error %>
                         </div>
-                    </c:if>
+                    <%
+                        }
+                    %>
 
                     <div class="mt-4 text-muted small">
                         <p>Note:</p>

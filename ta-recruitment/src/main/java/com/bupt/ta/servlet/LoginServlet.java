@@ -1,37 +1,36 @@
 package com.bupt.ta.servlet;
 
 import com.bupt.ta.model.User;
+import com.bupt.ta.storage.UserStorage;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 @WebServlet(name = "LoginServlet", urlPatterns = "/login")
-public class LoginServlet extends HttpServlet {
+public class LoginServlet extends BaseServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String email = req.getParameter("email");
         String password = req.getParameter("password");
-        String role = req.getParameter("role");
 
-        // This login logic is only for prototype/demo purposes: any email/password is accepted.
         if (email == null || email.isBlank() || password == null || password.isBlank()) {
             req.setAttribute("error", "Please enter a valid email and password.");
-            req.getRequestDispatcher("/index.jsp").forward(req, resp);
+            forwardTo(req, resp, "/index.jsp");
             return;
         }
 
-        User user;
-        try {
-            User.Role userRole = User.Role.valueOf(role);
-            user = new User(email, userRole);
-        } catch (Exception e) {
-            user = new User(email, User.Role.TA);
+        UserStorage userStorage = new UserStorage(getServletContext());
+        User user = userStorage.authenticate(email, password);
+
+        if (user == null) {
+            req.setAttribute("error", "Invalid email or password, or account is disabled.");
+            forwardTo(req, resp, "/index.jsp");
+            return;
         }
 
         HttpSession session = req.getSession(true);

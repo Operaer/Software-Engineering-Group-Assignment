@@ -13,7 +13,7 @@
             <p class="text-muted">View and manage user accounts and roles in the system.</p>
         </div>
         <div>
-            <a class="btn btn-outline-secondary" href="<%= request.getContextPath() %>/secure/admin/dashboard.jsp">Back to Admin Dashboard</a>
+            <a class="btn btn-outline-secondary" href="<%= request.getContextPath() %>/dashboard">Back to Dashboard</a>
         </div>
     </div>
 
