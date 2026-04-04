@@ -46,10 +46,6 @@
    # 使用Maven 
    mvn clean compile exec:java
 
-   # 或使用批处理脚本
-   run.bat
-   ```
-
 3. **访问系统**:
    打开浏览器: http://localhost:8080
 
