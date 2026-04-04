@@ -13,10 +13,12 @@ public class DashboardServlet extends BaseServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        requireLogin(req, resp);
+        if (!requireLogin(req, resp)) {
+            return;
+        }
 
         User user = getCurrentUser(req);
-        String dashboardPath = "/WEB-INF/includes/base_dashboard.jsp";
-        forwardTo(req, resp, dashboardPath);
+        req.setAttribute("currentUser", user);
+        forwardTo(req, resp, "/WEB-INF/includes/base_dashboard.jsp");
     }
 }
