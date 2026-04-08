@@ -47,6 +47,15 @@
             <div class="col-md-3">
                 <div class="card mb-3">
                     <div class="card-body">
+                        <h5 class="card-title">Post TA Position</h5>
+                        <p class="card-text">Post new teaching assistant positions.</p>
+                        <a href="<%= request.getContextPath() %>/post-job" class="btn btn-sm btn-primary">Post Position</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card mb-3">
+                    <div class="card-body">
                         <h5 class="card-title">Application Management</h5>
                         <p class="card-text">Review and manage applications.</p>
                         <a href="<%= request.getContextPath() %>/secure/mo/application-management" class="btn btn-sm btn-primary">Manage Applications</a>

@@ -38,8 +38,13 @@
             <artifactId>jackson-databind</artifactId>
             <version>2.15.2</version>
         </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>2.15.2</version>
+        </dependency>
 
-        <!-- 嵌入式 Tomcat 运行时（用于 mvn exec:java 启动） -->
+        <!-- 嵌入式 Tomcat 运行时（用于 mvn exec:java） -->
         <dependency>
             <groupId>org.apache.tomcat.embed</groupId>
             <artifactId>tomcat-embed-core</artifactId>

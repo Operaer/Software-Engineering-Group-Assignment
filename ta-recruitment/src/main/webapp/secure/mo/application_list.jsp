@@ -1,15 +1,20 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="com.bupt.ta.model.User" %>
+<%@ page import="com.bupt.ta.model.Application" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.time.format.DateTimeFormatter" %>
 <%@ include file="/WEB-INF/includes/header.jsp" %>
 
 <%
     User currentUser = (User) session.getAttribute("currentUser");
+    List<Application> applications = (List<Application>) request.getAttribute("applications");
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 %>
 
 <div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center">
         <div>
-            <h2>Application List (Demo)</h2>
+            <h2>Application List</h2>
             <p class="text-muted">MO can review applications for all positions and filter results here.</p>
         </div>
         <div>
@@ -29,6 +34,7 @@
                         <option value="Pending">Pending</option>
                         <option value="Shortlisted">Shortlisted</option>
                         <option value="Accepted">Accepted</option>
+                        <option value="Rejected">Rejected</option>
                     </select>
                 </div>
                 <div class="col-md-2">
@@ -47,27 +53,53 @@
                 </tr>
                 </thead>
                 <tbody>
+                <%
+                    if (applications != null && !applications.isEmpty()) {
+                        for (Application app : applications) {
+                %>
                 <tr>
-                    <td>ta1@example.com</td>
-                    <td>Computer Networks TA</td>
-                    <td>2026-03-15 14:32</td>
-                    <td><span class="badge status-pending">Pending</span></td>
-                    <td class="text-end"><button class="btn btn-sm btn-primary">Approve</button> <button class="btn btn-sm btn-outline-secondary">Reject</button></td>
+                    <td><%= app.getTaEmail() %></td>
+                    <td><%= app.getPositionTitle() %></td>
+                    <td><%= app.getAppliedAt().atZone(java.time.ZoneId.systemDefault()).format(formatter) %></td>
+                    <td><span class="badge status-<%= app.getStatus().toLowerCase() %>"><%= app.getStatus() %></span></td>
+                    <td class="text-end">
+                        <% if ("Pending".equals(app.getStatus())) { %>
+                        <form method="post" style="display: inline;">
+                            <input type="hidden" name="applicationId" value="<%= app.getId() %>" />
+                            <input type="hidden" name="status" value="Shortlisted" />
+                            <button type="submit" class="btn btn-sm btn-primary">Shortlist</button>
+                        </form>
+                        <form method="post" style="display: inline;">
+                            <input type="hidden" name="applicationId" value="<%= app.getId() %>" />
+                            <input type="hidden" name="status" value="Rejected" />
+                            <button type="submit" class="btn btn-sm btn-outline-secondary">Reject</button>
+                        </form>
+                        <% } else if ("Shortlisted".equals(app.getStatus())) { %>
+                        <form method="post" style="display: inline;">
+                            <input type="hidden" name="applicationId" value="<%= app.getId() %>" />
+                            <input type="hidden" name="status" value="Accepted" />
+                            <button type="submit" class="btn btn-sm btn-success">Accept</button>
+                        </form>
+                        <form method="post" style="display: inline;">
+                            <input type="hidden" name="applicationId" value="<%= app.getId() %>" />
+                            <input type="hidden" name="status" value="Rejected" />
+                            <button type="submit" class="btn btn-sm btn-outline-secondary">Reject</button>
+                        </form>
+                        <% } else { %>
+                        <span class="text-muted">No action available</span>
+                        <% } %>
+                    </td>
                 </tr>
+                <%
+                        }
+                    } else {
+                %>
                 <tr>
-                    <td>ta2@example.com</td>
-                    <td>Compilers Homework Tutor</td>
-                    <td>2026-03-14 09:18</td>
-                    <td><span class="badge status-shortlisted">Shortlisted</span></td>
-                    <td class="text-end"><button class="btn btn-sm btn-outline-secondary">View Resume</button></td>
+                    <td colspan="5" class="text-center text-muted">No applications found.</td>
                 </tr>
-                <tr>
-                    <td>ta3@example.com</td>
-                    <td>English Writing Reviewer</td>
-                    <td>2026-03-10 11:05</td>
-                    <td><span class="badge status-accepted">Accepted</span></td>
-                    <td class="text-end"><button class="btn btn-sm btn-outline-secondary">View Resume</button></td>
-                </tr>
+                <%
+                    }
+                %>
                 </tbody>
             </table>
         </div>
@@ -86,6 +118,8 @@
 
         const rows = appListTable.querySelectorAll('tbody tr');
         rows.forEach(row => {
+            if (row.cells.length < 4) return; // Skip the "no applications" row
+            
             const ta = row.cells[0].textContent.toLowerCase();
             const position = row.cells[1].textContent.toLowerCase();
             const rowStatus = row.cells[3].textContent.trim();

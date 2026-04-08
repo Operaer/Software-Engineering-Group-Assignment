@@ -11,8 +11,8 @@ import java.io.File;
 public class EmbeddedTomcat {
 
     public static void main(String[] args) throws Exception {
-        // Use port 8080 by default.
-        int port = 8080;
+        // Use port 8081 by default to avoid conflicts.
+        int port = 8081;
         // Use absolute path to webapp directory
         String webappDirLocation = new File("src/main/webapp").getAbsolutePath();
 

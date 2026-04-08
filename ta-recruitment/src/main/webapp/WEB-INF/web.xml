@@ -91,6 +91,15 @@
     </servlet-mapping>
 
     <servlet>
+        <servlet-name>PostJobServlet</servlet-name>
+        <servlet-class>com.bupt.ta.servlet.PostJobServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>PostJobServlet</servlet-name>
+        <url-pattern>/post-job</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
         <servlet-name>ApplicationManagementServlet</servlet-name>
         <servlet-class>com.bupt.ta.servlet.ApplicationManagementServlet</servlet-class>
     </servlet>

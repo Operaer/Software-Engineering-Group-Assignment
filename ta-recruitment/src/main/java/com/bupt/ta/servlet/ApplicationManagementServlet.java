@@ -19,7 +19,9 @@ public class ApplicationManagementServlet extends BaseServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        requirePermission(req, resp, User.Role.MO);
+        if (!requirePermission(req, resp, User.Role.MO)) {
+            return;
+        }
 
         ApplicationStorage storage = new ApplicationStorage(getServletContext());
         List<Application> applications = storage.findAll();
@@ -30,7 +32,9 @@ public class ApplicationManagementServlet extends BaseServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        requirePermission(req, resp, User.Role.MO);
+        if (!requirePermission(req, resp, User.Role.MO)) {
+            return;
+        }
 
         String applicationId = req.getParameter("applicationId");
         String status = req.getParameter("status");

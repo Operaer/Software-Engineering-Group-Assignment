@@ -1,6 +1,8 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page import="com.bupt.ta.model.Application" %>
+<%@ page import="com.bupt.ta.model.Job" %>
+<%@ page import="java.util.List" %>
 <%@ include file="/WEB-INF/includes/header.jsp" %>
 
 <%
@@ -8,13 +10,17 @@
     if (applications == null) {
         applications = java.util.Collections.emptyList();
     }
+    java.util.List<Job> availableJobs = (java.util.List<Job>) request.getAttribute("availableJobs");
+    if (availableJobs == null) {
+        availableJobs = java.util.Collections.emptyList();
+    }
 %>
 
 <div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center">
         <div>
             <h2>My Applications</h2>
-            <p class="text-muted">View submitted applications and their current status.</p>
+            <p class="text-muted">View your submitted applications and current status.</p>
         </div>
         <div>
             <a class="btn btn-outline-secondary" href="<%= request.getContextPath() %>/dashboard">Back to Dashboard</a>
@@ -25,7 +31,67 @@
         <div class="alert alert-success">${success}</div>
     </c:if>
 
+    <c:if test="${not empty error}">
+        <div class="alert alert-danger">${error}</div>
+    </c:if>
+
+    <!-- Available Positions -->
     <div class="card mt-3">
+        <div class="card-header">
+            <h5>Available Positions</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <c:forEach var="job" items="${availableJobs}">
+                    <div class="col-md-6 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="card-title">${job.title}</h6>
+                                <p class="card-text">
+                                    <strong>Module Code:</strong> ${job.moduleCode}<br>
+                                    <strong>Workload:</strong> ${job.workload}<br>
+                                    <strong>Deadline:</strong> ${job.deadline}<br>
+                                    <strong>Requirements:</strong> ${job.requirements}
+                                </p>
+                                <%
+                                    boolean hasApplied = false;
+                                    for (Application app : applications) {
+                                        if (app.getPositionId().equals(((Job)pageContext.getAttribute("job")).getId())) {
+                                            hasApplied = true;
+                                            break;
+                                        }
+                                    }
+                                    if (!hasApplied) {
+                                %>
+                                <form method="post" action="<%= request.getContextPath() %>/secure/ta/applications">
+                                    <input type="hidden" name="jobId" value="${job.id}">
+                                    <button type="submit" class="btn btn-primary btn-sm">Apply</button>
+                                </form>
+                                <%
+                                    } else {
+                                %>
+                                <span class="text-muted">Already Applied</span>
+                                <%
+                                    }
+                                %>
+                            </div>
+                        </div>
+                    </div>
+                </c:forEach>
+                <c:if test="${empty availableJobs}">
+                    <div class="col-12">
+                        <p class="text-muted">No available positions at the moment.</p>
+                    </div>
+                </c:if>
+            </div>
+        </div>
+    </div>
+
+    <!-- My Applications -->
+    <div class="card mt-3">
+        <div class="card-header">
+            <h5>My Applications</h5>
+        </div>
         <div class="card-body">
             <div class="row g-2 mb-3">
                 <div class="col-md-4">

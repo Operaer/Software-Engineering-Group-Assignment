@@ -1,15 +1,19 @@
 package com.bupt.ta.servlet;
 
 import com.bupt.ta.model.Application;
+import com.bupt.ta.model.Job;
 import com.bupt.ta.model.User;
 import com.bupt.ta.storage.ApplicationStorage;
+import com.bupt.ta.storage.JobStorage;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @WebServlet(name = "ApplicationServlet", urlPatterns = "/secure/ta/applications")
 public class ApplicationServlet extends BaseServlet {
@@ -19,10 +23,16 @@ public class ApplicationServlet extends BaseServlet {
         requireLogin(req, resp);
 
         User user = getCurrentUser(req);
-        ApplicationStorage storage = new ApplicationStorage(getServletContext());
-        List<Application> applications = storage.findByTaEmail(user.getEmail());
+        ApplicationStorage appStorage = new ApplicationStorage(getServletContext());
+        JobStorage jobStorage = new JobStorage(getServletContext());
+        
+        List<Application> applications = appStorage.findByTaEmail(user.getEmail());
+        List<Job> availableJobs = jobStorage.findAll().stream()
+            .filter(job -> job.getDeadline().isAfter(LocalDate.now()))
+            .collect(Collectors.toList());
 
         req.setAttribute("applications", applications);
+        req.setAttribute("availableJobs", availableJobs);
         forwardTo(req, resp, "/secure/ta/applications.jsp");
     }
 
@@ -31,18 +41,32 @@ public class ApplicationServlet extends BaseServlet {
         requireLogin(req, resp);
 
         User user = getCurrentUser(req);
-        String positionId = req.getParameter("positionId");
-        String positionTitle = req.getParameter("positionTitle");
+        String jobId = req.getParameter("jobId");
 
-        if (positionId == null || positionId.isBlank() || positionTitle == null || positionTitle.isBlank()) {
+        if (jobId == null || jobId.isBlank()) {
+            resp.sendRedirect(req.getContextPath() + "/secure/ta/applications");
+            return;
+        }
+
+        JobStorage jobStorage = new JobStorage(getServletContext());
+        Job job = jobStorage.findById(jobId);
+        if (job == null) {
             resp.sendRedirect(req.getContextPath() + "/secure/ta/applications");
             return;
         }
 
         ApplicationStorage storage = new ApplicationStorage(getServletContext());
-        Application application = storage.createNew(user.getEmail(), positionId, positionTitle);
+        
+        // Check if user has already applied for this position
+        if (storage.hasApplied(user.getEmail(), jobId)) {
+            req.setAttribute("error", "You have already applied for this position.");
+            doGet(req, resp);
+            return;
+        }
+        
+        Application application = storage.createNew(user.getEmail(), jobId, job.getTitle());
 
-        req.setAttribute("success", "Application submitted: " + application.getPositionTitle());
+        req.setAttribute("success", "Application submitted successfully: " + application.getPositionTitle());
         doGet(req, resp);
     }
 }

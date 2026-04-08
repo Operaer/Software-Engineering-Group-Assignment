@@ -1,9 +1,17 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="com.bupt.ta.model.User" %>
+<%@ page import="com.bupt.ta.model.Job" %>
+<%@ page import="com.bupt.ta.storage.JobStorage" %>
+<%@ page import="com.bupt.ta.storage.ApplicationStorage" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.time.LocalDate" %>
 <%@ include file="/WEB-INF/includes/header.jsp" %>
 
 <%
     User currentUser = (User) session.getAttribute("currentUser");
+    JobStorage jobStorage = new JobStorage(application);
+    ApplicationStorage appStorage = new ApplicationStorage(application);
+    List<Job> jobs = jobStorage.findAll();
 %>
 
 <div class="container mt-5">
@@ -19,6 +27,14 @@
 
     <div class="row mt-4">
         <div class="col-md-4">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">发布助教职位</h5>
+                    <p class="card-text">发布新的助教招聘职位，填写职位详情。</p>
+                    <a href="<%= request.getContextPath() %>/post-job" class="btn btn-sm btn-primary">发布职位</a>
+                </div>
+            </div>
+
             <div class="card mb-3">
                 <div class="card-body">
                     <h5 class="card-title">Post / Manage Positions</h5>
@@ -79,30 +95,21 @@
                         </tr>
                         </thead>
                         <tbody>
+                        <% for (Job job : jobs) { 
+                            int applicantCount = appStorage.findByTaEmail(null).stream()
+                                .mapToInt(app -> app.getPositionId().equals(job.getId()) ? 1 : 0)
+                                .sum();
+                            String status = job.getDeadline().isBefore(LocalDate.now()) ? "Completed" : "Ongoing";
+                        %>
                         <tr>
-                            <td>Data Structures TA</td>
-                            <td>CS201</td>
-                            <td>12</td>
-                            <td>2026-04-10</td>
-                            <td><span class="badge status-pending">Ongoing</span></td>
-                            <td class="text-end"><a class="btn btn-sm btn-secondary" href="#">View Applications</a></td>
+                            <td><%= job.getTitle() %></td>
+                            <td><%= job.getModuleCode() %></td>
+                            <td><%= applicantCount %></td>
+                            <td><%= job.getDeadline() %></td>
+                            <td><span class="badge <%= status.equals("Ongoing") ? "status-pending" : "status-accepted" %>"><%= status %></span></td>
+                            <td class="text-end"><a class="btn btn-sm btn-secondary" href="<%= request.getContextPath() %>/secure/mo/application_list.jsp?jobId=<%= job.getId() %>">View Applications</a></td>
                         </tr>
-                        <tr>
-                            <td>Operating Systems Tutor</td>
-                            <td>CS303</td>
-                            <td>6</td>
-                            <td>2026-03-28</td>
-                            <td><span class="badge status-shortlisted">Shortlisted</span></td>
-                            <td class="text-end"><a class="btn btn-sm btn-secondary" href="#">View Applications</a></td>
-                        </tr>
-                        <tr>
-                            <td>Academic Writing Mentor</td>
-                            <td>EN302</td>
-                            <td>3</td>
-                            <td>2026-03-20</td>
-                            <td><span class="badge status-accepted">Completed</span></td>
-                            <td class="text-end"><a class="btn btn-sm btn-secondary" href="#">View Applications</a></td>
-                        </tr>
+                        <% } %>
                         </tbody>
                     </table>
                 </div>
