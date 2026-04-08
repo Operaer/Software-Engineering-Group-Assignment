@@ -4,6 +4,7 @@ com\bupt\ta\servlet\RegisterServlet.class
 com\bupt\ta\servlet\ChangePasswordServlet.class
 com\bupt\ta\servlet\DashboardServlet.class
 com\bupt\ta\servlet\ProfileServlet.class
+com\bupt\ta\servlet\ResumePreviewServlet.class
 com\bupt\ta\storage\UserStorage.class
 com\bupt\ta\filter\EncodingFilter.class
 com\bupt\ta\model\Job.class

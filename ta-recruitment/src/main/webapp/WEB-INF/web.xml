@@ -126,4 +126,13 @@
         <url-pattern>/secure/admin/application-management</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>ResumePreviewServlet</servlet-name>
+        <servlet-class>com.bupt.ta.servlet.ResumePreviewServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ResumePreviewServlet</servlet-name>
+        <url-pattern>/secure/resume-preview</url-pattern>
+    </servlet-mapping>
+
 </web-app>

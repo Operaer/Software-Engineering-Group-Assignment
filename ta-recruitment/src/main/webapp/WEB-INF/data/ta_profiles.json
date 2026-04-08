@@ -1,1 +1,11 @@
-{}
+{
+  "ta1@example.com" : {
+    "email" : "ta1@example.com",
+    "name" : "operaer",
+    "studentId" : null,
+    "major" : "1",
+    "phone" : "1231321321",
+    "skills" : [ "2" ],
+    "resumeFileName" : "ta1_example_com_1775627246397.pdf"
+  }
+}
