@@ -1,0 +1,6 @@
+HTTP/1.1 302 
+Set-Cookie: JSESSIONID=D1EE616424F9F8EE96D171C152A0D28A; Path=/; HttpOnly
+Location: /dashboard
+Content-Length: 0
+Date: Tue, 07 Apr 2026 13:11:15 GMT
+
