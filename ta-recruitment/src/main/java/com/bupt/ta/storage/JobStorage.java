@@ -45,7 +45,7 @@ public class JobStorage {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split("\\|");
-                if (parts.length == 8) {
+                if (parts.length >= 8) {
                     Job job = new Job();
                     job.setId(parts[0]);
                     job.setTitle(parts[1]);
@@ -55,6 +55,12 @@ public class JobStorage {
                     job.setDeadline(LocalDate.parse(parts[5], DATE_FORMATTER));
                     job.setPostedBy(parts[6]);
                     job.setPostedAt(Instant.parse(parts[7]));
+                    job.setStatus(parts.length >= 9 ? parts[8] : Job.STATUS_OPEN);
+                    if (parts.length >= 10) {
+                        job.setUpdatedAt(Instant.parse(parts[9]));
+                    } else {
+                        job.setUpdatedAt(job.getPostedAt());
+                    }
                     jobs.add(job);
                 }
             }
@@ -74,7 +80,9 @@ public class JobStorage {
                            job.getRequirements() + "|" +
                            job.getDeadline().format(DATE_FORMATTER) + "|" +
                            job.getPostedBy() + "|" +
-                           job.getPostedAt().toString());
+                           job.getPostedAt().toString() + "|" +
+                           (job.getStatus() == null ? Job.STATUS_OPEN : job.getStatus()) + "|" +
+                           (job.getUpdatedAt() == null ? job.getPostedAt().toString() : job.getUpdatedAt().toString()));
                 writer.newLine();
             }
         } catch (IOException e) {
@@ -88,6 +96,34 @@ public class JobStorage {
         saveAll(jobs);
     }
 
+    public void update(Job updatedJob) {
+        List<Job> jobs = loadAll();
+        boolean replaced = false;
+        for (int i = 0; i < jobs.size(); i++) {
+            if (jobs.get(i).getId().equals(updatedJob.getId())) {
+                jobs.set(i, updatedJob);
+                replaced = true;
+                break;
+            }
+        }
+        if (!replaced) {
+            jobs.add(updatedJob);
+        }
+        saveAll(jobs);
+    }
+
+    public void archive(String id) {
+        List<Job> jobs = loadAll();
+        for (Job job : jobs) {
+            if (job.getId().equals(id)) {
+                job.setStatus(Job.STATUS_ARCHIVED);
+                job.setUpdatedAt(Instant.now());
+                break;
+            }
+        }
+        saveAll(jobs);
+    }
+
     public Job createNew(String title, String moduleCode, String workload, String requirements, LocalDate deadline, String postedBy) {
         Job job = new Job();
         job.setId(UUID.randomUUID().toString());
@@ -98,6 +134,8 @@ public class JobStorage {
         job.setDeadline(deadline);
         job.setPostedBy(postedBy);
         job.setPostedAt(Instant.now());
+        job.setUpdatedAt(job.getPostedAt());
+        job.setStatus(Job.STATUS_OPEN);
         save(job);
         return job;
     }

@@ -29,6 +29,7 @@ public class ApplicationServlet extends BaseServlet {
         List<Application> applications = appStorage.findByTaEmail(user.getEmail());
         List<Job> availableJobs = jobStorage.findAll().stream()
             .filter(job -> job.getDeadline().isAfter(LocalDate.now()))
+            .filter(job -> Job.STATUS_OPEN.equals(job.getStatus()))
             .collect(Collectors.toList());
 
         req.setAttribute("applications", applications);
@@ -50,8 +51,9 @@ public class ApplicationServlet extends BaseServlet {
 
         JobStorage jobStorage = new JobStorage(getServletContext());
         Job job = jobStorage.findById(jobId);
-        if (job == null) {
-            resp.sendRedirect(req.getContextPath() + "/secure/ta/applications");
+        if (job == null || !Job.STATUS_OPEN.equals(job.getStatus()) || job.getDeadline().isBefore(LocalDate.now())) {
+            req.setAttribute("error", "This position is no longer available.");
+            doGet(req, resp);
             return;
         }
 
