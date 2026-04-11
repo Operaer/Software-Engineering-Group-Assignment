@@ -5,6 +5,10 @@ import java.time.Instant;
 import java.time.LocalDate;
 
 public class Job implements Serializable {
+    public static final String STATUS_OPEN = "Open";
+    public static final String STATUS_ARCHIVED = "Archived";
+    public static final String STATUS_CLOSED = "Closed";
+
     private String id;
     private String title;
     private String moduleCode;
@@ -13,6 +17,8 @@ public class Job implements Serializable {
     private LocalDate deadline;
     private String postedBy;
     private Instant postedAt;
+    private Instant updatedAt;
+    private String status = STATUS_OPEN;
 
     public Job() {
     }
@@ -26,6 +32,8 @@ public class Job implements Serializable {
         this.deadline = deadline;
         this.postedBy = postedBy;
         this.postedAt = postedAt;
+        this.updatedAt = postedAt;
+        this.status = STATUS_OPEN;
     }
 
     // Getters and Setters
@@ -91,5 +99,21 @@ public class Job implements Serializable {
 
     public void setPostedAt(Instant postedAt) {
         this.postedAt = postedAt;
+    }
+
+    public Instant getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Instant updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

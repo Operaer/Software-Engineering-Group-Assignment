@@ -56,6 +56,15 @@
             <div class="col-md-3">
                 <div class="card mb-3">
                     <div class="card-body">
+                        <h5 class="card-title">Manage Posted Positions</h5>
+                        <p class="card-text">View and update your published positions, archive filled roles, and inspect edit history.</p>
+                        <a href="<%= request.getContextPath() %>/secure/mo/manage-job" class="btn btn-sm btn-primary">Manage Positions</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card mb-3">
+                    <div class="card-body">
                         <h5 class="card-title">Application Management</h5>
                         <p class="card-text">Review and manage applications.</p>
                         <a href="<%= request.getContextPath() %>/secure/mo/application-management" class="btn btn-sm btn-primary">Manage Applications</a>

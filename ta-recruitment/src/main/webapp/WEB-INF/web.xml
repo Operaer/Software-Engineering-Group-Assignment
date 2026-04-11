@@ -100,6 +100,15 @@
     </servlet-mapping>
 
     <servlet>
+        <servlet-name>ManageJobServlet</servlet-name>
+        <servlet-class>com.bupt.ta.servlet.ManageJobServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ManageJobServlet</servlet-name>
+        <url-pattern>/secure/mo/manage-job</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
         <servlet-name>ApplicationManagementServlet</servlet-name>
         <servlet-class>com.bupt.ta.servlet.ApplicationManagementServlet</servlet-class>
     </servlet>
