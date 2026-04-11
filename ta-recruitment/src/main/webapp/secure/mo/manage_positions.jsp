@@ -57,7 +57,7 @@
                         <td><%= job.getModuleCode() %></td>
                         <td><%= job.getWorkload() %></td>
                         <td><%= job.getDeadline() %></td>
-                        <td><span class="badge <%= Job.STATUS_ARCHIVED.equals(effectiveStatus) ? "status-rejected" : Job.STATUS_CLOSED.equals(effectiveStatus) ? "status-accepted" : "status-pending" %>"><%= effectiveStatus %></span></td>
+                        <td><span class="badge <%= Job.STATUS_ARCHIVED.equals(effectiveStatus) ? "status-rejected" : Job.STATUS_CLOSED.equals(effectiveStatus) ? "status-accepted" : Job.STATUS_OPEN.equals(effectiveStatus) ? "status-open" : "status-pending" %>"><%= effectiveStatus %></span></td>
                         <td><%= job.getUpdatedAt() != null ? job.getUpdatedAt() : job.getPostedAt() %></td>
                         <td class="text-end">
                             <a class="btn btn-sm btn-primary me-1" href="<%= request.getContextPath() %>/secure/mo/manage-job?action=view&jobId=<%= job.getId() %>">View</a>

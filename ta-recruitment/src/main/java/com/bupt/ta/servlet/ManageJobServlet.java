@@ -67,6 +67,30 @@ public class ManageJobServlet extends BaseServlet {
             return;
         }
 
+        if ("historyDetail".equals(action) && jobId != null) {
+            String indexParam = req.getParameter("index");
+            Job job = jobStorage.findById(jobId);
+            if (job == null || indexParam == null) {
+                resp.sendRedirect(req.getContextPath() + "/secure/mo/manage-job");
+                return;
+            }
+            try {
+                int index = Integer.parseInt(indexParam);
+                List<JobHistoryEntry> history = historyStorage.findByJobId(jobId);
+                if (index < 0 || index >= history.size()) {
+                    resp.sendRedirect(req.getContextPath() + "/secure/mo/manage-job?action=history&jobId=" + jobId);
+                    return;
+                }
+                JobHistoryEntry entry = history.get(index);
+                req.setAttribute("job", job);
+                req.setAttribute("historyEntry", entry);
+                forwardTo(req, resp, "/secure/mo/job_history_detail.jsp");
+            } catch (NumberFormatException e) {
+                resp.sendRedirect(req.getContextPath() + "/secure/mo/manage-job?action=history&jobId=" + jobId);
+            }
+            return;
+        }
+
         req.setAttribute("jobs", jobStorage.findAll());
         forwardTo(req, resp, "/secure/mo/manage_positions.jsp");
     }

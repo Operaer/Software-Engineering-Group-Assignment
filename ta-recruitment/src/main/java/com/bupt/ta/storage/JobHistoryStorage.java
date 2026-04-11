@@ -107,4 +107,14 @@ public class JobHistoryStorage {
                 .filter(entry -> jobId != null && jobId.equals(entry.getJobId()))
                 .collect(Collectors.toList());
     }
+
+    public JobHistoryEntry findByJobIdAndChangedAt(String jobId, Instant changedAt) {
+        if (jobId == null || changedAt == null) {
+            return null;
+        }
+        return loadAll().stream()
+                .filter(entry -> jobId.equals(entry.getJobId()) && changedAt.equals(entry.getChangedAt()))
+                .findFirst()
+                .orElse(null);
+    }
 }

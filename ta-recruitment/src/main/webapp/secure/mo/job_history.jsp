@@ -3,6 +3,7 @@
 <%@ page import="com.bupt.ta.model.JobHistoryEntry" %>
 <%@ page import="java.util.List" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ include file="/WEB-INF/includes/header.jsp" %>
 
 <%
@@ -37,21 +38,37 @@
                         <th>When</th>
                         <th>Changed By</th>
                         <th>Action</th>
+                        <th>Summary</th>
                         <th>Details</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <c:forEach var="entry" items="${history}">
+                    <c:forEach var="entry" items="${history}" varStatus="loop">
+                        <c:url var="detailUrl" value="/secure/mo/manage-job">
+                            <c:param name="action" value="historyDetail" />
+                            <c:param name="jobId" value="${job.id}" />
+                            <c:param name="index" value="${loop.index}" />
+                        </c:url>
                         <tr>
                             <td>${entry.changedAt}</td>
                             <td>${entry.changedBy}</td>
                             <td>${entry.action}</td>
-                            <td>${entry.details}</td>
+                            <td>
+                                <c:choose>
+                                    <c:when test="${fn:length(entry.details) > 80}">
+                                        ${fn:substring(entry.details, 0, 80)}...
+                                    </c:when>
+                                    <c:otherwise>${entry.details}</c:otherwise>
+                                </c:choose>
+                            </td>
+                            <td>
+                                <a class="btn btn-sm btn-outline-primary" href="${detailUrl}">View</a>
+                            </td>
                         </tr>
                     </c:forEach>
                     <c:if test="${empty history}">
                         <tr>
-                            <td colspan="4" class="text-center text-muted">No history recorded for this position yet.</td>
+                            <td colspan="5" class="text-center text-muted">No history recorded for this position yet.</td>
                         </tr>
                     </c:if>
                     </tbody>
