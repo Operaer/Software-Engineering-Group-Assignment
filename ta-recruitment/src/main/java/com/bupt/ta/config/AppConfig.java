@@ -8,4 +8,5 @@ public class AppConfig {
     public static final String APPLICATIONS_FILE = DATA_DIR + "/applications.json";
     public static final String PROFILES_FILE = DATA_DIR + "/ta_profiles.json";
     public static final String JOBS_FILE = DATA_DIR + "/jobs.txt";
+    public static final String JOB_HISTORY_FILE = DATA_DIR + "/job_history.txt";
 }
