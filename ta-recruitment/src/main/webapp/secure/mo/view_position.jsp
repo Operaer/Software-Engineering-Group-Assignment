@@ -50,7 +50,7 @@
                 </div>
                 <div class="col-md-4">
                     <ul class="list-group">
-                        <li class="list-group-item"><strong>Status:</strong> <span class="badge <%= Job.STATUS_ARCHIVED.equals(status) ? "status-rejected" : Job.STATUS_CLOSED.equals(status) ? "status-accepted" : "status-pending" %>"><%= status %></span></li>
+                        <li class="list-group-item"><strong>Status:</strong> <span class="badge <%= Job.STATUS_ARCHIVED.equals(status) ? "status-rejected" : Job.STATUS_CLOSED.equals(status) ? "status-accepted" : Job.STATUS_OPEN.equals(status) ? "status-open" : "status-pending" %>"><%= status %></span></li>
                         <li class="list-group-item"><strong>Posted By:</strong> <%= job.getPostedBy() %></li>
                         <li class="list-group-item"><strong>Posted At:</strong> <%= job.getPostedAt() %></li>
                         <li class="list-group-item"><strong>Updated At:</strong> <%= job.getUpdatedAt() != null ? job.getUpdatedAt() : job.getPostedAt() %></li>

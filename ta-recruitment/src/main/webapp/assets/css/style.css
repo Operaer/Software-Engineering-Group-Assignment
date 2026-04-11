@@ -35,6 +35,12 @@ body {
   border-color: #ffeaa7 !important;
 }
 
+.badge.status-open {
+  background-color: #cfe2ff !important;
+  color: #084298 !important;
+  border-color: #b6d4fe !important;
+}
+
 .badge.status-accepted {
   background-color: #d4edda !important;
   color: #155724 !important;

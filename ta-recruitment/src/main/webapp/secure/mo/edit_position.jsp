@@ -38,7 +38,7 @@
         <div class="card-body">
             <div class="mb-3">
                 <strong>Current Status:</strong>
-                <span class="badge <%= Job.STATUS_ARCHIVED.equals(status) ? "status-rejected" : Job.STATUS_CLOSED.equals(status) ? "status-accepted" : "status-pending" %>"><%= status %></span>
+                <span class="badge <%= Job.STATUS_ARCHIVED.equals(status) ? "status-rejected" : Job.STATUS_CLOSED.equals(status) ? "status-accepted" : Job.STATUS_OPEN.equals(status) ? "status-open" : "status-pending" %>"><%= status %></span>
             </div>
             <form action="<%= request.getContextPath() %>/secure/mo/manage-job" method="post">
                 <input type="hidden" name="action" value="update" />
