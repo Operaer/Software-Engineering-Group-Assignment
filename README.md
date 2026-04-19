@@ -15,17 +15,17 @@
 - Maven 3.6+
 
 ### 运行步骤
-1. **进入项目目录**:
+1. 进入项目目录:
    ```bash
    cd ta-recruitment
    ```
 
-2. **运行应用**:
+2. 运行应用:
    ```bash
    # 使用Maven 
    mvn clean compile exec:java
 
-3. **访问系统**:
+3. 访问系统:
    打开浏览器: http://localhost:8081
 
 ### 测试账户
