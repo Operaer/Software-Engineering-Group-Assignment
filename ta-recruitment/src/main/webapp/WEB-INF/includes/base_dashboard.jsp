@@ -74,6 +74,16 @@
         <% } %>
 
         <% if ("admin".equals(roleName)) { %>
+
+            <div class="col-md-3">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Global Recruitment Dashboard</h5>
+                        <p class="card-text">View school-wide recruitment metrics and module progress.</p>
+                        <a href="<%= request.getContextPath() %>/secure/admin/global-dashboard" class="btn btn-sm btn-primary">View Dashboard</a>
+                    </div>
+                </div>
+            </div>
             <div class="col-md-3">
                 <div class="card mb-3">
                     <div class="card-body">
