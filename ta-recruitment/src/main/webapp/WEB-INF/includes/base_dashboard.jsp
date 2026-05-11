@@ -83,6 +83,15 @@
                     </div>
                 </div>
             </div>
+            <div class="col-md-3">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Operation Logs</h5>
+                        <p class="card-text">Review admin operation logs for audit and compliance.</p>
+                        <a href="<%= request.getContextPath() %>/secure/admin/audit-logs" class="btn btn-sm btn-danger">View Logs</a>
+                    </div>
+                </div>
+            </div>
         <% } %>
     </div>
 </div>

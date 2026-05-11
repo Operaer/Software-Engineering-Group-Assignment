@@ -5,6 +5,7 @@ import com.bupt.ta.model.JobHistoryEntry;
 import com.bupt.ta.model.User;
 import com.bupt.ta.storage.JobHistoryStorage;
 import com.bupt.ta.storage.JobStorage;
+import com.bupt.ta.storage.OperationLogStorage;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -17,9 +18,16 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Manages position lifecycle actions for module organizers including edit,
+ * archive, rollback, and history browsing, while recording each operation.
+ */
 @WebServlet("/secure/mo/manage-job")
 public class ManageJobServlet extends BaseServlet {
 
+    /**
+     * Handles view rendering for manage, edit, rollback, and history actions.
+     */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (!requireLogin(req, resp)) return;
@@ -95,6 +103,9 @@ public class ManageJobServlet extends BaseServlet {
         forwardTo(req, resp, "/secure/mo/manage_positions.jsp");
     }
 
+    /**
+     * Applies archive, rollback, or update operations to the selected job.
+     */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (!requireLogin(req, resp)) return;
@@ -124,6 +135,8 @@ public class ManageJobServlet extends BaseServlet {
                 job.setUpdatedAt(Instant.now());
                 jobStorage.update(job);
                 historyStorage.record(job.getId(), "Archive", "Position archived by " + currentUser.getEmail(), previousState, currentUser.getEmail());
+                new OperationLogStorage(getServletContext())
+                        .record(currentUser.getEmail(), "Archive Position", job.getId(), "Archived position \"" + job.getTitle() + "\".");
             }
             resp.sendRedirect(req.getContextPath() + "/secure/mo/manage-job");
             return;
@@ -142,6 +155,8 @@ public class ManageJobServlet extends BaseServlet {
             previousSnapshot.setUpdatedAt(Instant.now());
             jobStorage.update(previousSnapshot);
             historyStorage.record(job.getId(), "Rollback", "Reverted to previous position version.", currentState, currentUser.getEmail());
+            new OperationLogStorage(getServletContext())
+                    .record(currentUser.getEmail(), "Rollback Position", job.getId(), "Reverted position \"" + job.getTitle() + "\" to a prior version.");
             resp.sendRedirect(req.getContextPath() + "/secure/mo/manage-job?action=view&jobId=" + jobId);
             return;
         }
@@ -212,6 +227,8 @@ public class ManageJobServlet extends BaseServlet {
             jobStorage.update(job);
             String historyDetail = changes.length() > 0 ? changes.toString() : "No content changes. Metadata refreshed.";
             historyStorage.record(job.getId(), "Update", historyDetail, snapshot, currentUser.getEmail());
+            new OperationLogStorage(getServletContext())
+                    .record(currentUser.getEmail(), "Edit Position", job.getId(), "Updated position \"" + job.getTitle() + "\". " + historyDetail);
 
             req.setAttribute("success", "Position updated successfully.");
             req.setAttribute("job", job);
@@ -222,6 +239,12 @@ public class ManageJobServlet extends BaseServlet {
         resp.sendRedirect(req.getContextPath() + "/secure/mo/manage-job");
     }
 
+    /**
+     * Creates a shallow clone of a job for history tracking and rollback support.
+     *
+     * @param job the job to clone
+     * @return a new Job instance containing the same field values
+     */
     private Job cloneJob(Job job) {
         Job clone = new Job();
         clone.setId(job.getId());

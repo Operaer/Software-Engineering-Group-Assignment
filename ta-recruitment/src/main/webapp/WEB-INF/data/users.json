@@ -2,7 +2,7 @@
   "ta1@example.com" : {
     "username" : "ta1",
     "email" : "ta1@example.com",
-    "password" : "123456",
+    "password" : "default123",
     "role" : "TA",
     "active" : true
   },

@@ -1,5 +1,9 @@
 package com.bupt.ta.config;
 
+/**
+ * Provides shared configuration constants for file paths and defaults used by the
+ * TA recruitment application.
+ */
 public class AppConfig {
     public static final String DEFAULT_PASSWORD = "default123";
     public static final String UPLOAD_DIR = "/WEB-INF/uploads";
@@ -9,4 +13,5 @@ public class AppConfig {
     public static final String PROFILES_FILE = DATA_DIR + "/ta_profiles.json";
     public static final String JOBS_FILE = DATA_DIR + "/jobs.txt";
     public static final String JOB_HISTORY_FILE = DATA_DIR + "/job_history.txt";
+    public static final String OPERATION_LOG_FILE = DATA_DIR + "/operation_logs.txt";
 }

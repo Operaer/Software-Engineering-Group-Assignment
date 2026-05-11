@@ -1,6 +1,7 @@
 package com.bupt.ta.servlet;
 
 import com.bupt.ta.model.User;
+import com.bupt.ta.storage.OperationLogStorage;
 import com.bupt.ta.storage.UserStorage;
 
 import javax.servlet.ServletException;
@@ -10,9 +11,25 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
 
+/**
+ * Servlet for admin user management operations.
+ * <p>
+ * Provides a secured Admin interface for listing users and handling
+ * user lifecycle actions such as creation, status toggle, password reset,
+ * and deletion.
+ * </p>
+ */
 @WebServlet(name = "UserManagementServlet", urlPatterns = "/secure/admin/user-management")
 public class UserManagementServlet extends BaseServlet {
 
+    /**
+     * Displays the user management page for administrators.
+     *
+     * @param req  the HttpServletRequest object
+     * @param resp the HttpServletResponse object
+     * @throws ServletException if a servlet error occurs
+     * @throws IOException      if an I/O error occurs
+     */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (!requirePermission(req, resp, User.Role.ADMIN)) {
@@ -26,6 +43,19 @@ public class UserManagementServlet extends BaseServlet {
         forwardTo(req, resp, "/secure/admin/user_management.jsp");
     }
 
+    /**
+     * Handles admin user lifecycle actions sent from the management page.
+     * <p>
+     * Supported actions include creating users, toggling account status,
+     * resetting passwords, and deleting users. Only ADMIN users may perform
+     * these operations.
+     * </p>
+     *
+     * @param req  the HttpServletRequest object
+     * @param resp the HttpServletResponse object
+     * @throws ServletException if a servlet error occurs
+     * @throws IOException      if an I/O error occurs
+     */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (!requirePermission(req, resp, User.Role.ADMIN)) {
@@ -35,6 +65,7 @@ public class UserManagementServlet extends BaseServlet {
         String action = req.getParameter("action");
         String email = req.getParameter("email");
         UserStorage userStorage = new UserStorage(getServletContext());
+        OperationLogStorage logStorage = new OperationLogStorage(getServletContext());
 
         try {
             if ("create".equals(action)) {
@@ -57,6 +88,7 @@ public class UserManagementServlet extends BaseServlet {
 
                     User newUser = new User(username, email, password, role, true);
                     userStorage.createUser(newUser);
+                    logStorage.record(getCurrentUser(req).getEmail(), "Create Account", email, "Created user with role " + role + ".");
                     req.setAttribute("success", "User created successfully: " + email);
                 }
 
@@ -74,8 +106,11 @@ public class UserManagementServlet extends BaseServlet {
                     } else if (user.getRole() == User.Role.ADMIN && user.isActive() && userStorage.countActiveAdmins() <= 1) {
                         req.setAttribute("error", "The last active administrator cannot be disabled.");
                     } else {
-                        user.setActive(!user.isActive());
+                        boolean newStatus = !user.isActive();
+                        user.setActive(newStatus);
                         userStorage.updateUser(user);
+                        logStorage.record(getCurrentUser(req).getEmail(), "Account Status Change", email,
+                                "Set account " + email + " to " + (newStatus ? "active" : "disabled") + ".");
                         req.setAttribute("success", "User status updated: " + email);
                     }
                 }
@@ -87,6 +122,8 @@ public class UserManagementServlet extends BaseServlet {
                 if (user != null) {
                     user.setPassword("default123");
                     userStorage.updateUser(user);
+                    logStorage.record(getCurrentUser(req).getEmail(), "Password Reset", email,
+                            "Reset password for user " + email + ".");
                     req.setAttribute("success", "Password reset successfully for: " + email);
                 } else {
                     req.setAttribute("error", "User not found.");
@@ -105,6 +142,8 @@ public class UserManagementServlet extends BaseServlet {
                     req.setAttribute("error", "The last administrator account cannot be deleted.");
                 } else {
                     userStorage.deleteUser(email);
+                    logStorage.record(getCurrentUser(req).getEmail(), "Delete Account", email,
+                            "Deleted user account " + email + ".");
                     req.setAttribute("success", "User deleted successfully: " + email);
                 }
             }

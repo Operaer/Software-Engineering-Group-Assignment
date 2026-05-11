@@ -2,6 +2,7 @@ package com.bupt.ta.servlet;
 
 import com.bupt.ta.model.TAProfile;
 import com.bupt.ta.model.User;
+import com.bupt.ta.storage.OperationLogStorage;
 import com.bupt.ta.storage.ProfileStorage;
 
 import javax.servlet.ServletException;
@@ -18,10 +19,17 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.time.Instant;
 
+/**
+ * Allows TA users to view and update their profile information,
+ * including resume upload functionality.
+ */
 @WebServlet(name = "ProfileServlet", urlPatterns = "/secure/ta/profile")
 @MultipartConfig(fileSizeThreshold = 1024 * 512, maxFileSize = 5 * 1024 * 1024, maxRequestSize = 6 * 1024 * 1024)
 public class ProfileServlet extends BaseServlet {
 
+    /**
+     * Loads the current TA profile and forwards to the profile page.
+     */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         requireLogin(req, resp);
@@ -37,6 +45,9 @@ public class ProfileServlet extends BaseServlet {
         forwardTo(req, resp, "/secure/ta/profile.jsp");
     }
 
+    /**
+     * Saves TA profile updates and handles optional resume uploads.
+     */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         requireLogin(req, resp);
@@ -91,8 +102,13 @@ public class ProfileServlet extends BaseServlet {
         ProfileStorage storage = new ProfileStorage(getServletContext());
         storage.save(profile);
 
+        if (profile.getResumeFileName() != null) {
+            OperationLogStorage logStorage = new OperationLogStorage(getServletContext());
+            logStorage.record(user.getEmail(), "Resume Upload", user.getEmail(), "Uploaded resume file " + profile.getResumeFileName());
+        }
+
         req.setAttribute("profile", profile);
         req.setAttribute("success", "Profile saved successfully.");
         forwardTo(req, resp, "/secure/ta/profile.jsp");
     }
-}
+
