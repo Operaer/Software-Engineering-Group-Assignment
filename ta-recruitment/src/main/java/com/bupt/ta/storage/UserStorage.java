@@ -17,10 +17,12 @@ public class UserStorage {
 
     private final ObjectMapper objectMapper;
     private final File usersFile;
+    private final javax.servlet.ServletContext servletContext;
 
     public UserStorage(ServletContext context) {
         this.objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
         this.usersFile = new File(context.getRealPath(USERS_FILE));
+        this.servletContext = context;
 
         File parent = usersFile.getParentFile();
         if (parent != null && !parent.exists()) {
@@ -138,6 +140,10 @@ public class UserStorage {
         user.setEmail(key);
         users.put(key, user);
         saveUsersInternal(users);
+        try {
+            com.bupt.ta.storage.AuditLogStorage audit = new com.bupt.ta.storage.AuditLogStorage(servletContext);
+            audit.add(new com.bupt.ta.model.AuditLogEntry(user.getEmail(), "Account Create", user.getEmail(), "Created new user account."));
+        } catch (Exception ignored) {}
     }
 
     public void updateUser(User user) throws IOException {
@@ -150,6 +156,10 @@ public class UserStorage {
         user.setEmail(key);
         users.put(key, user);
         saveUsersInternal(users);
+        try {
+            com.bupt.ta.storage.AuditLogStorage audit = new com.bupt.ta.storage.AuditLogStorage(servletContext);
+            audit.add(new com.bupt.ta.model.AuditLogEntry(user.getEmail(), "Account Update", user.getEmail(), "Updated user account."));
+        } catch (Exception ignored) {}
     }
 
     public void deleteUser(String email) throws IOException {
@@ -160,6 +170,10 @@ public class UserStorage {
         Map<String, User> users = loadUsersInternal();
         users.remove(email.trim().toLowerCase());
         saveUsersInternal(users);
+        try {
+            com.bupt.ta.storage.AuditLogStorage audit = new com.bupt.ta.storage.AuditLogStorage(servletContext);
+            audit.add(new com.bupt.ta.model.AuditLogEntry(email, "Account Delete", email, "Deleted user account."));
+        } catch (Exception ignored) {}
     }
 
     public int countAdmins() throws IOException {

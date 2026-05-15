@@ -18,10 +18,12 @@ import java.util.UUID;
 public class JobStorage {
     private static final String STORAGE_PATH = AppConfig.JOBS_FILE;
     private final File storageFile;
+    private final javax.servlet.ServletContext servletContext;
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     public JobStorage(ServletContext context) {
         this.storageFile = new File(context.getRealPath(STORAGE_PATH));
+        this.servletContext = context;
         ensureStorageExists();
     }
 
@@ -94,6 +96,10 @@ public class JobStorage {
         List<Job> jobs = loadAll();
         jobs.add(job);
         saveAll(jobs);
+        try {
+            com.bupt.ta.storage.AuditLogStorage audit = new com.bupt.ta.storage.AuditLogStorage(servletContext);
+            audit.add(new com.bupt.ta.model.AuditLogEntry(job.getPostedBy(), "Position Create", job.getId(), "Created position: " + job.getTitle()));
+        } catch (Exception ignored) {}
     }
 
     public void update(Job updatedJob) {
@@ -110,6 +116,10 @@ public class JobStorage {
             jobs.add(updatedJob);
         }
         saveAll(jobs);
+        try {
+            com.bupt.ta.storage.AuditLogStorage audit = new com.bupt.ta.storage.AuditLogStorage(servletContext);
+            audit.add(new com.bupt.ta.model.AuditLogEntry(updatedJob.getPostedBy(), "Position Update", updatedJob.getId(), "Updated position: " + updatedJob.getTitle()));
+        } catch (Exception ignored) {}
     }
 
     public void archive(String id) {
@@ -122,6 +132,11 @@ public class JobStorage {
             }
         }
         saveAll(jobs);
+        try {
+            // best-effort: find job to log operator unknown here
+            com.bupt.ta.storage.AuditLogStorage audit = new com.bupt.ta.storage.AuditLogStorage(servletContext);
+            audit.add(new com.bupt.ta.model.AuditLogEntry("system", "Position Archive", id, "Archived position id: " + id));
+        } catch (Exception ignored) {}
     }
 
     public Job createNew(String title, String moduleCode, String workload, String requirements, LocalDate deadline, String postedBy) {

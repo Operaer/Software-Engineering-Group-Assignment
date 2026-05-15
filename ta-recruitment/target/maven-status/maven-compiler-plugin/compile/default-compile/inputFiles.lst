@@ -1,32 +1,35 @@
-C:\Users\31435\Desktop\BUPT\大三下\Software Engineering\小组project\final assest\4\Software-Engineering-Group-Assignment-main\ta-recruitment\src\main\java\com\bupt\ta\servlet\AdminDashboardServlet.java
-C:\Users\31435\Desktop\BUPT\大三下\Software Engineering\小组project\final assest\4\Software-Engineering-Group-Assignment-main\ta-recruitment\src\main\java\com\bupt\ta\servlet\ProfileServlet.java
-C:\Users\31435\Desktop\BUPT\大三下\Software Engineering\小组project\final assest\4\Software-Engineering-Group-Assignment-main\ta-recruitment\src\main\java\com\bupt\ta\servlet\LoginServlet.java
-C:\Users\31435\Desktop\BUPT\大三下\Software Engineering\小组project\final assest\4\Software-Engineering-Group-Assignment-main\ta-recruitment\src\main\java\com\bupt\ta\storage\UserStorage.java
-C:\Users\31435\Desktop\BUPT\大三下\Software Engineering\小组project\final assest\4\Software-Engineering-Group-Assignment-main\ta-recruitment\src\main\java\com\bupt\ta\model\AdminDashboardStats.java
-C:\Users\31435\Desktop\BUPT\大三下\Software Engineering\小组project\final assest\4\Software-Engineering-Group-Assignment-main\ta-recruitment\src\main\java\com\bupt\ta\servlet\BaseServlet.java
-C:\Users\31435\Desktop\BUPT\大三下\Software Engineering\小组project\final assest\4\Software-Engineering-Group-Assignment-main\ta-recruitment\src\main\java\com\bupt\ta\servlet\AdminApplicationManagementServlet.java
-C:\Users\31435\Desktop\BUPT\大三下\Software Engineering\小组project\final assest\4\Software-Engineering-Group-Assignment-main\ta-recruitment\src\main\java\com\bupt\ta\servlet\UserManagementServlet.java
-C:\Users\31435\Desktop\BUPT\大三下\Software Engineering\小组project\final assest\4\Software-Engineering-Group-Assignment-main\ta-recruitment\src\main\java\com\bupt\ta\servlet\ResumePreviewServlet.java
-C:\Users\31435\Desktop\BUPT\大三下\Software Engineering\小组project\final assest\4\Software-Engineering-Group-Assignment-main\ta-recruitment\src\main\java\com\bupt\ta\servlet\ChangePasswordServlet.java
-C:\Users\31435\Desktop\BUPT\大三下\Software Engineering\小组project\final assest\4\Software-Engineering-Group-Assignment-main\ta-recruitment\src\main\java\com\bupt\ta\servlet\ApplicationServlet.java
-C:\Users\31435\Desktop\BUPT\大三下\Software Engineering\小组project\final assest\4\Software-Engineering-Group-Assignment-main\ta-recruitment\src\main\java\com\bupt\ta\storage\JobHistoryStorage.java
-C:\Users\31435\Desktop\BUPT\大三下\Software Engineering\小组project\final assest\4\Software-Engineering-Group-Assignment-main\ta-recruitment\src\main\java\com\bupt\ta\model\User.java
-C:\Users\31435\Desktop\BUPT\大三下\Software Engineering\小组project\final assest\4\Software-Engineering-Group-Assignment-main\ta-recruitment\src\main\java\com\bupt\ta\EmbeddedTomcat.java
-C:\Users\31435\Desktop\BUPT\大三下\Software Engineering\小组project\final assest\4\Software-Engineering-Group-Assignment-main\ta-recruitment\src\main\java\com\bupt\ta\storage\JobStorage.java
-C:\Users\31435\Desktop\BUPT\大三下\Software Engineering\小组project\final assest\4\Software-Engineering-Group-Assignment-main\ta-recruitment\src\main\java\com\bupt\ta\model\TAProfile.java
-C:\Users\31435\Desktop\BUPT\大三下\Software Engineering\小组project\final assest\4\Software-Engineering-Group-Assignment-main\ta-recruitment\src\main\java\com\bupt\ta\storage\ProfileStorage.java
-C:\Users\31435\Desktop\BUPT\大三下\Software Engineering\小组project\final assest\4\Software-Engineering-Group-Assignment-main\ta-recruitment\src\main\java\com\bupt\ta\servlet\ManageJobServlet.java
-C:\Users\31435\Desktop\BUPT\大三下\Software Engineering\小组project\final assest\4\Software-Engineering-Group-Assignment-main\ta-recruitment\src\main\java\com\bupt\ta\storage\ApplicationStorage.java
-C:\Users\31435\Desktop\BUPT\大三下\Software Engineering\小组project\final assest\4\Software-Engineering-Group-Assignment-main\ta-recruitment\src\main\java\com\bupt\ta\filter\EncodingFilter.java
-C:\Users\31435\Desktop\BUPT\大三下\Software Engineering\小组project\final assest\4\Software-Engineering-Group-Assignment-main\ta-recruitment\src\main\java\com\bupt\ta\security\PermissionChecker.java
-C:\Users\31435\Desktop\BUPT\大三下\Software Engineering\小组project\final assest\4\Software-Engineering-Group-Assignment-main\ta-recruitment\src\main\java\com\bupt\ta\config\AppConfig.java
-C:\Users\31435\Desktop\BUPT\大三下\Software Engineering\小组project\final assest\4\Software-Engineering-Group-Assignment-main\ta-recruitment\src\main\java\com\bupt\ta\servlet\PostJobServlet.java
-C:\Users\31435\Desktop\BUPT\大三下\Software Engineering\小组project\final assest\4\Software-Engineering-Group-Assignment-main\ta-recruitment\src\main\java\com\bupt\ta\servlet\DashboardServlet.java
-C:\Users\31435\Desktop\BUPT\大三下\Software Engineering\小组project\final assest\4\Software-Engineering-Group-Assignment-main\ta-recruitment\src\main\java\com\bupt\ta\model\JobHistoryEntry.java
-C:\Users\31435\Desktop\BUPT\大三下\Software Engineering\小组project\final assest\4\Software-Engineering-Group-Assignment-main\ta-recruitment\src\main\java\com\bupt\ta\servlet\ResumeDownloadServlet.java
-C:\Users\31435\Desktop\BUPT\大三下\Software Engineering\小组project\final assest\4\Software-Engineering-Group-Assignment-main\ta-recruitment\src\main\java\com\bupt\ta\model\Application.java
-C:\Users\31435\Desktop\BUPT\大三下\Software Engineering\小组project\final assest\4\Software-Engineering-Group-Assignment-main\ta-recruitment\src\main\java\com\bupt\ta\servlet\ApplicationManagementServlet.java
-C:\Users\31435\Desktop\BUPT\大三下\Software Engineering\小组project\final assest\4\Software-Engineering-Group-Assignment-main\ta-recruitment\src\main\java\com\bupt\ta\servlet\RegisterServlet.java
-C:\Users\31435\Desktop\BUPT\大三下\Software Engineering\小组project\final assest\4\Software-Engineering-Group-Assignment-main\ta-recruitment\src\main\java\com\bupt\ta\filter\AuthFilter.java
-C:\Users\31435\Desktop\BUPT\大三下\Software Engineering\小组project\final assest\4\Software-Engineering-Group-Assignment-main\ta-recruitment\src\main\java\com\bupt\ta\model\Job.java
-C:\Users\31435\Desktop\BUPT\大三下\Software Engineering\小组project\final assest\4\Software-Engineering-Group-Assignment-main\ta-recruitment\src\main\java\com\bupt\ta\servlet\LogoutServlet.java
+D:\python\Software-Engineering-Group-Assignment-main\main\ta-recruitment\src\main\java\com\bupt\ta\model\TAProfile.java
+D:\python\Software-Engineering-Group-Assignment-main\main\ta-recruitment\src\main\java\com\bupt\ta\servlet\AdminAuditLogsServlet.java
+D:\python\Software-Engineering-Group-Assignment-main\main\ta-recruitment\src\main\java\com\bupt\ta\EmbeddedTomcat.java
+D:\python\Software-Engineering-Group-Assignment-main\main\ta-recruitment\src\main\java\com\bupt\ta\servlet\RegisterServlet.java
+D:\python\Software-Engineering-Group-Assignment-main\main\ta-recruitment\src\main\java\com\bupt\ta\servlet\DashboardServlet.java
+D:\python\Software-Engineering-Group-Assignment-main\main\ta-recruitment\src\main\java\com\bupt\ta\servlet\PostJobServlet.java
+D:\python\Software-Engineering-Group-Assignment-main\main\ta-recruitment\src\main\java\com\bupt\ta\servlet\ResumeDownloadServlet.java
+D:\python\Software-Engineering-Group-Assignment-main\main\ta-recruitment\src\main\java\com\bupt\ta\storage\ApplicationStorage.java
+D:\python\Software-Engineering-Group-Assignment-main\main\ta-recruitment\src\main\java\com\bupt\ta\servlet\AdminApplicationManagementServlet.java
+D:\python\Software-Engineering-Group-Assignment-main\main\ta-recruitment\src\main\java\com\bupt\ta\servlet\ResumePreviewServlet.java
+D:\python\Software-Engineering-Group-Assignment-main\main\ta-recruitment\src\main\java\com\bupt\ta\model\JobHistoryEntry.java
+D:\python\Software-Engineering-Group-Assignment-main\main\ta-recruitment\src\main\java\com\bupt\ta\model\Job.java
+D:\python\Software-Engineering-Group-Assignment-main\main\ta-recruitment\src\main\java\com\bupt\ta\storage\UserStorage.java
+D:\python\Software-Engineering-Group-Assignment-main\main\ta-recruitment\src\main\java\com\bupt\ta\storage\ProfileStorage.java
+D:\python\Software-Engineering-Group-Assignment-main\main\ta-recruitment\src\main\java\com\bupt\ta\servlet\ApplicationServlet.java
+D:\python\Software-Engineering-Group-Assignment-main\main\ta-recruitment\src\main\java\com\bupt\ta\servlet\LogoutServlet.java
+D:\python\Software-Engineering-Group-Assignment-main\main\ta-recruitment\src\main\java\com\bupt\ta\model\AuditLogEntry.java
+D:\python\Software-Engineering-Group-Assignment-main\main\ta-recruitment\src\main\java\com\bupt\ta\model\AdminDashboardStats.java
+D:\python\Software-Engineering-Group-Assignment-main\main\ta-recruitment\src\main\java\com\bupt\ta\filter\EncodingFilter.java
+D:\python\Software-Engineering-Group-Assignment-main\main\ta-recruitment\src\main\java\com\bupt\ta\storage\JobHistoryStorage.java
+D:\python\Software-Engineering-Group-Assignment-main\main\ta-recruitment\src\main\java\com\bupt\ta\config\AppConfig.java
+D:\python\Software-Engineering-Group-Assignment-main\main\ta-recruitment\src\main\java\com\bupt\ta\servlet\ManageJobServlet.java
+D:\python\Software-Engineering-Group-Assignment-main\main\ta-recruitment\src\main\java\com\bupt\ta\model\User.java
+D:\python\Software-Engineering-Group-Assignment-main\main\ta-recruitment\src\main\java\com\bupt\ta\storage\AuditLogStorage.java
+D:\python\Software-Engineering-Group-Assignment-main\main\ta-recruitment\src\main\java\com\bupt\ta\servlet\ChangePasswordServlet.java
+D:\python\Software-Engineering-Group-Assignment-main\main\ta-recruitment\src\main\java\com\bupt\ta\security\PermissionChecker.java
+D:\python\Software-Engineering-Group-Assignment-main\main\ta-recruitment\src\main\java\com\bupt\ta\servlet\UserManagementServlet.java
+D:\python\Software-Engineering-Group-Assignment-main\main\ta-recruitment\src\main\java\com\bupt\ta\servlet\ApplicationManagementServlet.java
+D:\python\Software-Engineering-Group-Assignment-main\main\ta-recruitment\src\main\java\com\bupt\ta\servlet\BaseServlet.java
+D:\python\Software-Engineering-Group-Assignment-main\main\ta-recruitment\src\main\java\com\bupt\ta\filter\AuthFilter.java
+D:\python\Software-Engineering-Group-Assignment-main\main\ta-recruitment\src\main\java\com\bupt\ta\storage\JobStorage.java
+D:\python\Software-Engineering-Group-Assignment-main\main\ta-recruitment\src\main\java\com\bupt\ta\servlet\ProfileServlet.java
+D:\python\Software-Engineering-Group-Assignment-main\main\ta-recruitment\src\main\java\com\bupt\ta\model\Application.java
+D:\python\Software-Engineering-Group-Assignment-main\main\ta-recruitment\src\main\java\com\bupt\ta\servlet\LoginServlet.java
+D:\python\Software-Engineering-Group-Assignment-main\main\ta-recruitment\src\main\java\com\bupt\ta\servlet\AdminDashboardServlet.java

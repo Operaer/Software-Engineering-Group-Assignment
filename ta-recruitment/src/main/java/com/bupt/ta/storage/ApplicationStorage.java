@@ -28,9 +28,11 @@ public class ApplicationStorage {
             .registerModule(new JavaTimeModule())
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     private final File storageFile;
+    private final javax.servlet.ServletContext servletContext;
 
     public ApplicationStorage(ServletContext context) {
         this.storageFile = new File(context.getRealPath(STORAGE_PATH));
+        this.servletContext = context;
         ensureStorageExists();
     }
 
@@ -85,6 +87,10 @@ public class ApplicationStorage {
         List<Application> apps = loadAll();
         apps.add(application);
         saveAll(apps);
+        try {
+            com.bupt.ta.storage.AuditLogStorage audit = new com.bupt.ta.storage.AuditLogStorage(servletContext);
+            audit.add(new com.bupt.ta.model.AuditLogEntry(application.getTaEmail(), "Application Create", application.getId(), "Applied to: " + application.getPositionTitle()));
+        } catch (Exception ignored) {}
     }
 
     public boolean hasApplied(String taEmail, String positionId) {
@@ -117,6 +123,10 @@ public class ApplicationStorage {
             }
         }
         saveAll(apps);
+        try {
+            com.bupt.ta.storage.AuditLogStorage audit = new com.bupt.ta.storage.AuditLogStorage(servletContext);
+            audit.add(new com.bupt.ta.model.AuditLogEntry("mo", "Application Status", applicationId, "Status changed to: " + status.name()));
+        } catch (Exception ignored) {}
     }
 
     public List<Application> findAll() {

@@ -12,6 +12,7 @@ com\bupt\ta\storage\UserStorage.class
 com\bupt\ta\filter\EncodingFilter.class
 com\bupt\ta\model\Job.class
 com\bupt\ta\model\AdminDashboardStats$TAWorkloadMetric.class
+com\bupt\ta\storage\AuditLogStorage$1.class
 com\bupt\ta\model\Application$Status.class
 com\bupt\ta\servlet\LogoutServlet.class
 com\bupt\ta\servlet\ManageJobServlet.class
@@ -27,12 +28,15 @@ com\bupt\ta\storage\JobHistoryStorage.class
 com\bupt\ta\servlet\ApplicationManagementServlet.class
 com\bupt\ta\storage\ApplicationStorage.class
 com\bupt\ta\servlet\LoginServlet.class
+com\bupt\ta\servlet\AdminAuditLogsServlet.class
 com\bupt\ta\config\AppConfig.class
 com\bupt\ta\servlet\ResumeDownloadServlet.class
+com\bupt\ta\model\AuditLogEntry.class
 com\bupt\ta\EmbeddedTomcat.class
 com\bupt\ta\model\User.class
 com\bupt\ta\model\User$Role.class
 com\bupt\ta\servlet\BaseServlet.class
+com\bupt\ta\storage\AuditLogStorage.class
 com\bupt\ta\security\PermissionChecker.class
 com\bupt\ta\model\Application.class
 com\bupt\ta\servlet\AdminDashboardServlet$TAWorkloadAccumulator.class
