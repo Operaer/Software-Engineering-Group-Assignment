@@ -12,6 +12,7 @@
         </div>
         <div class="d-flex gap-2">
             <a class="btn btn-outline-primary" href="${pageContext.request.contextPath}/secure/admin/global-dashboard?module=${selectedModule}">Refresh Sync</a>
+            <a class="btn btn-outline-secondary" href="${pageContext.request.contextPath}/secure/admin/audit-logs">View Audit Logs</a>
             <a class="btn btn-outline-secondary" href="${pageContext.request.contextPath}/dashboard">Back to Dashboard</a>
         </div>
     </div>

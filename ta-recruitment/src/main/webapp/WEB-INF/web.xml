@@ -136,6 +136,15 @@
     </servlet-mapping>
 
     <servlet>
+        <servlet-name>AdminAuditLogsServlet</servlet-name>
+        <servlet-class>com.bupt.ta.servlet.AdminAuditLogsServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AdminAuditLogsServlet</servlet-name>
+        <url-pattern>/secure/admin/audit-logs</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
         <servlet-name>AdminApplicationManagementServlet</servlet-name>
         <servlet-class>com.bupt.ta.servlet.AdminApplicationManagementServlet</servlet-class>
     </servlet>

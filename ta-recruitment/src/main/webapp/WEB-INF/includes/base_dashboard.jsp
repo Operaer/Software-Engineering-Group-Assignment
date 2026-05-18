@@ -87,6 +87,15 @@
             <div class="col-md-3">
                 <div class="card mb-3">
                     <div class="card-body">
+                        <h5 class="card-title">Audit Logs</h5>
+                        <p class="card-text">Trace valid admin operations and review system activity.</p>
+                        <a href="<%= request.getContextPath() %>/secure/admin/audit-logs" class="btn btn-sm btn-secondary">View Logs</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card mb-3">
+                    <div class="card-body">
                         <h5 class="card-title">User Management</h5>
                         <p class="card-text">Manage system users.</p>
                         <a href="<%= request.getContextPath() %>/secure/admin/user-management" class="btn btn-sm btn-danger">Manage Users</a>

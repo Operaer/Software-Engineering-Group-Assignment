@@ -30,8 +30,11 @@ public class JobHistoryStorage {
 
     public JobHistoryStorage(ServletContext context) {
         this.storageFile = new File(context.getRealPath(STORAGE_PATH));
+        this.context = context;
         ensureStorageExists();
     }
+
+    private final ServletContext context;
 
     private void ensureStorageExists() {
         try {
@@ -82,6 +85,10 @@ public class JobHistoryStorage {
             String encodedSnapshot = snapshot != null ? URLEncoder.encode(mapper.writeValueAsString(snapshot), StandardCharsets.UTF_8) : "";
             writer.write(jobId + "|" + Instant.now().toString() + "|" + changedBy + "|" + action + "|" + encodedDetails + "|" + encodedSnapshot);
             writer.newLine();
+            try {
+                com.bupt.ta.storage.AuditLogStorage audit = new com.bupt.ta.storage.AuditLogStorage(context);
+                audit.add(new com.bupt.ta.model.AuditLogEntry(changedBy, "Job History", jobId, action + ": " + details));
+            } catch (Exception ignored) {}
         } catch (IOException e) {
             throw new IllegalStateException("Unable to write job history storage", e);
         }
