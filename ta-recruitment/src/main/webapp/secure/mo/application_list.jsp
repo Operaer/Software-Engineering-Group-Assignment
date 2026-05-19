@@ -2,7 +2,6 @@
 <%@ page import="com.bupt.ta.model.User" %>
 <%@ page import="com.bupt.ta.model.Application" %>
 <%@ page import="com.bupt.ta.model.TAProfile" %>
-<%@ page import="com.bupt.ta.storage.ProfileStorage" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.HashMap" %>
 <%@ page import="java.util.Map" %>
@@ -14,9 +13,10 @@
     List<Application> applications = (List<Application>) request.getAttribute("applications");
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
     
-    // Load TA profiles for resume information
-    ProfileStorage profileStorage = new ProfileStorage(getServletContext());
-    Map<String, TAProfile> profileCache = new HashMap<>();
+    Map<String, TAProfile> profileCache = (Map<String, TAProfile>) request.getAttribute("profilesByEmail");
+    if (profileCache == null) {
+        profileCache = new HashMap<>();
+    }
 %>
 
 <div class="container mt-5">
@@ -49,6 +49,24 @@
                     <button id="appFilterClear" class="btn btn-outline-secondary w-100">Clear</button>
                 </div>
             </div>
+            <form class="row g-2 mb-3" method="get" action="<%= request.getContextPath() %>/secure/mo/application-management">
+                <div class="col-md-3">
+                    <select class="form-select" name="sortBy">
+                        <option value="appliedAt" ${sortBy == 'appliedAt' ? 'selected' : ''}>Application time</option>
+                        <option value="gpa" ${sortBy == 'gpa' ? 'selected' : ''}>GPA</option>
+                        <option value="skills" ${sortBy == 'skills' ? 'selected' : ''}>Skills</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" name="order">
+                        <option value="desc" ${order == 'desc' ? 'selected' : ''}>Descending</option>
+                        <option value="asc" ${order == 'asc' ? 'selected' : ''}>Ascending</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">Sort</button>
+                </div>
+            </form>
 
             <table id="appListTable" class="table table-hover">
                 <thead>
@@ -56,6 +74,7 @@
                     <th>TA Email</th>
                     <th>Name</th>
                     <th>Major</th>
+                    <th>GPA</th>
                     <th>Position</th>
                     <th>Applied At</th>
                     <th>Skills</th>
@@ -69,17 +88,12 @@
                         for (Application app : applications) {
                             // Get TA profile information
                             TAProfile profile = profileCache.get(app.getTaEmail());
-                            if (profile == null) {
-                                profile = profileStorage.load(app.getTaEmail());
-                                if (profile != null) {
-                                    profileCache.put(app.getTaEmail(), profile);
-                                }
-                            }
                 %>
                 <tr>
                     <td><%= app.getTaEmail() %></td>
                     <td><%= profile != null && profile.getName() != null ? profile.getName() : "<span class=\"text-muted\">N/A</span>" %></td>
                     <td><%= profile != null && profile.getMajor() != null ? profile.getMajor() : "<span class=\"text-muted\">N/A</span>" %></td>
+                    <td><%= profile != null && profile.getGpa() != null ? profile.getGpa() : "<span class=\"text-muted\">N/A</span>" %></td>
                     <td><%= app.getPositionTitle() %></td>
                     <td><%= app.getAppliedAt().atZone(java.time.ZoneId.systemDefault()).format(formatter) %></td>
                     <td>
@@ -129,9 +143,9 @@
                 <%
                         }
                     } else {
-                %>8
+                %>
                 <tr>
-                    <td colspan="6" class="text-center text-muted">No applications found.</td>
+                    <td colspan="9" class="text-center text-muted">No applications found.</td>
                 </tr>
                 <%
                     }
@@ -154,16 +168,17 @@
 
         const rows = appListTable.querySelectorAll('tbody tr');
         rows.forEach(row => {
-            if (row.cells.length < 7) return; // Skip the "no applications" row
+            if (row.cells.length < 8) return; // Skip the "no applications" row
             
             const ta = row.cells[0].textContent.toLowerCase();
             const name = row.cells[1].textContent.toLowerCase();
             const major = row.cells[2].textContent.toLowerCase();
-            const position = row.cells[3].textContent.toLowerCase();
-            const skills = row.cells[5].textContent.toLowerCase();
-            const rowStatus = row.cells[6].textContent.trim();
+            const gpa = row.cells[3].textContent.toLowerCase();
+            const position = row.cells[4].textContent.toLowerCase();
+            const skills = row.cells[6].textContent.toLowerCase();
+            const rowStatus = row.cells[7].textContent.trim();
 
-            const matchKeyword = keyword === '' || ta.includes(keyword) || name.includes(keyword) || major.includes(keyword) || position.includes(keyword) || skills.includes(keyword);
+            const matchKeyword = keyword === '' || ta.includes(keyword) || name.includes(keyword) || major.includes(keyword) || gpa.includes(keyword) || position.includes(keyword) || skills.includes(keyword);
             const matchStatus = status === '' || rowStatus === status;
 
             row.style.display = (matchKeyword && matchStatus) ? '' : 'none';

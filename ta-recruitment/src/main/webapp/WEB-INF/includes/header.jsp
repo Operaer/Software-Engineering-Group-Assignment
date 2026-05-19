@@ -33,6 +33,14 @@
                             </a>
                         </li>
 
+                        <c:if test="${sessionScope.currentUser.role == 'TA'}">
+                            <li class="nav-item">
+                                <a class="nav-link" href="${pageContext.request.contextPath}/secure/ta/positions">
+                                    Available Positions
+                                </a>
+                            </li>
+                        </c:if>
+
                         <!-- ✅ 新增：Change Password -->
                         <li class="nav-item">
                             <a class="nav-link" href="${pageContext.request.contextPath}/secure/account/change-password">

@@ -35,6 +35,15 @@
             <div class="col-md-3">
                 <div class="card mb-3">
                     <div class="card-body">
+                        <h5 class="card-title">Available Positions</h5>
+                        <p class="card-text">Browse TA positions that are still open for application.</p>
+                        <a href="<%= request.getContextPath() %>/secure/ta/positions" class="btn btn-sm btn-primary">View Positions</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card mb-3">
+                    <div class="card-body">
                         <h5 class="card-title">My Applications</h5>
                         <p class="card-text">View your submitted applications.</p>
                         <a href="<%= request.getContextPath() %>/secure/ta/applications" class="btn btn-sm btn-primary">View Applications</a>

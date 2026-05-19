@@ -3,6 +3,11 @@
 <%@ page import="com.bupt.ta.model.Application" %>
 <%@ page import="com.bupt.ta.model.Job" %>
 <%@ page import="java.util.List" %>
+<%@ page import="java.util.Objects" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="java.util.Locale" %>
+<%@ page import="java.util.regex.Matcher" %>
+<%@ page import="java.util.regex.Pattern" %>
 <%@ include file="/WEB-INF/includes/header.jsp" %>
 
 <%
@@ -13,6 +18,41 @@
     java.util.List<Job> availableJobs = (java.util.List<Job>) request.getAttribute("availableJobs");
     if (availableJobs == null) {
         availableJobs = java.util.Collections.emptyList();
+    }
+
+    String courseKeyword = request.getParameter("courseKeyword");
+    String skillKeyword = request.getParameter("skillKeyword");
+    String minimumGpaRaw = request.getParameter("minimumGpa");
+    Double minimumGpaValue = null;
+    try {
+        minimumGpaValue = minimumGpaRaw == null || minimumGpaRaw.isBlank()
+                ? null
+                : Double.parseDouble(minimumGpaRaw.trim());
+    } catch (NumberFormatException ignored) {
+        minimumGpaValue = null;
+    }
+
+    List<Job> displayJobs = new ArrayList<>();
+    for (Job job : availableJobs) {
+        String moduleCode = job.getModuleCode() == null ? "" : job.getModuleCode();
+        String requirements = job.getRequirements() == null ? "" : job.getRequirements();
+        boolean matchCourse = courseKeyword == null || courseKeyword.isBlank()
+                || moduleCode.toLowerCase(Locale.ROOT).contains(courseKeyword.trim().toLowerCase(Locale.ROOT));
+        boolean matchSkill = skillKeyword == null || skillKeyword.isBlank()
+                || requirements.toLowerCase(Locale.ROOT).contains(skillKeyword.trim().toLowerCase(Locale.ROOT));
+        double extractedGpa = 0.0;
+        Matcher gpaMatcher = Pattern.compile("(?i)gpa\\s*(?:>=|>|at least|minimum|min)?\\s*([0-4](?:\\.\\d+)?)").matcher(requirements);
+        if (gpaMatcher.find()) {
+            try {
+                extractedGpa = Double.parseDouble(gpaMatcher.group(1));
+            } catch (NumberFormatException ignored) {
+                extractedGpa = 0.0;
+            }
+        }
+        boolean matchGpa = minimumGpaValue == null || extractedGpa <= minimumGpaValue;
+        if (matchCourse && matchSkill && matchGpa) {
+            displayJobs.add(job);
+        }
     }
 %>
 
@@ -41,8 +81,23 @@
             <h5>Available Positions</h5>
         </div>
         <div class="card-body">
+            <form class="row g-2 mb-4" method="get" action="<%= request.getContextPath() %>/secure/ta/applications">
+                <div class="col-md-4">
+                    <input type="text" class="form-control" name="courseKeyword" value="${courseKeyword}" placeholder="Course keyword">
+                </div>
+                <div class="col-md-4">
+                    <input type="text" class="form-control" name="skillKeyword" value="${skillKeyword}" placeholder="Skill keyword">
+                </div>
+                <div class="col-md-2">
+                    <input type="number" step="0.01" min="0" max="4.0" class="form-control" name="minimumGpa" value="${minimumGpa}" placeholder="Min GPA">
+                </div>
+                <div class="col-md-2 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary w-100">Filter</button>
+                    <a class="btn btn-outline-secondary w-100" href="<%= request.getContextPath() %>/secure/ta/applications">Reset</a>
+                </div>
+            </form>
             <div class="row">
-                <c:forEach var="job" items="${availableJobs}">
+                <c:forEach var="job" items="<%= displayJobs %>">
                     <div class="col-md-6 mb-3">
                         <div class="card">
                             <div class="card-body">
@@ -53,10 +108,16 @@
                                     <strong>Deadline:</strong> ${job.deadline}<br>
                                     <strong>Requirements:</strong> ${job.requirements}
                                 </p>
+                                <div class="d-flex gap-2">
+                                    <a class="btn btn-outline-secondary btn-sm"
+                                       href="<%= request.getContextPath() %>/secure/ta/positions/${job.id}">
+                                        View Details
+                                    </a>
                                 <%
                                     boolean hasApplied = false;
+                                    Job currentJob = (Job) pageContext.getAttribute("job");
                                     for (Application app : applications) {
-                                        if (app.getPositionId().equals(((Job)pageContext.getAttribute("job")).getId())) {
+                                        if (currentJob != null && Objects.equals(app.getPositionId(), currentJob.getId())) {
                                             hasApplied = true;
                                             break;
                                         }
@@ -74,15 +135,16 @@
                                 <%
                                     }
                                 %>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </c:forEach>
-                <c:if test="${empty availableJobs}">
+                <% if (displayJobs.isEmpty()) { %>
                     <div class="col-12">
-                        <p class="text-muted">No available positions at the moment.</p>
+                        <p class="text-muted">No available positions found.</p>
                     </div>
-                </c:if>
+                <% } %>
             </div>
         </div>
     </div>

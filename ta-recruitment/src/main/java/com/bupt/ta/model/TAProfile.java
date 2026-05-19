@@ -10,6 +10,8 @@ public class TAProfile implements Serializable {
     private String studentId;
     private String major;
     private String phone;
+    /** GPA reported by the TA for applicant display and MO-side sorting. */
+    private Double gpa;
     private List<String> skills = new ArrayList<>();
     private String resumeFileName;
 
@@ -58,6 +60,24 @@ public class TAProfile implements Serializable {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    /**
+     * Returns the GPA reported by the TA.
+     *
+     * @return GPA value, or {@code null} when the TA has not provided one
+     */
+    public Double getGpa() {
+        return gpa;
+    }
+
+    /**
+     * Stores the GPA reported by the TA.
+     *
+     * @param gpa GPA value to save
+     */
+    public void setGpa(Double gpa) {
+        this.gpa = gpa;
     }
 
     public List<String> getSkills() {

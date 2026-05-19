@@ -12,8 +12,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -77,9 +79,15 @@ public class AdminDashboardServlet extends BaseServlet {
         List<Job> allJobs = jobStorage.findAll();
         List<Application> allApplications = applicationStorage.findAll();
 
-        String selectedModule = normalizeSelectedModule(req.getParameter("module"));
+        String selectedModule = normalizeSelectedModule(req.getParameter("course"));
+        String jobTitle = normalizeOptionalText(req.getParameter("jobTitle"));
+        String createdBy = normalizeOptionalText(req.getParameter("createdBy"));
+        LocalDate deadlineAfter = parseOptionalDate(req.getParameter("deadlineAfter"));
+        LocalDate deadlineBefore = parseOptionalDate(req.getParameter("deadlineBefore"));
+        String workload = normalizeOptionalText(req.getParameter("workload"));
+        String status = normalizeOptionalText(req.getParameter("status"));
         List<String> moduleOptions = buildModuleOptions(allJobs);
-        List<Job> filteredJobs = filterJobsByModule(allJobs, selectedModule);
+        List<Job> filteredJobs = filterJobs(allJobs, selectedModule, jobTitle, createdBy, deadlineAfter, deadlineBefore, workload, status);
         Set<String> filteredJobIds = filteredJobs.stream()
                 .map(Job::getId)
                 .collect(Collectors.toSet());
@@ -90,6 +98,13 @@ public class AdminDashboardServlet extends BaseServlet {
         req.setAttribute("stats", stats);
         req.setAttribute("moduleOptions", moduleOptions);
         req.setAttribute("selectedModule", selectedModule);
+        req.setAttribute("jobTitle", jobTitle);
+        req.setAttribute("createdBy", createdBy);
+        req.setAttribute("deadlineAfter", deadlineAfter);
+        req.setAttribute("deadlineBefore", deadlineBefore);
+        req.setAttribute("workload", workload);
+        req.setAttribute("status", status);
+        req.setAttribute("filteredJobs", filteredJobs);
         req.setAttribute("lastSyncedAt", LocalDateTime.now().format(SYNC_TIME_FORMATTER));
         req.setAttribute("syncMessage", "Dashboard data is recalculated from the latest MO hiring decisions on every refresh.");
         forwardTo(req, resp, "/WEB-INF/secure/admin/global_dashboard.jsp");
@@ -132,14 +147,29 @@ public class AdminDashboardServlet extends BaseServlet {
     }
 
     /**
-     * Returns all jobs for the selected module, or every job when the filter is ALL.
+     * Applies the admin multi-dimensional position filters using AND semantics.
+     *
+     * @param jobs all persisted positions
+     * @param selectedModule selected course/module filter
+     * @param jobTitle optional title keyword
+     * @param createdBy optional MO creator keyword
+     * @param deadlineAfter optional inclusive lower deadline bound
+     * @param deadlineBefore optional inclusive upper deadline bound
+     * @param workload optional workload keyword
+     * @param status optional effective-status filter
+     * @return positions matching every provided filter
      */
-    private List<Job> filterJobsByModule(List<Job> jobs, String selectedModule) {
-        if ("ALL".equalsIgnoreCase(selectedModule)) {
-            return jobs;
-        }
+    private List<Job> filterJobs(List<Job> jobs, String selectedModule, String jobTitle, String createdBy,
+                                 LocalDate deadlineAfter, LocalDate deadlineBefore, String workload, String status) {
         return jobs.stream()
-                .filter(job -> selectedModule.equals(normalizeModuleCode(job.getModuleCode())))
+                .filter(job -> "ALL".equalsIgnoreCase(selectedModule)
+                        || selectedModule.equals(normalizeModuleCode(job.getModuleCode())))
+                .filter(job -> jobTitle == null || containsIgnoreCase(job.getTitle(), jobTitle))
+                .filter(job -> createdBy == null || containsIgnoreCase(job.getPostedBy(), createdBy))
+                .filter(job -> deadlineAfter == null || (job.getDeadline() != null && !job.getDeadline().isBefore(deadlineAfter)))
+                .filter(job -> deadlineBefore == null || (job.getDeadline() != null && !job.getDeadline().isAfter(deadlineBefore)))
+                .filter(job -> workload == null || containsIgnoreCase(job.getWorkload(), workload))
+                .filter(job -> status == null || status.equalsIgnoreCase(getEffectiveStatus(job)))
                 .collect(Collectors.toList());
     }
 
@@ -339,6 +369,69 @@ public class AdminDashboardServlet extends BaseServlet {
             return fallback;
         }
         return value.trim();
+    }
+
+    /**
+     * Normalizes an optional text filter from the admin dashboard.
+     *
+     * @param value raw form value
+     * @return trimmed value, or {@code null} when blank
+     */
+    private String normalizeOptionalText(String value) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        return value.trim();
+    }
+
+    /**
+     * Parses an optional admin date-filter field without failing the request.
+     *
+     * @param value raw form value
+     * @return parsed date, or {@code null} when absent or invalid
+     */
+    private LocalDate parseOptionalDate(String value) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        try {
+            return LocalDate.parse(value.trim());
+        } catch (DateTimeParseException e) {
+            return null;
+        }
+    }
+
+    /**
+     * Performs a null-safe, case-insensitive substring check for admin filters.
+     *
+     * @param value source text
+     * @param keyword keyword to search for
+     * @return {@code true} when the source contains the keyword
+     */
+    private boolean containsIgnoreCase(String value, String keyword) {
+        return value != null && keyword != null && value.toLowerCase(Locale.ROOT).contains(keyword.toLowerCase(Locale.ROOT));
+    }
+
+    /**
+     * Returns the effective display status used by admin filters.
+     *
+     * <p>Expired non-archived jobs are treated as closed even if their stored
+     * status is still open.</p>
+     *
+     * @param job position to inspect
+     * @return effective position status
+     */
+    private String getEffectiveStatus(Job job) {
+        if (job == null) {
+            return "Unknown";
+        }
+        if (Job.STATUS_ARCHIVED.equalsIgnoreCase(job.getStatus())) {
+            return Job.STATUS_ARCHIVED;
+        }
+        if (job.getDeadline() != null && job.getDeadline().isBefore(LocalDate.now())) {
+            return Job.STATUS_CLOSED;
+        }
+        return job.getStatus();
     }
 
     private static class TAWorkloadAccumulator {

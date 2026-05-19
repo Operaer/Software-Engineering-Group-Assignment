@@ -57,6 +57,13 @@
                 </div>
 
                 <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">GPA</label>
+                        <input type="number" step="0.01" min="0" max="4.0" name="gpa" class="form-control" value="<%= profile.getGpa() == null ? "" : profile.getGpa() %>">
+                    </div>
+                </div>
+
+                <div class="row">
                     <div class="col-md-12 mb-3">
                         <label class="form-label">Skills (comma-separated)</label>
                         <input type="text" name="skills" class="form-control" value="<%= profile.getSkills() == null ? "" : String.join(", ", profile.getSkills()) %>">

@@ -12,4 +12,18 @@
   "actionType" : "Account Update",
   "target" : "ta1@example.com",
   "description" : "Updated user account."
+}, {
+  "id" : "85272d06-894e-4274-99ac-eb7fea1524cb",
+  "timestamp" : 1779094688.892301100,
+  "operator" : "mo1@example.com",
+  "actionType" : "Position Create",
+  "target" : "680affde-efbd-478c-a4ae-a233f1a5db18",
+  "description" : "Created position: Test Active Position"
+}, {
+  "id" : "12f3cb4b-879e-4190-95d7-f54bdf00ca37",
+  "timestamp" : 1779094856.065330400,
+  "operator" : "mo1@example.com",
+  "actionType" : "Position Create",
+  "target" : "35f3b68a-b779-409b-851b-0088d914f3c1",
+  "description" : "Created position: MATH201 - Math TA"
 } ]

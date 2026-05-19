@@ -45,12 +45,23 @@ public class ProfileServlet extends BaseServlet {
         String name = req.getParameter("name");
         String major = req.getParameter("major");
         String phone = req.getParameter("phone");
+        String gpaRaw = req.getParameter("gpa");
         String skillsRaw = req.getParameter("skills");
 
         TAProfile profile = new TAProfile(user.getEmail());
         profile.setName(name);
         profile.setMajor(major);
         profile.setPhone(phone);
+        if (gpaRaw != null && !gpaRaw.isBlank()) {
+            try {
+                profile.setGpa(Double.parseDouble(gpaRaw.trim()));
+            } catch (NumberFormatException e) {
+                req.setAttribute("uploadError", "GPA must be a valid number.");
+                req.setAttribute("profile", profile);
+                forwardTo(req, resp, "/secure/ta/profile.jsp");
+                return;
+            }
+        }
         if (skillsRaw != null) {
             String[] parts = skillsRaw.split(",");
             for (String part : parts) {

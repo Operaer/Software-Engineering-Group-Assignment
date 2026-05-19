@@ -11,7 +11,7 @@
             <small class="text-muted">${syncMessage} Last synced: ${lastSyncedAt}</small>
         </div>
         <div class="d-flex gap-2">
-            <a class="btn btn-outline-primary" href="${pageContext.request.contextPath}/secure/admin/global-dashboard?module=${selectedModule}">Refresh Sync</a>
+            <a class="btn btn-outline-primary" href="${pageContext.request.contextPath}/secure/admin/global-dashboard">Refresh Sync</a>
             <a class="btn btn-outline-secondary" href="${pageContext.request.contextPath}/secure/admin/audit-logs">View Audit Logs</a>
             <a class="btn btn-outline-secondary" href="${pageContext.request.contextPath}/dashboard">Back to Dashboard</a>
         </div>
@@ -56,20 +56,95 @@
         </div>
     </div>
 
-    <div class="card shadow-sm">
-        <div class="card-header bg-white d-flex justify-content-between align-items-center flex-wrap gap-2">
-            <h5 class="mb-0">Applicants per Module</h5>
-            <form class="d-flex align-items-center gap-2 mb-0" method="get" action="${pageContext.request.contextPath}/secure/admin/global-dashboard">
-                <label for="module" class="form-label mb-0 small text-muted">Module</label>
-                <select class="form-select form-select-sm" id="module" name="module" style="width: 150px;">
-                    <option value="ALL" ${selectedModule == 'ALL' ? 'selected' : ''}>All Modules</option>
-                    <c:forEach var="moduleCode" items="${moduleOptions}">
-                        <option value="${moduleCode}" ${selectedModule == moduleCode ? 'selected' : ''}>${moduleCode}</option>
-                    </c:forEach>
-                </select>
-                <button type="submit" class="btn btn-sm btn-primary">Filter</button>
-                <a class="btn btn-sm btn-outline-secondary" href="${pageContext.request.contextPath}/secure/admin/global-dashboard">Reset</a>
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-white">
+            <h5 class="mb-0">Advanced Recruitment Filters</h5>
+        </div>
+        <div class="card-body">
+            <form class="row g-2" method="get" action="${pageContext.request.contextPath}/secure/admin/global-dashboard">
+                <div class="col-md-3">
+                    <select class="form-select" id="course" name="course">
+                        <option value="ALL" ${selectedModule == 'ALL' ? 'selected' : ''}>All Courses</option>
+                        <c:forEach var="moduleCode" items="${moduleOptions}">
+                            <option value="${moduleCode}" ${selectedModule == moduleCode ? 'selected' : ''}>${moduleCode}</option>
+                        </c:forEach>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <input class="form-control" name="jobTitle" value="${jobTitle}" placeholder="Job title">
+                </div>
+                <div class="col-md-3">
+                    <input class="form-control" name="createdBy" value="${createdBy}" placeholder="Created by / MO">
+                </div>
+                <div class="col-md-3">
+                    <input class="form-control" name="workload" value="${workload}" placeholder="Workload">
+                </div>
+                <div class="col-md-3">
+                    <input type="date" class="form-control" name="deadlineAfter" value="${deadlineAfter}">
+                </div>
+                <div class="col-md-3">
+                    <input type="date" class="form-control" name="deadlineBefore" value="${deadlineBefore}">
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" name="status">
+                        <option value="" ${empty status ? 'selected' : ''}>All Statuses</option>
+                        <option value="Open" ${status == 'Open' ? 'selected' : ''}>Open</option>
+                        <option value="Closed" ${status == 'Closed' ? 'selected' : ''}>Closed</option>
+                        <option value="Archived" ${status == 'Archived' ? 'selected' : ''}>Archived</option>
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary w-100">Filter</button>
+                    <a class="btn btn-outline-secondary w-100" href="${pageContext.request.contextPath}/secure/admin/global-dashboard">Reset</a>
+                </div>
             </form>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-white">
+            <h5 class="mb-0">Filtered Positions</h5>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-striped table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Course</th>
+                        <th>Job Title</th>
+                        <th>Created By</th>
+                        <th>Deadline</th>
+                        <th>Workload</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <c:choose>
+                        <c:when test="${empty filteredJobs}">
+                            <tr>
+                                <td colspan="6" class="text-center text-muted py-4">No positions match the selected filters.</td>
+                            </tr>
+                        </c:when>
+                        <c:otherwise>
+                            <c:forEach var="job" items="${filteredJobs}">
+                                <tr>
+                                    <td>${job.moduleCode}</td>
+                                    <td>${job.title}</td>
+                                    <td>${job.postedBy}</td>
+                                    <td>${job.deadline}</td>
+                                    <td>${job.workload}</td>
+                                    <td>${job.status}</td>
+                                </tr>
+                            </c:forEach>
+                        </c:otherwise>
+                    </c:choose>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-white">
+            <h5 class="mb-0">Applicants per Module</h5>
         </div>
         <div class="table-responsive">
             <table class="table table-striped table-hover align-middle mb-0">

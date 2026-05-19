@@ -89,6 +89,14 @@
         <servlet-name>ApplicationServlet</servlet-name>
         <url-pattern>/secure/ta/applications/*</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ApplicationServlet</servlet-name>
+        <url-pattern>/secure/ta/positions</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ApplicationServlet</servlet-name>
+        <url-pattern>/secure/ta/positions/*</url-pattern>
+    </servlet-mapping>
 
     <servlet>
         <servlet-name>PostJobServlet</servlet-name>
