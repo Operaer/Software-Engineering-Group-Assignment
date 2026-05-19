@@ -1,0 +1,37 @@
+{
+  "ta1@example.com" : {
+    "username" : "ta1",
+    "email" : "ta1@example.com",
+    "password" : "123456",
+    "role" : "TA",
+    "active" : true
+  },
+  "mo1@example.com" : {
+    "username" : "mo1",
+    "email" : "mo1@example.com",
+    "password" : "123456",
+    "role" : "MO",
+    "active" : true
+  },
+  "admin@example.com" : {
+    "username" : "admin",
+    "email" : "admin@example.com",
+    "password" : "admin123",
+    "role" : "ADMIN",
+    "active" : true
+  },
+  "ta2@example.com" : {
+    "username" : "ta2",
+    "email" : "ta2@example.com",
+    "password" : "123456",
+    "role" : "TA",
+    "active" : true
+  },
+  "creator@qq.com" : {
+    "username" : "creator1",
+    "email" : "creator@qq.com",
+    "password" : "123456",
+    "role" : "TA",
+    "active" : true
+  }
+}
