@@ -25,10 +25,18 @@
         <div class="alert alert-success">${success}</div>
     </c:if>
     <c:if test="${not empty uploadError}">
-        <div class="alert alert-danger">${uploadError}</div>
+        <div class="alert alert-danger"><strong>${uploadError}</strong></div>
     </c:if>
     <c:if test="${not empty uploadMessage}">
-        <div class="alert alert-info">${uploadMessage}</div>
+        <div class="alert alert-info"><strong>${uploadMessage}</strong></div>
+    </c:if>
+    <c:if test="${not empty uploadSuccess}">
+        <div class="alert alert-success">
+            <span class="fw-bold text-success">✓ Resume uploaded successfully.</span>
+            <c:if test="${not empty profile.resumeFileName}">
+                <a class="btn btn-sm btn-success ms-2" href="${pageContext.request.contextPath}/secure/ta/resume?file=${profile.resumeFileName}" target="_blank">Preview resume</a>
+            </c:if>
+        </div>
     </c:if>
 
     <div class="card">
@@ -71,16 +79,18 @@
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Resume (PDF, max 5MB)</label>
+                    <label class="form-label">Resume</label>
                     <div class="input-group">
                         <input type="text" id="resumeFileName" class="form-control" placeholder="No file selected" readonly>
-                        <button type="button" class="btn btn-outline-secondary" id="chooseResumeBtn">Choose file</button>
+                        <button type="button" class="btn btn-outline-secondary" id="chooseResumeBtn">Choose resume</button>
                     </div>
-                    <input type="file" name="resume" id="resumeInput" accept="application/pdf" class="d-none">
+                    <input type="file" name="resume" id="resumeInput" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" class="d-none">
+                    <div id="resumeValidationText" class="form-text text-muted fw-bold">Supported formats: <span class="text-primary">PDF, Word (.doc, .docx)</span>; size limit: <span class="text-primary">≤ 5MB</span>.</div>
                     <c:if test="${not empty profile.resumeFileName}">
                         <div class="mt-2">
                             Current resume: <strong>${profile.resumeFileName}</strong>
                             <a class="btn btn-sm btn-outline-secondary ms-2" href="${pageContext.request.contextPath}/secure/ta/resume?file=${profile.resumeFileName}" target="_blank">View</a>
+                            <button type="submit" name="action" value="removeResume" class="btn btn-sm btn-outline-danger ms-2" onclick="return confirm('Remove the uploaded resume?');">Remove</button>
                         </div>
                     </c:if>
                 </div>
@@ -92,6 +102,35 @@
                         var fileInput = document.getElementById('resumeInput');
                         var fileNameField = document.getElementById('resumeFileName');
                         var chooseBtn = document.getElementById('chooseResumeBtn');
+                        var validationText = document.getElementById('resumeValidationText');
+                        var form = document.querySelector('form');
+                        var maxSize = 5 * 1024 * 1024;
+                        var allowedPattern = /\.(pdf|doc|docx)$/i;
+
+                        function updateValidation(message, status) {
+                            validationText.textContent = message;
+                            validationText.classList.remove('text-success', 'text-danger', 'text-muted');
+                            if (status === 'success') {
+                                validationText.classList.add('text-success');
+                            } else if (status === 'error') {
+                                validationText.classList.add('text-danger');
+                            } else {
+                                validationText.classList.add('text-muted');
+                            }
+                        }
+
+                        function validateResume(file) {
+                            if (!file) {
+                                return { valid: true, message: 'Supported formats: PDF, Word (.doc, .docx); size limit: ≤ 5MB.' };
+                            }
+                            if (!allowedPattern.test(file.name)) {
+                                return { valid: false, message: 'Unsupported format. Please choose a PDF or Word document.' };
+                            }
+                            if (file.size > maxSize) {
+                                return { valid: false, message: 'File too large. Please upload a file smaller than 5MB.' };
+                            }
+                            return { valid: true, message: 'File is valid and ready to upload.' };
+                        }
 
                         chooseBtn.addEventListener('click', function() {
                             fileInput.click();
@@ -100,6 +139,26 @@
                         fileInput.addEventListener('change', function() {
                             var file = fileInput.files[0];
                             fileNameField.value = file ? file.name : 'No file selected';
+                            var validation = validateResume(file);
+                            if (validation.valid) {
+                                fileNameField.classList.remove('is-invalid');
+                                fileNameField.classList.add('is-valid');
+                                updateValidation(validation.message, 'success');
+                            } else {
+                                fileNameField.classList.remove('is-valid');
+                                fileNameField.classList.add('is-invalid');
+                                updateValidation(validation.message, 'error');
+                            }
+                        });
+
+                        form.addEventListener('submit', function(event) {
+                            var file = fileInput.files[0];
+                            var validation = validateResume(file);
+                            if (file && !validation.valid) {
+                                event.preventDefault();
+                                fileNameField.classList.add('is-invalid');
+                                updateValidation('Please fix the resume upload issue before saving.', 'error');
+                            }
                         });
                     })();
                 </script>

@@ -5,7 +5,8 @@
     "studentId" : null,
     "major" : "1",
     "phone" : "1231321321",
+    "gpa" : null,
     "skills" : [ "2" ],
-    "resumeFileName" : "ta1_example_com_1775627246397.pdf"
+    "resumeFileName" : null
   }
 }
