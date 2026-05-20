@@ -3,6 +3,7 @@ package com.bupt.ta.storage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -53,18 +54,48 @@ public class ApplicationStorage {
         }
     }
 
+    private static final Duration EXPIRATION_PERIOD = Duration.ofDays(7);
+
     private List<Application> loadAll() {
         try {
             TypeFactory factory = mapper.getTypeFactory();
             CollectionType listType = factory.constructCollectionType(ArrayList.class, Application.class);
             List<Application> list = mapper.readValue(storageFile, listType);
-            return list != null ? list : new ArrayList<>();
+            if (list == null) {
+                list = new ArrayList<>();
+            }
+            checkAndUpdateExpiredApplications(list);
+            return list;
         } catch (JsonProcessingException e) {
-            // Recover from corrupted JSON by resetting storage to an empty list.
             saveAll(new ArrayList<>());
             return new ArrayList<>();
         } catch (IOException e) {
             throw new IllegalStateException("Unable to read applications storage", e);
+        }
+    }
+
+    private void checkAndUpdateExpiredApplications(List<Application> applications) {
+        Instant now = Instant.now();
+        boolean hasChanges = false;
+        
+        for (Application app : applications) {
+            if (app.getAppliedAt() != null && app.getStatus() != null) {
+                String status = app.getStatus();
+                if (!status.equals(Application.Status.Accepted.name()) 
+                    && !status.equals(Application.Status.Rejected.name())
+                    && !status.equals(Application.Status.Expired.name())) {
+                    
+                    Duration age = Duration.between(app.getAppliedAt(), now);
+                    if (age.compareTo(EXPIRATION_PERIOD) > 0) {
+                        app.setStatus(Application.Status.Expired.name());
+                        hasChanges = true;
+                    }
+                }
+            }
+        }
+        
+        if (hasChanges) {
+            saveAll(applications);
         }
     }
 

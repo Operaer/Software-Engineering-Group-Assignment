@@ -21,6 +21,11 @@
         </div>
     </div>
 
+    <c:if test="${not empty redirectAfterProfile}">
+        <div class="alert alert-warning">
+            <strong>Please complete your profile (name, student ID, major, phone, and resume) before applying for positions.</strong>
+        </div>
+    </c:if>
     <c:if test="${not empty success}">
         <div class="alert alert-success">${success}</div>
     </c:if>
@@ -55,16 +60,20 @@
 
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">Major</label>
-                        <input type="text" name="major" class="form-control" value="<%= profile.getMajor() == null ? "" : profile.getMajor() %>" required>
+                        <label class="form-label">Student ID</label>
+                        <input type="text" name="studentId" class="form-control" value="<%= profile.getStudentId() == null ? "" : profile.getStudentId() %>" required>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">Phone</label>
-                        <input type="text" name="phone" class="form-control" value="<%= profile.getPhone() == null ? "" : profile.getPhone() %>">
+                        <label class="form-label">Major</label>
+                        <input type="text" name="major" class="form-control" value="<%= profile.getMajor() == null ? "" : profile.getMajor() %>" required>
                     </div>
                 </div>
 
                 <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Phone</label>
+                        <input type="text" name="phone" class="form-control" value="<%= profile.getPhone() == null ? "" : profile.getPhone() %>" required>
+                    </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label">GPA</label>
                         <input type="number" step="0.01" min="0" max="4.0" name="gpa" class="form-control" value="<%= profile.getGpa() == null ? "" : profile.getGpa() %>">

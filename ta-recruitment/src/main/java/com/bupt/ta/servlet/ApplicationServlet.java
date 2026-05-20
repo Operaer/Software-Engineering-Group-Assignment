@@ -75,6 +75,21 @@ public class ApplicationServlet extends BaseServlet {
             return;
         }
 
+        // Handle success message from URL parameter
+        String successParam = req.getParameter("success");
+        String positionParam = req.getParameter("position");
+        if ("true".equals(successParam)) {
+            String positionName = positionParam != null ? positionParam : "this position";
+            req.setAttribute("success", "Application submitted successfully: " + positionName);
+            req.setAttribute("showSuccessModal", true);
+        }
+        
+        // Handle already applied message from URL parameter
+        String alreadyAppliedParam = req.getParameter("alreadyApplied");
+        if ("true".equals(alreadyAppliedParam)) {
+            req.setAttribute("alreadyApplied", "You have already submitted an application for this position. You can view your application status in the 'My Applications' section.");
+        }
+        
         req.setAttribute("applications", applications);
         req.setAttribute("availableJobs", filteredJobs);
         req.setAttribute("courseKeyword", courseKeyword);
@@ -109,7 +124,7 @@ public class ApplicationServlet extends BaseServlet {
         
         // Check if user has already applied for this position
         if (storage.hasApplied(user.getEmail(), jobId)) {
-            req.setAttribute("error", "You have already applied for this position.");
+            req.setAttribute("alreadyApplied", "You have already submitted an application for this position. You can view your application status in the 'My Applications' section.");
             doGet(req, resp);
             return;
         }
@@ -117,6 +132,7 @@ public class ApplicationServlet extends BaseServlet {
         Application application = storage.createNew(user.getEmail(), jobId, job.getTitle());
 
         req.setAttribute("success", "Application submitted successfully: " + application.getPositionTitle());
+        req.setAttribute("showSuccessModal", true);
         doGet(req, resp);
     }
 

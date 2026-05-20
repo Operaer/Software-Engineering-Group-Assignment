@@ -53,6 +53,11 @@ public class ProfileServlet extends BaseServlet {
             profile = new TAProfile(user.getEmail());
         }
 
+        String redirectAfterProfile = req.getParameter("redirectAfterProfile");
+        if (redirectAfterProfile != null && !redirectAfterProfile.isBlank()) {
+            req.setAttribute("redirectAfterProfile", redirectAfterProfile);
+        }
+
         req.setAttribute("profile", profile);
         forwardTo(req, resp, "/secure/ta/profile.jsp");
     }
@@ -93,12 +98,14 @@ public class ProfileServlet extends BaseServlet {
         }
 
         String name = req.getParameter("name");
+        String studentId = req.getParameter("studentId");
         String major = req.getParameter("major");
         String phone = req.getParameter("phone");
         String gpaRaw = req.getParameter("gpa");
         String skillsRaw = req.getParameter("skills");
 
         profile.setName(name);
+        profile.setStudentId(studentId);
         profile.setMajor(major);
         profile.setPhone(phone);
         if (gpaRaw != null && !gpaRaw.isBlank()) {
@@ -171,6 +178,12 @@ public class ProfileServlet extends BaseServlet {
         }
 
         storage.save(profile);
+
+        String redirectAfterProfile = req.getParameter("redirectAfterProfile");
+        if (redirectAfterProfile != null && !redirectAfterProfile.isBlank()) {
+            resp.sendRedirect(req.getContextPath() + redirectAfterProfile);
+            return;
+        }
 
         req.setAttribute("profile", profile);
         req.setAttribute("success", "Profile saved successfully.");
