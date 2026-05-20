@@ -75,6 +75,7 @@ public class Application implements Serializable {
         Pending,
         Shortlisted,
         Accepted,
-        Rejected
+        Rejected,
+        Expired
     }
 }

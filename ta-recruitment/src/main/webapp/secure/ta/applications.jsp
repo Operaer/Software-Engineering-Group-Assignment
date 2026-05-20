@@ -75,6 +75,31 @@
         <div class="alert alert-danger">${error}</div>
     </c:if>
 
+    <c:if test="${not empty alreadyApplied}">
+        <div class="alert alert-warning">
+            <strong>Already Applied!</strong> ${alreadyApplied}
+        </div>
+    </c:if>
+
+    <!-- Success Modal -->
+    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="successModalLabel">Application Successful!</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Your application has been submitted successfully. You can view your application status in the "My Applications" section below.</p>
+                    <p class="text-muted">Your application is now in "Pending Review" status and will be reviewed by the MO within 7 days.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Available Positions -->
     <div class="card mt-3">
         <div class="card-header">
@@ -162,10 +187,11 @@
                 <div class="col-md-3">
                     <select id="appFilterStatus" class="form-select">
                         <option value="">All statuses</option>
-                        <option value="Pending">Pending</option>
+                        <option value="Pending">Pending Review</option>
                         <option value="Shortlisted">Shortlisted</option>
                         <option value="Accepted">Accepted</option>
                         <option value="Rejected">Rejected</option>
+                        <option value="Expired">Expired</option>
                     </select>
                 </div>
                 <div class="col-md-2">
@@ -191,8 +217,9 @@
                                 ${app.status == 'Pending' ? 'status-pending' : ''} 
                                 ${app.status == 'Shortlisted' ? 'status-shortlisted' : ''} 
                                 ${app.status == 'Accepted' ? 'status-accepted' : ''} 
-                                ${app.status == 'Rejected' ? 'status-rejected' : ''}">
-                                ${app.status}
+                                ${app.status == 'Rejected' ? 'status-rejected' : ''}
+                                ${app.status == 'Expired' ? 'status-expired' : ''}">
+                                ${app.status == 'Pending' ? 'Pending Review' : app.status}
                             </span>
                         </td>
                     </tr>
@@ -237,6 +264,14 @@
         appFilterStatus.value = '';
         applyAppFilters();
     });
+
+    // Show success modal if application was successful
+    <c:if test="${showSuccessModal}">
+        document.addEventListener('DOMContentLoaded', function() {
+            var successModal = new bootstrap.Modal(document.getElementById('successModal'));
+            successModal.show();
+        });
+    </c:if>
 </script>
 
 <%@ include file="/WEB-INF/includes/footer.jsp" %>

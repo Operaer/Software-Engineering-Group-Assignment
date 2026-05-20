@@ -170,4 +170,13 @@
         <url-pattern>/secure/resume-preview</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>QuickApplyServlet</servlet-name>
+        <servlet-class>com.bupt.ta.servlet.QuickApplyServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>QuickApplyServlet</servlet-name>
+        <url-pattern>/secure/ta/quick-apply</url-pattern>
+    </servlet-mapping>
+
 </web-app>

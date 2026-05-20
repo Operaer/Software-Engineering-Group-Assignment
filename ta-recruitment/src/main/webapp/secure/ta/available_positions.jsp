@@ -105,6 +105,10 @@
                                    href="${pageContext.request.contextPath}/secure/ta/positions/${job.id}">
                                     View Details
                                 </a>
+                                <form method="post" action="${pageContext.request.contextPath}/secure/ta/quick-apply" style="display: inline;">
+                                    <input type="hidden" name="jobId" value="${job.id}">
+                                    <button type="submit" class="btn btn-sm btn-success">Quick Apply</button>
+                                </form>
                             </td>
                         </tr>
                     </c:forEach>
