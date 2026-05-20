@@ -8,6 +8,24 @@ body {
   border-radius: 0.75rem;
 }
 
+.dashboard-card {
+  min-height: 100%;
+}
+
+.dashboard-card .card-body {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.dashboard-card .card-text {
+  flex: 1 1 auto;
+}
+
+.dashboard-card .btn {
+  margin-top: auto;
+}
+
 .badge-status {
   min-width: 90px;
 }

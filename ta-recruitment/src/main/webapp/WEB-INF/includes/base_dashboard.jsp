@@ -18,10 +18,10 @@
         </div>
     </div>
 
-    <div class="row mt-4">
+    <div class="row mt-4 g-4 dashboard-row">
         <!-- Common cards for all roles -->
         <div class="col-md-3">
-            <div class="card mb-3">
+            <div class="card mb-3 dashboard-card h-100">
                 <div class="card-body">
                     <h5 class="card-title">My Profile</h5>
                     <p class="card-text">Manage your personal information.</p>
@@ -33,7 +33,7 @@
         <!-- Role-specific content -->
         <% if ("ta".equals(roleName)) { %>
             <div class="col-md-3">
-                <div class="card mb-3">
+                <div class="card mb-3 dashboard-card h-100">
                     <div class="card-body">
                         <h5 class="card-title">Available Positions</h5>
                         <p class="card-text">Browse TA positions that are still open for application.</p>
@@ -42,7 +42,7 @@
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="card mb-3">
+                <div class="card mb-3 dashboard-card h-100">
                     <div class="card-body">
                         <h5 class="card-title">My Applications</h5>
                         <p class="card-text">View your submitted applications.</p>
@@ -54,7 +54,7 @@
 
         <% if ("mo".equals(roleName) || "admin".equals(roleName)) { %>
             <div class="col-md-3">
-                <div class="card mb-3">
+                <div class="card mb-3 dashboard-card h-100">
                     <div class="card-body">
                         <h5 class="card-title">Post TA Position</h5>
                         <p class="card-text">Post new teaching assistant positions.</p>
@@ -63,7 +63,7 @@
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="card mb-3">
+                <div class="card mb-3 dashboard-card h-100">
                     <div class="card-body">
                         <h5 class="card-title">Manage Posted Positions</h5>
                         <p class="card-text">View and update your published positions, archive filled roles, and inspect edit history.</p>
@@ -72,7 +72,7 @@
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="card mb-3">
+                <div class="card mb-3 dashboard-card h-100">
                     <div class="card-body">
                         <h5 class="card-title">Application Management</h5>
                         <p class="card-text">Review and manage applications.</p>
@@ -85,7 +85,7 @@
         <% if ("admin".equals(roleName)) { %>
 
             <div class="col-md-3">
-                <div class="card mb-3">
+                <div class="card mb-3 dashboard-card h-100">
                     <div class="card-body">
                         <h5 class="card-title">Global Recruitment Dashboard</h5>
                         <p class="card-text">View school-wide recruitment metrics and module progress.</p>
@@ -94,7 +94,7 @@
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="card mb-3">
+                <div class="card mb-3 dashboard-card h-100">
                     <div class="card-body">
                         <h5 class="card-title">Audit Logs</h5>
                         <p class="card-text">Trace valid admin operations and review system activity.</p>
@@ -103,7 +103,7 @@
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="card mb-3">
+                <div class="card mb-3 dashboard-card h-100">
                     <div class="card-body">
                         <h5 class="card-title">User Management</h5>
                         <p class="card-text">Manage system users.</p>

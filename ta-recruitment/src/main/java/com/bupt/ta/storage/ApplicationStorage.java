@@ -1,23 +1,26 @@
 package com.bupt.ta.storage;
 
-import com.bupt.ta.config.AppConfig;
-import com.bupt.ta.model.Application;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.type.CollectionType;
-import com.fasterxml.jackson.databind.type.TypeFactory;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import javax.servlet.ServletContext;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import javax.servlet.ServletContext;
+
+import com.bupt.ta.config.AppConfig;
+import com.bupt.ta.model.Application;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.type.CollectionType;
+import com.fasterxml.jackson.databind.type.TypeFactory;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 /**
  * JSON-backed storage for TA applications.
@@ -115,17 +118,33 @@ public class ApplicationStorage {
     }
 
     public void updateStatus(String applicationId, Application.Status status) {
+        updateStatus(applicationId, status, "system");
+    }
+
+    public void updateStatus(String applicationId, Application.Status status, String operator) {
+        updateStatus(Collections.singletonList(applicationId), status, operator);
+    }
+
+    public void updateStatus(List<String> applicationIds, Application.Status status, String operator) {
+        if (applicationIds == null || applicationIds.isEmpty()) {
+            return;
+        }
+
         List<Application> apps = loadAll();
+        HashSet<String> idSet = new HashSet<>(applicationIds);
         for (Application app : apps) {
-            if (app.getId().equals(applicationId)) {
+            if (idSet.contains(app.getId())) {
                 app.setStatus(status.name());
-                break;
             }
         }
         saveAll(apps);
+
         try {
             com.bupt.ta.storage.AuditLogStorage audit = new com.bupt.ta.storage.AuditLogStorage(servletContext);
-            audit.add(new com.bupt.ta.model.AuditLogEntry("mo", "Application Status", applicationId, "Status changed to: " + status.name()));
+            String operatorId = operator != null ? operator : "system";
+            for (String applicationId : applicationIds) {
+                audit.add(new com.bupt.ta.model.AuditLogEntry(operatorId, "Application Status", applicationId, "Status changed to: " + status.name()));
+            }
         } catch (Exception ignored) {}
     }
 
@@ -133,3 +152,4 @@ public class ApplicationStorage {
         return loadAll();
     }
 }
+

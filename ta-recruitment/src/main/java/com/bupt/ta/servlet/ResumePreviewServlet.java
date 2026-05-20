@@ -1,15 +1,17 @@
 package com.bupt.ta.servlet;
 
-import com.bupt.ta.model.User;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+
+import com.bupt.ta.config.AppConfig;
+import com.bupt.ta.model.User;
 
 /**
  * Streams resume files for ADMIN/MO users to preview (display inline, not download).
@@ -36,14 +38,16 @@ public class ResumePreviewServlet extends BaseServlet {
             return;
         }
 
-        // Verify file name is safe (should start with sanitized email)
+        // Verify file name is safe (should start with sanitized TA username or email prefix).
         String sanitizedEmail = taEmail.replaceAll("[^a-zA-Z0-9]", "_");
-        if (!fileName.startsWith(sanitizedEmail)) {
+        String sanitizedUserId = taEmail.contains("@") ? taEmail.substring(0, taEmail.indexOf('@')).replaceAll("[^a-zA-Z0-9]", "_") : sanitizedEmail;
+        if (!fileName.toLowerCase().endsWith(".pdf") ||
+                !(fileName.startsWith(sanitizedUserId) || fileName.startsWith(sanitizedEmail))) {
             resp.sendError(HttpServletResponse.SC_FORBIDDEN);
             return;
         }
 
-        File file = new File(getServletContext().getRealPath("/WEB-INF/uploads/" + fileName));
+        File file = new File(getServletContext().getRealPath(AppConfig.UPLOAD_DIR + "/" + fileName));
         if (!file.exists() || !file.isFile()) {
             resp.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;

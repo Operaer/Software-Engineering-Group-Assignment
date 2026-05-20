@@ -68,9 +68,29 @@
                 </div>
             </form>
 
+            <form id="bulkActionForm" class="row g-2 align-items-end mb-3" method="post" action="<%= request.getContextPath() %>/secure/mo/application-management">
+                <div class="col-md-4">
+                    <label class="form-label" for="bulkStatus">Bulk status update</label>
+                    <select class="form-select" id="bulkStatus" name="status" required>
+                        <option value="">Choose a status</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Shortlisted">Shortlisted</option>
+                        <option value="Accepted">Accepted</option>
+                        <option value="Rejected">Rejected</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <button id="bulkUpdateBtn" type="submit" class="btn btn-primary w-100" disabled>Apply to selected</button>
+                </div>
+                <div class="col-md-5 text-end">
+                    <p class="text-muted mb-0">Status changes are recorded in the audit log for traceability.</p>
+                </div>
+            </form>
+
             <table id="appListTable" class="table table-hover">
                 <thead>
                 <tr>
+                    <th class="text-center"><input id="selectAll" type="checkbox" class="form-check-input" /></th>
                     <th>TA Email</th>
                     <th>Name</th>
                     <th>Major</th>
@@ -90,6 +110,9 @@
                             TAProfile profile = profileCache.get(app.getTaEmail());
                 %>
                 <tr>
+                    <td class="text-center">
+                        <input type="checkbox" class="form-check-input app-checkbox" form="bulkActionForm" name="applicationId" value="<%= app.getId() %>" />
+                    </td>
                     <td><%= app.getTaEmail() %></td>
                     <td><%= profile != null && profile.getName() != null ? profile.getName() : "<span class=\"text-muted\">N/A</span>" %></td>
                     <td><%= profile != null && profile.getMajor() != null ? profile.getMajor() : "<span class=\"text-muted\">N/A</span>" %></td>
@@ -145,7 +168,7 @@
                     } else {
                 %>
                 <tr>
-                    <td colspan="9" class="text-center text-muted">No applications found.</td>
+                    <td colspan="10" class="text-center text-muted">No applications found.</td>
                 </tr>
                 <%
                     }
@@ -161,6 +184,9 @@
     const appFilterStatus = document.getElementById('appFilterStatus');
     const appFilterClear = document.getElementById('appFilterClear');
     const appListTable = document.getElementById('appListTable');
+    const selectAll = document.getElementById('selectAll');
+    const bulkStatus = document.getElementById('bulkStatus');
+    const bulkUpdateBtn = document.getElementById('bulkUpdateBtn');
 
     function applyAppFilters() {
         const keyword = appFilterKeyword.value.trim().toLowerCase();
@@ -168,15 +194,15 @@
 
         const rows = appListTable.querySelectorAll('tbody tr');
         rows.forEach(row => {
-            if (row.cells.length < 8) return; // Skip the "no applications" row
-            
-            const ta = row.cells[0].textContent.toLowerCase();
-            const name = row.cells[1].textContent.toLowerCase();
-            const major = row.cells[2].textContent.toLowerCase();
-            const gpa = row.cells[3].textContent.toLowerCase();
-            const position = row.cells[4].textContent.toLowerCase();
-            const skills = row.cells[6].textContent.toLowerCase();
-            const rowStatus = row.cells[7].textContent.trim();
+            if (row.cells.length < 10) return; // Skip the "no applications" row
+
+            const ta = row.cells[1].textContent.toLowerCase();
+            const name = row.cells[2].textContent.toLowerCase();
+            const major = row.cells[3].textContent.toLowerCase();
+            const gpa = row.cells[4].textContent.toLowerCase();
+            const position = row.cells[5].textContent.toLowerCase();
+            const skills = row.cells[7].textContent.toLowerCase();
+            const rowStatus = row.cells[8].textContent.trim();
 
             const matchKeyword = keyword === '' || ta.includes(keyword) || name.includes(keyword) || major.includes(keyword) || gpa.includes(keyword) || position.includes(keyword) || skills.includes(keyword);
             const matchStatus = status === '' || rowStatus === status;
@@ -185,12 +211,43 @@
         });
     }
 
+    function updateBulkButtonState() {
+        const checkboxes = Array.from(document.querySelectorAll('.app-checkbox'));
+        const anyChecked = checkboxes.some(cb => cb.checked);
+        bulkUpdateBtn.disabled = !anyChecked || !bulkStatus.value;
+    }
+
+    function updateSelectAllState() {
+        const checkboxes = Array.from(document.querySelectorAll('.app-checkbox'));
+        selectAll.checked = checkboxes.length > 0 && checkboxes.every(cb => cb.checked);
+        updateBulkButtonState();
+    }
+
     appFilterKeyword.addEventListener('input', applyAppFilters);
     appFilterStatus.addEventListener('change', applyAppFilters);
     appFilterClear.addEventListener('click', () => {
         appFilterKeyword.value = '';
         appFilterStatus.value = '';
         applyAppFilters();
+    });
+
+    selectAll.addEventListener('change', () => {
+        document.querySelectorAll('.app-checkbox').forEach(cb => cb.checked = selectAll.checked);
+        updateBulkButtonState();
+    });
+
+    document.querySelectorAll('.app-checkbox').forEach(cb => {
+        cb.addEventListener('change', updateSelectAllState);
+    });
+
+    bulkStatus.addEventListener('change', updateBulkButtonState);
+
+    document.getElementById('bulkActionForm').addEventListener('submit', function (event) {
+        const anyChecked = Array.from(document.querySelectorAll('.app-checkbox')).some(cb => cb.checked);
+        if (!anyChecked) {
+            event.preventDefault();
+            alert('Please select at least one application to update.');
+        }
     });
 </script>
 

@@ -1,18 +1,16 @@
 package com.bupt.ta.servlet;
 
-import com.bupt.ta.model.Application;
-import com.bupt.ta.model.User;
-import com.bupt.ta.security.PermissionChecker;
-import com.bupt.ta.storage.ApplicationStorage;
+import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.util.List;
+
+import com.bupt.ta.model.Application;
+import com.bupt.ta.model.User;
+import com.bupt.ta.storage.ApplicationStorage;
 
 @WebServlet(name = "AdminApplicationManagementServlet", urlPatterns = "/secure/admin/application-management")
 public class AdminApplicationManagementServlet extends BaseServlet {
@@ -41,9 +39,11 @@ public class AdminApplicationManagementServlet extends BaseServlet {
         }
 
         ApplicationStorage storage = new ApplicationStorage(getServletContext());
+        User currentUser = getCurrentUser(req);
+        String operator = currentUser != null ? currentUser.getEmail() : "admin";
         try {
             Application.Status newStatus = Application.Status.valueOf(status);
-            storage.updateStatus(applicationId, newStatus);
+            storage.updateStatus(applicationId, newStatus, operator);
             req.setAttribute("success", "Application status updated");
         } catch (Exception e) {
             req.setAttribute("error", "Error updating status: " + e.getMessage());

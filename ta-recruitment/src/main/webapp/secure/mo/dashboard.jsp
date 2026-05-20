@@ -25,9 +25,9 @@
         </div>
     </div>
 
-    <div class="row mt-4">
+    <div class="row mt-4 g-4 align-items-stretch">
         <div class="col-md-4">
-            <div class="card mb-3">
+            <div class="card mb-3 dashboard-card h-100">
                 <div class="card-body">
                     <h5 class="card-title">发布助教职位</h5>
                     <p class="card-text">发布新的助教招聘职位，填写职位详情。</p>
@@ -35,7 +35,7 @@
                 </div>
             </div>
 
-            <div class="card mb-3">
+            <div class="card mb-3 dashboard-card h-100">
                 <div class="card-body">
                     <h5 class="card-title">Post / Manage Positions</h5>
                     <p class="card-text">Create new TA positions or update existing postings.</p>
@@ -43,7 +43,7 @@
                 </div>
             </div>
 
-            <div class="card mb-3">
+            <div class="card mb-3 dashboard-card h-100">
                 <div class="card-body">
                     <h5 class="card-title">View Applications</h5>
                     <p class="card-text">Browse applicants for each position and update screening status.</p>
@@ -51,7 +51,7 @@
                 </div>
             </div>
 
-            <div class="card">
+            <div class="card dashboard-card h-100">
                 <div class="card-body">
                     <h5 class="card-title">Recruitment Progress</h5>
                     <p class="card-text">Track recruitment progress and number of hires for each position.</p>

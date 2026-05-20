@@ -1,22 +1,22 @@
 package com.bupt.ta.servlet;
 
-import com.bupt.ta.model.TAProfile;
-import com.bupt.ta.model.User;
-import com.bupt.ta.storage.ProfileStorage;
-
-import javax.servlet.ServletException;
-import javax.servlet.annotation.MultipartConfig;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.Part;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.time.Instant;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
+
+import com.bupt.ta.config.AppConfig;
+import com.bupt.ta.model.TAProfile;
+import com.bupt.ta.model.User;
+import com.bupt.ta.storage.ProfileStorage;
 
 /**
  * Servlet for TA profile management, including profile viewing, resume upload validation,
@@ -58,7 +58,7 @@ public class ProfileServlet extends BaseServlet {
     }
 
     private static final long MAX_RESUME_SIZE = 5 * 1024 * 1024;
-    private static final String[] ALLOWED_RESUME_EXTENSIONS = {".pdf", ".doc", ".docx"};
+    private static final String[] ALLOWED_RESUME_EXTENSIONS = {".pdf"};
 
     /**
      * Handle POST requests to save profile changes or manage resume upload/removal.
@@ -134,7 +134,7 @@ public class ProfileServlet extends BaseServlet {
             }
 
             if (!isAllowedResumeExtension(extension)) {
-                req.setAttribute("uploadError", "Unsupported resume format. Only PDF or Word documents are allowed.");
+                req.setAttribute("uploadError", "Unsupported resume format. Only PDF documents are allowed.");
                 req.setAttribute("profile", profile);
                 forwardTo(req, resp, "/secure/ta/profile.jsp");
                 return;
@@ -147,10 +147,10 @@ public class ProfileServlet extends BaseServlet {
                 return;
             }
 
-            String fileName = user.getEmail().replaceAll("[^a-zA-Z0-9]", "_")
+            String fileName = user.getUsername().replaceAll("[^a-zA-Z0-9]", "_")
                     + "_" + Instant.now().toEpochMilli() + extension;
 
-            File uploads = new File(getServletContext().getRealPath("/WEB-INF/uploads"));
+            File uploads = new File(getServletContext().getRealPath(AppConfig.UPLOAD_DIR));
             if (!uploads.exists()) {
                 Files.createDirectories(uploads.toPath());
             }
@@ -211,7 +211,7 @@ public class ProfileServlet extends BaseServlet {
      * @param fileName the stored resume file name
      */
     private void deleteStoredResume(String fileName) {
-        File uploads = new File(getServletContext().getRealPath("/WEB-INF/uploads"));
+        File uploads = new File(getServletContext().getRealPath(AppConfig.UPLOAD_DIR));
         File oldFile = new File(uploads, fileName);
         if (oldFile.exists()) {
             oldFile.delete();

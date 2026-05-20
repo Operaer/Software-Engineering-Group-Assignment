@@ -84,8 +84,8 @@
                         <input type="text" id="resumeFileName" class="form-control" placeholder="No file selected" readonly>
                         <button type="button" class="btn btn-outline-secondary" id="chooseResumeBtn">Choose resume</button>
                     </div>
-                    <input type="file" name="resume" id="resumeInput" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" class="d-none">
-                    <div id="resumeValidationText" class="form-text text-muted fw-bold">Supported formats: <span class="text-primary">PDF, Word (.doc, .docx)</span>; size limit: <span class="text-primary">≤ 5MB</span>.</div>
+                    <input type="file" name="resume" id="resumeInput" accept="application/pdf" class="d-none">
+                    <div id="resumeValidationText" class="form-text text-muted fw-bold">Supported format: <span class="text-primary">PDF</span>; size limit: <span class="text-primary">≤ 5MB</span>.</div>
                     <c:if test="${not empty profile.resumeFileName}">
                         <div class="mt-2">
                             Current resume: <strong>${profile.resumeFileName}</strong>
@@ -105,7 +105,7 @@
                         var validationText = document.getElementById('resumeValidationText');
                         var form = document.querySelector('form');
                         var maxSize = 5 * 1024 * 1024;
-                        var allowedPattern = /\.(pdf|doc|docx)$/i;
+                        var allowedPattern = /\.pdf$/i;
 
                         function updateValidation(message, status) {
                             validationText.textContent = message;
@@ -124,7 +124,7 @@
                                 return { valid: true, message: 'Supported formats: PDF, Word (.doc, .docx); size limit: ≤ 5MB.' };
                             }
                             if (!allowedPattern.test(file.name)) {
-                                return { valid: false, message: 'Unsupported format. Please choose a PDF or Word document.' };
+                                return { valid: false, message: 'Unsupported format. Please choose a PDF document.' };
                             }
                             if (file.size > maxSize) {
                                 return { valid: false, message: 'File too large. Please upload a file smaller than 5MB.' };

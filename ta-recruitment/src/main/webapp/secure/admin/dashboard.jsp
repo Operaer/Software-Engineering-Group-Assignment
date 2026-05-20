@@ -17,9 +17,9 @@
         </div>
     </div>
 
-    <div class="row mt-4">
+    <div class="row mt-4 g-4 align-items-stretch">
         <div class="col-md-4">
-            <div class="card mb-3">
+            <div class="card mb-3 dashboard-card h-100">
                 <div class="card-body">
                     <h5 class="card-title">User Management</h5>
                     <p class="card-text">View/edit all user accounts, roles, and active status.</p>
@@ -27,7 +27,7 @@
                 </div>
             </div>
 
-            <div class="card mb-3">
+            <div class="card mb-3 dashboard-card h-100">
                 <div class="card-body">
                     <h5 class="card-title">System Settings</h5>
                     <p class="card-text">Adjust site settings (demo), such as notification toggles and concurrency limits.</p>
@@ -35,7 +35,7 @@
                 </div>
             </div>
 
-            <div class="card">
+            <div class="card dashboard-card h-100">
                 <div class="card-body">
                     <h5 class="card-title">Audit Logs</h5>
                     <p class="card-text">Review critical operation logs to track system changes.</p>
@@ -45,7 +45,7 @@
         </div>
 
         <div class="col-md-8">
-            <div class="card mb-4">
+            <div class="card mb-4 dashboard-card h-100">
                 <div class="card-body">
                     <h5 class="card-title">核心指标</h5>
                     <div class="row text-center">

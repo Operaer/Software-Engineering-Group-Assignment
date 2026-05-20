@@ -1,17 +1,17 @@
 package com.bupt.ta.servlet;
 
-import com.bupt.ta.model.User;
-
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.bupt.ta.config.AppConfig;
+import com.bupt.ta.model.User;
 
 /**
  * Streams uploaded resume files for authenticated TA users.
@@ -31,13 +31,15 @@ public class ResumeDownloadServlet extends BaseServlet {
         }
 
         // Only allow TA to download their own resume
-        // (filename includes sanitized email prefix)
-        if (!fileName.startsWith(user.getEmail().replaceAll("[^a-zA-Z0-9]", "_"))) {
+        // (filename includes a sanitized user ID prefix)
+        String sanitizedUsername = user.getUsername().replaceAll("[^a-zA-Z0-9]", "_");
+        String sanitizedEmail = user.getEmail().replaceAll("[^a-zA-Z0-9]", "_");
+        if (!fileName.startsWith(sanitizedUsername) && !fileName.startsWith(sanitizedEmail)) {
             resp.sendError(HttpServletResponse.SC_FORBIDDEN);
             return;
         }
 
-        File file = new File(getServletContext().getRealPath("/WEB-INF/uploads/" + fileName));
+        File file = new File(getServletContext().getRealPath(AppConfig.UPLOAD_DIR + "/" + fileName));
         if (!file.exists() || !file.isFile()) {
             resp.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;

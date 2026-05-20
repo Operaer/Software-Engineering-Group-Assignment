@@ -1,21 +1,22 @@
 package com.bupt.ta.servlet;
 
-import com.bupt.ta.model.Application;
-import com.bupt.ta.model.TAProfile;
-import com.bupt.ta.model.User;
-import com.bupt.ta.storage.ApplicationStorage;
-import com.bupt.ta.storage.ProfileStorage;
-
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.bupt.ta.model.Application;
+import com.bupt.ta.model.TAProfile;
+import com.bupt.ta.model.User;
+import com.bupt.ta.storage.ApplicationStorage;
+import com.bupt.ta.storage.ProfileStorage;
 
 @WebServlet(name = "ApplicationManagementServlet", urlPatterns = "/secure/mo/application-management")
 /**
@@ -54,19 +55,25 @@ public class ApplicationManagementServlet extends BaseServlet {
             return;
         }
 
-        String applicationId = req.getParameter("applicationId");
+        String[] applicationIds = req.getParameterValues("applicationId");
         String status = req.getParameter("status");
 
-        if (applicationId == null || status == null) {
-            resp.sendRedirect(req.getContextPath() + "/secure/mo/application-management");
+        if (applicationIds == null || applicationIds.length == 0 || status == null) {
+            req.setAttribute("error", "Select at least one application and a target status.");
+            doGet(req, resp);
             return;
         }
 
         ApplicationStorage storage = new ApplicationStorage(getServletContext());
+        User currentUser = getCurrentUser(req);
+        String operator = currentUser != null ? currentUser.getEmail() : "mo";
+
         try {
             Application.Status newStatus = Application.Status.valueOf(status);
-            storage.updateStatus(applicationId, newStatus);
-            req.setAttribute("success", "Application status updated");
+            storage.updateStatus(java.util.Arrays.asList(applicationIds), newStatus, operator);
+            req.setAttribute("success", applicationIds.length == 1 ?
+                    "Application status updated." :
+                    applicationIds.length + " applications updated.");
         } catch (Exception e) {
             req.setAttribute("error", "Error updating status: " + e.getMessage());
         }

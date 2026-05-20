@@ -26,4 +26,18 @@
   "actionType" : "Position Create",
   "target" : "35f3b68a-b779-409b-851b-0088d914f3c1",
   "description" : "Created position: MATH201 - Math TA"
+}, {
+  "id" : "25698887-8ad5-4f7b-90e0-92605ec6370b",
+  "timestamp" : 1779244566.053790600,
+  "operator" : "mo1@example.com",
+  "actionType" : "Position Update",
+  "target" : "a8d003d3-c2ad-4f5e-afc0-349fdbe21509",
+  "description" : "Updated position: kskbl"
+}, {
+  "id" : "6b8e4d3f-1fc1-4877-a790-8cc71afa22a8",
+  "timestamp" : 1779244566.075584700,
+  "operator" : "mo1@example.com",
+  "actionType" : "Job History",
+  "target" : "a8d003d3-c2ad-4f5e-afc0-349fdbe21509",
+  "description" : "Update: Deadline: '2026-05-07' → '2026-05-25'; "
 } ]

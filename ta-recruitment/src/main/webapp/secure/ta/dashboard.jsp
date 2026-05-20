@@ -17,9 +17,9 @@
         </div>
     </div>
 
-    <div class="row mt-4">
+    <div class="row mt-4 g-4 align-items-stretch">
         <div class="col-md-3">
-            <div class="card mb-3">
+            <div class="card mb-3 dashboard-card h-100">
                 <div class="card-body">
                     <h5 class="card-title">My Profile</h5>
                     <p class="card-text">Fill in your information and upload your resume so MOs can review your background.</p>
@@ -27,7 +27,7 @@
                 </div>
             </div>
 
-            <div class="card mb-3">
+            <div class="card mb-3 dashboard-card h-100">
                 <div class="card-body">
                     <h5 class="card-title">My Applications</h5>
                     <p class="card-text">View the status of your submitted applications.</p>
@@ -36,7 +36,7 @@
             </div>
 
             <% if (currentUser.getRole() == User.Role.MO) { %>
-            <div class="card mb-3">
+            <div class="card mb-3 dashboard-card h-100">
                 <div class="card-body">
                     <h5 class="card-title">MO Portal</h5>
                     <p class="card-text">Go to the Module Organizer (MO) dashboard to view applications and post positions.</p>
@@ -45,7 +45,7 @@
             </div>
             <% } %>
             <% if (currentUser.getRole() == User.Role.ADMIN) { %>
-            <div class="card mb-3">
+            <div class="card mb-3 dashboard-card h-100">
                 <div class="card-body">
                     <h5 class="card-title">Admin Portal</h5>
                     <p class="card-text">Go to the Admin console to view system metrics, user management, and audit logs.</p>
@@ -114,7 +114,7 @@
                 </div>
             </div>
 
-            <div class="card">
+            <div class="card dashboard-card h-100">
                 <div class="card-body">
                     <h5 class="card-title">Recent Activity</h5>
                     <ul class="list-group list-group-flush">
