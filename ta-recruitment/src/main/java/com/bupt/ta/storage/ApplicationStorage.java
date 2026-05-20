@@ -117,14 +117,39 @@ public class ApplicationStorage {
         return app;
     }
 
+    /**
+     * Updates the status of a single application using the default "system" operator.
+     * This method delegates to {@link #updateStatus(String, Application.Status, String)}.
+     *
+     * @param applicationId the unique identifier of the application to update
+     * @param status the new status for the application
+     */
     public void updateStatus(String applicationId, Application.Status status) {
         updateStatus(applicationId, status, "system");
     }
 
+    /**
+     * Updates the status of a single application and records the change in the audit log.
+     * This method delegates to the bulk update method for consistency.
+     *
+     * @param applicationId the unique identifier of the application to update
+     * @param status the new status for the application
+     * @param operator the user email or identifier performing this operation (recorded in audit log)
+     */
     public void updateStatus(String applicationId, Application.Status status, String operator) {
         updateStatus(Collections.singletonList(applicationId), status, operator);
     }
 
+    /**
+     * Bulk updates the status for multiple applications in a single operation.
+     * All status changes are persisted to storage and an audit log entry is created
+     * for each application updated, with the given operator identifier.
+     *
+     * @param applicationIds list of application identifiers to update; if null or empty, operation is skipped
+     * @param status the new status to apply to all selected applications
+     * @param operator the user email or identifier performing this bulk update (recorded in audit log);
+     *                 defaults to "system" if null
+     */
     public void updateStatus(List<String> applicationIds, Application.Status status, String operator) {
         if (applicationIds == null || applicationIds.isEmpty()) {
             return;

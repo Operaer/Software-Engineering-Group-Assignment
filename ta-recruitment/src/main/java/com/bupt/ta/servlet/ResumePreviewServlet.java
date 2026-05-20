@@ -15,10 +15,39 @@ import com.bupt.ta.model.User;
 
 /**
  * Streams resume files for ADMIN/MO users to preview (display inline, not download).
+ *
+ * <p>Only users with ADMIN or MO roles can access this endpoint. This servlet
+ * validates both user role and file ownership via sanitized TA email/username prefixes
+ * in the filename to prevent unauthorized file access.</p>
  */
 @WebServlet(name = "ResumePreviewServlet", urlPatterns = "/secure/resume-preview")
 public class ResumePreviewServlet extends BaseServlet {
 
+    /**
+     * Handles GET requests to preview a TA's resume file for administrative review.
+     *
+     * <p>Request parameters:</p>
+     * <ul>
+     *   <li>file: the sanitized filename of the resume to stream</li>
+     *   <li>ta: the email address of the TA whose resume is being viewed</li>
+     * </ul>
+     *
+     * <p>Validates that:</p>
+     * <ul>
+     *   <li>user is logged in (requireLogin enforced)</li>
+     *   <li>user has ADMIN or MO role</li>
+     *   <li>filename ends with .pdf and starts with sanitized TA email/username prefix</li>
+     *   <li>file exists in the configured upload directory</li>
+     * </ul>
+     *
+     * <p>Returns 400 if parameters are missing, 403 if unauthorized or filename invalid,
+     * 404 if file not found. PDF is served inline (displayed in browser, not downloaded).</p>
+     *
+     * @param req the HTTP request with 'file' and 'ta' parameters
+     * @param resp the HTTP response for streaming the PDF inline
+     * @throws ServletException on servlet failure
+     * @throws IOException on input/output failure during file streaming
+     */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         requireLogin(req, resp);

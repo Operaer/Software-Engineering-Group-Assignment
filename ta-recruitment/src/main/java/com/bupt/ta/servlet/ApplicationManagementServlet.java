@@ -55,6 +55,20 @@ public class ApplicationManagementServlet extends BaseServlet {
             return;
         }
 
+        /**
+         * Handles bulk application status updates from the MO dashboard.
+         * Accepts one or more application IDs and a target status, validates input,
+         * and applies the status change to all selected applications via ApplicationStorage.
+         * The current MO user is recorded as the operator in the audit log.
+         *
+         * Request parameters:
+         *   - applicationId: array of application IDs to update (from checkboxes)
+         *   - status: target Application.Status value (e.g., "Pending", "Shortlisted", "Accepted", "Rejected")
+         *
+         * On success, redirects back to the application list with a success message.
+         * On error (missing parameters or invalid status), displays an error message.
+         */
+
         String[] applicationIds = req.getParameterValues("applicationId");
         String status = req.getParameter("status");
 
