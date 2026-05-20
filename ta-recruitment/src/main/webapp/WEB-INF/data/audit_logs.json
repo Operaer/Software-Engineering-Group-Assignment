@@ -1,0 +1,43 @@
+[ {
+  "id" : "a833738f-4e37-4bc9-b6ea-d664b942eb9a",
+  "timestamp" : 1778830571.424876100,
+  "operator" : "ta1@example.com",
+  "actionType" : "Account Update",
+  "target" : "ta1@example.com",
+  "description" : "Updated user account."
+}, {
+  "id" : "a42fbe82-f70e-4fc9-b92c-53857283b856",
+  "timestamp" : 1778830572.438502600,
+  "operator" : "ta1@example.com",
+  "actionType" : "Account Update",
+  "target" : "ta1@example.com",
+  "description" : "Updated user account."
+}, {
+  "id" : "85272d06-894e-4274-99ac-eb7fea1524cb",
+  "timestamp" : 1779094688.892301100,
+  "operator" : "mo1@example.com",
+  "actionType" : "Position Create",
+  "target" : "680affde-efbd-478c-a4ae-a233f1a5db18",
+  "description" : "Created position: Test Active Position"
+}, {
+  "id" : "12f3cb4b-879e-4190-95d7-f54bdf00ca37",
+  "timestamp" : 1779094856.065330400,
+  "operator" : "mo1@example.com",
+  "actionType" : "Position Create",
+  "target" : "35f3b68a-b779-409b-851b-0088d914f3c1",
+  "description" : "Created position: MATH201 - Math TA"
+}, {
+  "id" : "25698887-8ad5-4f7b-90e0-92605ec6370b",
+  "timestamp" : 1779244566.053790600,
+  "operator" : "mo1@example.com",
+  "actionType" : "Position Update",
+  "target" : "a8d003d3-c2ad-4f5e-afc0-349fdbe21509",
+  "description" : "Updated position: kskbl"
+}, {
+  "id" : "6b8e4d3f-1fc1-4877-a790-8cc71afa22a8",
+  "timestamp" : 1779244566.075584700,
+  "operator" : "mo1@example.com",
+  "actionType" : "Job History",
+  "target" : "a8d003d3-c2ad-4f5e-afc0-349fdbe21509",
+  "description" : "Update: Deadline: '2026-05-07' → '2026-05-25'; "
+} ]
