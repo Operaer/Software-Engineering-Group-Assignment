@@ -25,6 +25,12 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 /**
  * JSON-backed storage for TA applications.
+ *
+ * <p>This class manages persisted application records in the embedded file-based
+ * storage used by the TA recruitment system.</p>
+ *
+ * @author Operaer
+ * @date 2026-05-17
  */
 public class ApplicationStorage {
     private static final String STORAGE_PATH = AppConfig.APPLICATIONS_FILE;
@@ -201,6 +207,32 @@ public class ApplicationStorage {
             for (String applicationId : applicationIds) {
                 audit.add(new com.bupt.ta.model.AuditLogEntry(operatorId, "Application Status", applicationId, "Status changed to: " + status.name()));
             }
+        } catch (Exception ignored) {}
+    }
+
+    public void updateAssignedWorkload(String applicationId, Integer assignedWorkloadHours, String operator) {
+        if (applicationId == null || applicationId.isBlank()) {
+            return;
+        }
+
+        List<Application> apps = loadAll();
+        boolean updated = false;
+        for (Application app : apps) {
+            if (applicationId.equals(app.getId())) {
+                app.setAssignedWorkloadHours(assignedWorkloadHours);
+                updated = true;
+            }
+        }
+        if (!updated) {
+            return;
+        }
+        saveAll(apps);
+
+        try {
+            com.bupt.ta.storage.AuditLogStorage audit = new com.bupt.ta.storage.AuditLogStorage(servletContext);
+            String operatorId = operator != null ? operator : "system";
+            audit.add(new com.bupt.ta.model.AuditLogEntry(operatorId, "Workload Update", applicationId,
+                    "Assigned workload updated to: " + (assignedWorkloadHours == null ? "[clear]" : assignedWorkloadHours + " hours")));
         } catch (Exception ignored) {}
     }
 

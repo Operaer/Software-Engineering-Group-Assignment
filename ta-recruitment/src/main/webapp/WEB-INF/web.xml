@@ -144,6 +144,15 @@
     </servlet-mapping>
 
     <servlet>
+        <servlet-name>AdminWorkloadServlet</servlet-name>
+        <servlet-class>com.bupt.ta.servlet.AdminWorkloadServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AdminWorkloadServlet</servlet-name>
+        <url-pattern>/secure/admin/workload-management</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
         <servlet-name>AdminAuditLogsServlet</servlet-name>
         <servlet-class>com.bupt.ta.servlet.AdminAuditLogsServlet</servlet-class>
     </servlet>

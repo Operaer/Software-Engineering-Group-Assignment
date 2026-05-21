@@ -19,6 +19,8 @@ import java.util.List;
  * </p>
  *
  * @author Wenqi Guan
+ * @author Operaer
+ * @date 2026-05-17
  * @version 1.0
  * @since 2026-05-09
  */
@@ -173,6 +175,7 @@ public class AdminDashboardStats implements Serializable {
         private int acceptedPositions;
         private int totalWorkload;
         private String modules;
+        private String taName;
 
         public String getTaEmail() {
             return taEmail;
@@ -200,6 +203,14 @@ public class AdminDashboardStats implements Serializable {
 
         public String getModules() {
             return modules;
+        }
+
+        public String getTaName() {
+            return taName;
+        }
+
+        public void setTaName(String taName) {
+            this.taName = taName;
         }
 
         public void setModules(String modules) {

@@ -3,6 +3,16 @@ package com.bupt.ta.model;
 import java.io.Serializable;
 import java.time.Instant;
 
+/**
+ * Represents a TA application record in the recruitment system.
+ *
+ * <p>Applications track the TA email, the position applied for, the application
+ * timestamp, current status, and the assigned workload hours when adjusted by an
+ * administrator.</p>
+ *
+ * @author Operaer
+ * @date 2026-05-17
+ */
 public class Application implements Serializable {
     private String id;
     private String taEmail;
@@ -10,6 +20,7 @@ public class Application implements Serializable {
     private String positionTitle;
     private Instant appliedAt;
     private String status; // Pending / Shortlisted / Accepted / Rejected
+    private Integer assignedWorkloadHours;
 
     public Application() {
     }
@@ -69,6 +80,14 @@ public class Application implements Serializable {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public Integer getAssignedWorkloadHours() {
+        return assignedWorkloadHours;
+    }
+
+    public void setAssignedWorkloadHours(Integer assignedWorkloadHours) {
+        this.assignedWorkloadHours = assignedWorkloadHours;
     }
 
     public enum Status {

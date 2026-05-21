@@ -1,21 +1,11 @@
 package com.bupt.ta.servlet;
 
-import com.bupt.ta.model.AdminDashboardStats;
-import com.bupt.ta.model.Application;
-import com.bupt.ta.model.Job;
-import com.bupt.ta.model.User;
-import com.bupt.ta.storage.ApplicationStorage;
-import com.bupt.ta.storage.JobStorage;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -27,6 +17,17 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.bupt.ta.model.AdminDashboardStats;
+import com.bupt.ta.model.Application;
+import com.bupt.ta.model.Job;
+import com.bupt.ta.model.User;
+import com.bupt.ta.storage.ApplicationStorage;
+import com.bupt.ta.storage.JobStorage;
 
 /**
  * Servlet for the US03 Admin Global Recruitment Dashboard.
@@ -52,6 +53,8 @@ import java.util.stream.Collectors;
  * </p>
  *
  * @author Wenqi Guan
+ * @author Operaer
+ * @date 2026-05-17
  * @version 1.0
  * @since 2026-05-09
  */
@@ -273,7 +276,7 @@ public class AdminDashboardServlet extends BaseServlet {
 
             Job job = jobsById.get(application.getPositionId());
             String moduleCode = job == null ? "Unknown" : normalizeModuleCode(job.getModuleCode());
-            int workload = job == null ? 0 : parseWorkload(job.getWorkload());
+            int workload = calculateEffectiveWorkload(application, job);
 
             TAWorkloadAccumulator accumulator = workloadByTA.computeIfAbsent(taEmail, key -> new TAWorkloadAccumulator());
             accumulator.acceptedPositions++;
@@ -311,7 +314,7 @@ public class AdminDashboardServlet extends BaseServlet {
 
             Job job = jobsById.get(application.getPositionId());
             String moduleCode = job == null ? "Unknown" : normalizeModuleCode(job.getModuleCode());
-            int workload = job == null ? 0 : parseWorkload(job.getWorkload());
+            int workload = calculateEffectiveWorkload(application, job);
 
             ModuleWorkloadAccumulator accumulator = workloadByModule.computeIfAbsent(moduleCode, key -> new ModuleWorkloadAccumulator());
             accumulator.acceptedPositions++;
@@ -362,6 +365,17 @@ public class AdminDashboardServlet extends BaseServlet {
         } catch (NumberFormatException e) {
             return 0;
         }
+    }
+
+    private int calculateEffectiveWorkload(Application application, Job job) {
+        if (application == null) {
+            return 0;
+        }
+        Integer assigned = application.getAssignedWorkloadHours();
+        if (assigned != null) {
+            return assigned;
+        }
+        return parseWorkload(job == null ? null : job.getWorkload());
     }
 
     private String normalizeText(String value, String fallback) {

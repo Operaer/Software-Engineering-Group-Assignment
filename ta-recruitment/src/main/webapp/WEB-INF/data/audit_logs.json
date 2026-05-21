@@ -145,4 +145,18 @@
   "actionType" : "Application Create",
   "target" : "52547174-e40c-4e6a-9748-258a6e9f7931",
   "description" : "Applied to: ohhhhhhhhhhhhhhhh"
+}, {
+  "id" : "5e93a003-759d-48a8-b95a-f7a364529386",
+  "timestamp" : 1779283563.516343800,
+  "operator" : "admin@example.com",
+  "actionType" : "Workload Update",
+  "target" : "cde99465-0fb1-424d-a25b-0c33860dfb76",
+  "description" : "Assigned workload updated to: [clear]"
+}, {
+  "id" : "8b06b6ea-54c5-4d88-9e6a-556fba98e59f",
+  "timestamp" : 1779283566.467201800,
+  "operator" : "admin@example.com",
+  "actionType" : "Workload Update",
+  "target" : "cde99465-0fb1-424d-a25b-0c33860dfb76",
+  "description" : "Assigned workload updated to: 1 hours"
 } ]
