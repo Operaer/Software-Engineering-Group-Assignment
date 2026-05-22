@@ -18,6 +18,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+@WebServlet(name = "ApplicationServlet", urlPatterns = {
+        "/secure/ta/applications",
+        "/secure/ta/positions",
+        "/secure/ta/positions/*"
+})
 /**
  * Handles TA-facing application actions and available-position browsing.
  *
@@ -25,27 +30,8 @@ import java.util.stream.Collectors;
  * both the application page and the dedicated available-positions page. It also
  * serves position-detail requests under {@code /secure/ta/positions/*}.</p>
  */
-@WebServlet(name = "ApplicationServlet", urlPatterns = {
-        "/secure/ta/applications",
-        "/secure/ta/positions",
-        "/secure/ta/positions/*"
-})
 public class ApplicationServlet extends BaseServlet {
 
-    /**
-     * Handles GET requests for TA application management and position browsing.
-     *
-     * <p>For {@code /secure/ta/applications} routes, loads the TA's existing applications
-     * and applicable positions with optional filtering (course keyword, skill keyword,
-     * minimum GPA). For {@code /secure/ta/positions/*} routes, serves position details
-     * or the available-positions list view. Supports URL-parameter-driven success and
-     * already-applied messages.</p>
-     *
-     * @param req  the HTTP request
-     * @param resp the HTTP response
-     * @throws ServletException if forwarding fails
-     * @throws IOException      if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (!requireLogin(req, resp)) {
@@ -112,19 +98,6 @@ public class ApplicationServlet extends BaseServlet {
         forwardTo(req, resp, "/secure/ta/applications.jsp");
     }
 
-    /**
-     * Handles POST requests to submit a new application for a TA position.
-     *
-     * <p>Validates that the job ID is present and the position is still open and
-     * applicable. Checks for duplicate applications to prevent re-applying.
-     * On success, creates a new {@link Application} record and re-dispatches to
-     * {@code doGet} with a success message.</p>
-     *
-     * @param req  the HTTP request containing {@code jobId} parameter
-     * @param resp the HTTP response
-     * @throws ServletException if forwarding fails
-     * @throws IOException      if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (!requireLogin(req, resp)) {

@@ -10,25 +10,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-/**
- * Handles user authentication via login form submission.
- *
- * <p>Mapped to {@code /login}. The {@code doGet} method forwards logged-in users
- * to the dashboard and all others to the login page. The {@code doPost} method
- * validates credentials against {@link com.bupt.ta.storage.UserStorage}, enforces
- * account-active checks, and creates an authenticated HTTP session on success.</p>
- */
 @WebServlet(name = "LoginServlet", urlPatterns = "/login")
 public class LoginServlet extends BaseServlet {
 
-    /**
-     * Displays the login page or redirects already-authenticated users to the dashboard.
-     *
-     * @param req  the HTTP request
-     * @param resp the HTTP response
-     * @throws ServletException if forwarding fails
-     * @throws IOException      if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (isLoggedIn(req)) {
@@ -38,19 +22,6 @@ public class LoginServlet extends BaseServlet {
         forwardTo(req, resp, "/index.jsp");
     }
 
-    /**
-     * Authenticates a user with email and password credentials.
-     *
-     * <p>Validates that both fields are non-blank, verifies the account exists and
-     * is active, and checks the password. On success, invalidates any existing
-     * session and creates a new one with the {@code currentUser} attribute set.
-     * On failure, sets a descriptive error message and re-displays the login page.</p>
-     *
-     * @param req  the HTTP request containing {@code email} and {@code password} parameters
-     * @param resp the HTTP response
-     * @throws ServletException if forwarding fails
-     * @throws IOException      if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String email = req.getParameter("email");

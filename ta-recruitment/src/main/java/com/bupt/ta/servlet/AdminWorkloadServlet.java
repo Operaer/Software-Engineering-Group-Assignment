@@ -50,18 +50,6 @@ public class AdminWorkloadServlet extends BaseServlet {
         this.userStorage = new UserStorage(getServletContext());
     }
 
-    /**
-     * Handles GET requests to display the workload management dashboard.
-     *
-     * <p>Reads all jobs, applications, and user data, filters for accepted
-     * applications, and computes per-TA and per-module workload summaries.
-     * Supports filtering by TA name/email, module, and workload range.</p>
-     *
-     * @param req the HTTP request containing filter parameters
-     * @param resp the HTTP response
-     * @throws ServletException if forwarding to the JSP fails
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (!requireLogin(req, resp) || !requirePermission(req, resp, User.Role.ADMIN)) {
@@ -158,19 +146,6 @@ public class AdminWorkloadServlet extends BaseServlet {
         forwardTo(req, resp, "/WEB-INF/secure/admin/workload_management.jsp");
     }
 
-    /**
-     * Handles POST requests to update assigned workload hours for an application.
-     *
-     * <p>Accepts an {@code applicationId} and {@code assignedWorkloadHours}
-     * parameter. Validates that the workload is a non-negative integer,
-     * updates the application record, and stores a success message in the
-     * session for display on the subsequent GET request.</p>
-     *
-     * @param req the HTTP request containing applicationId and assignedWorkloadHours
-     * @param resp the HTTP response
-     * @throws ServletException if forwarding to the JSP fails
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (!requireLogin(req, resp) || !requirePermission(req, resp, User.Role.ADMIN)) {

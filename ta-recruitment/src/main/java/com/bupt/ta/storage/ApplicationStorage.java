@@ -40,24 +40,12 @@ public class ApplicationStorage {
     private final File storageFile;
     private final javax.servlet.ServletContext servletContext;
 
-    /**
-     * Constructs an {@code ApplicationStorage} instance and ensures the underlying
-     * JSON storage file exists.
-     *
-     * @param context the ServletContext used to resolve the real path to the storage file
-     */
     public ApplicationStorage(ServletContext context) {
         this.storageFile = new File(context.getRealPath(STORAGE_PATH));
         this.servletContext = context;
         ensureStorageExists();
     }
 
-    /**
-     * Ensures that the directory and storage file exist, creating them if necessary.
-     * If the file does not exist, it is initialised with an empty JSON array.
-     *
-     * @throws IllegalStateException if the directory or file cannot be created
-     */
     private void ensureStorageExists() {
         try {
             File parent = storageFile.getParentFile();
@@ -74,13 +62,6 @@ public class ApplicationStorage {
 
     private static final Duration EXPIRATION_PERIOD = Duration.ofDays(7);
 
-    /**
-     * Loads all application records from the JSON storage file.
-     * Expired applications are automatically marked during loading.
-     *
-     * @return a mutable list of all stored applications (never {@code null})
-     * @throws IllegalStateException if the storage file cannot be read
-     */
     private List<Application> loadAll() {
         try {
             TypeFactory factory = mapper.getTypeFactory();
@@ -99,12 +80,6 @@ public class ApplicationStorage {
         }
     }
 
-    /**
-     * Checks every non-terminal application and marks it as expired if its
-     * age exceeds {@link #EXPIRATION_PERIOD}. Changes are persisted immediately.
-     *
-     * @param applications the list of applications to inspect (modified in place)
-     */
     private void checkAndUpdateExpiredApplications(List<Application> applications) {
         Instant now = Instant.now();
         boolean hasChanges = false;
@@ -130,13 +105,6 @@ public class ApplicationStorage {
         }
     }
 
-    /**
-     * Persists the given list of applications to the JSON storage file with
-     * pretty-printing.
-     *
-     * @param list the applications to write (must not be {@code null})
-     * @throws IllegalStateException if the file cannot be written
-     */
     private void saveAll(List<Application> list) {
         try {
             mapper.writerWithDefaultPrettyPrinter().writeValue(storageFile, list);
@@ -145,13 +113,6 @@ public class ApplicationStorage {
         }
     }
 
-    /**
-     * Finds all applications submitted by the given TA email address.
-     * The comparison is case-insensitive.
-     *
-     * @param email the TA email to search for; if {@code null}, an empty list is returned
-     * @return a list of matching applications (never {@code null})
-     */
     public List<Application> findByTaEmail(String email) {
         if (email == null) {
             return new ArrayList<>();
@@ -162,12 +123,6 @@ public class ApplicationStorage {
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Saves a new application record to persistent storage and records an
-     * audit-log entry for the creation.
-     *
-     * @param application the application to persist (must not be {@code null})
-     */
     public void save(Application application) {
         List<Application> apps = loadAll();
         apps.add(application);
@@ -178,15 +133,6 @@ public class ApplicationStorage {
         } catch (Exception ignored) {}
     }
 
-    /**
-     * Checks whether a given TA has already submitted an application for a
-     * specific position. Comparisons are case-insensitive for the email.
-     *
-     * @param taEmail   the TA email to check
-     * @param positionId the position identifier to check
-     * @return {@code true} if a matching application exists, {@code false} otherwise
-     *         (also returns {@code false} if either argument is {@code null})
-     */
     public boolean hasApplied(String taEmail, String positionId) {
         if (taEmail == null || positionId == null) {
             return false;
@@ -290,11 +236,6 @@ public class ApplicationStorage {
         } catch (Exception ignored) {}
     }
 
-    /**
-     * Returns every application currently stored.
-     *
-     * @return a list of all applications (never {@code null})
-     */
     public List<Application> findAll() {
         return loadAll();
     }

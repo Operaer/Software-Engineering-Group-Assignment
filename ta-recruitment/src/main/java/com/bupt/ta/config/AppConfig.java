@@ -1,11 +1,5 @@
 package com.bupt.ta.config;
 
-/**
- * Central configuration constants for the TA recruitment application.
- * Defines default credentials, upload directories, data directories,
- * and file paths for persistence of users, applications, profiles,
- * jobs, job history, and audit logs.
- */
 public class AppConfig {
     public static final String DEFAULT_PASSWORD = "default123";
     public static final String UPLOAD_DIR = "/WEB-INF/uploads";

@@ -28,12 +28,6 @@ public class JobHistoryStorage {
             .registerModule(new JavaTimeModule())
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
-    /**
-     * Constructs a {@code JobHistoryStorage} instance and ensures the underlying
-     * text-based storage file exists.
-     *
-     * @param context the ServletContext used to resolve the real path to the storage file
-     */
     public JobHistoryStorage(ServletContext context) {
         this.storageFile = new File(context.getRealPath(STORAGE_PATH));
         this.context = context;
@@ -42,11 +36,6 @@ public class JobHistoryStorage {
 
     private final ServletContext context;
 
-    /**
-     * Ensures that the directory and storage file exist, creating them if necessary.
-     *
-     * @throws IllegalStateException if the directory or file cannot be created
-     */
     private void ensureStorageExists() {
         try {
             File parent = storageFile.getParentFile();
@@ -61,14 +50,6 @@ public class JobHistoryStorage {
         }
     }
 
-    /**
-     * Loads all job history entries from the pipe-delimited text storage file.
-     * Each line is parsed into a {@link JobHistoryEntry}; malformed lines are
-     * silently skipped.
-     *
-     * @return a mutable list of all stored entries (never {@code null})
-     * @throws IllegalStateException if the storage file cannot be read
-     */
     private List<JobHistoryEntry> loadAll() {
         List<JobHistoryEntry> entries = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(storageFile))) {
@@ -94,33 +75,10 @@ public class JobHistoryStorage {
         return entries;
     }
 
-    /**
-     * Records a job history entry without a full-job snapshot. Delegates to
-     * {@link #record(String, String, String, Job, String)} with a {@code null}
-     * snapshot.
-     *
-     * @param jobId     the job identifier
-     * @param action    a short description of the action performed
-     * @param details   additional details about the change
-     * @param changedBy the user who performed the change
-     */
     public void record(String jobId, String action, String details, String changedBy) {
         record(jobId, action, details, null, changedBy);
     }
 
-    /**
-     * Records a job history entry with an optional full-job JSON snapshot.
-     * The entry is appended to the text storage file and an audit-log entry is
-     * also created on a best-effort basis.
-     *
-     * @param jobId     the job identifier
-     * @param action    a short description of the action performed
-     * @param details   additional details about the change
-     * @param snapshot  a full snapshot of the job at the time of the change
-     *                  (may be {@code null} to omit)
-     * @param changedBy the user who performed the change
-     * @throws IllegalStateException if the storage file cannot be written
-     */
     public void record(String jobId, String action, String details, Job snapshot, String changedBy) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(storageFile, true))) {
             String encodedDetails = URLEncoder.encode(details == null ? "" : details, StandardCharsets.UTF_8);
@@ -136,14 +94,6 @@ public class JobHistoryStorage {
         }
     }
 
-    /**
-     * Finds the most recent job snapshot for the given job ID by scanning the
-     * history entries in reverse chronological order.
-     *
-     * @param jobId the job identifier to search for
-     * @return the most recent {@link Job} snapshot, or {@code null} if none exists
-     * @throws IllegalStateException if a stored snapshot cannot be deserialised
-     */
     public Job findLastSnapshot(String jobId) {
         List<JobHistoryEntry> entries = loadAll();
         for (int i = entries.size() - 1; i >= 0; i--) {
@@ -159,27 +109,12 @@ public class JobHistoryStorage {
         return null;
     }
 
-    /**
-     * Finds all history entries associated with the given job ID.
-     *
-     * @param jobId the job identifier to search for
-     * @return a list of matching entries (never {@code null})
-     */
     public List<JobHistoryEntry> findByJobId(String jobId) {
         return loadAll().stream()
                 .filter(entry -> jobId != null && jobId.equals(entry.getJobId()))
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Finds a single history entry matching both the job ID and the exact change
-     * timestamp.
-     *
-     * @param jobId    the job identifier to search for
-     * @param changedAt the exact change timestamp to match
-     * @return the matching entry, or {@code null} if no match is found or either
-     *         parameter is {@code null}
-     */
     public JobHistoryEntry findByJobIdAndChangedAt(String jobId, Instant changedAt) {
         if (jobId == null || changedAt == null) {
             return null;

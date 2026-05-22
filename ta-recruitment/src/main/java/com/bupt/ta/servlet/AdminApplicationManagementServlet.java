@@ -12,25 +12,9 @@ import com.bupt.ta.model.Application;
 import com.bupt.ta.model.User;
 import com.bupt.ta.storage.ApplicationStorage;
 
-/**
- * Servlet for administrators to manage TA applications.
- *
- * <p>Mapped to {@code /secure/admin/application-management}. Handles GET requests
- * to list all applications and POST requests to update individual application
- * statuses (e.g., Shortlisted, Accepted, Rejected). All status changes are
- * recorded with the current admin's email for audit traceability.</p>
- */
 @WebServlet(name = "AdminApplicationManagementServlet", urlPatterns = "/secure/admin/application-management")
 public class AdminApplicationManagementServlet extends BaseServlet {
 
-    /**
-     * Retrieves and displays all TA applications for admin review.
-     *
-     * @param req the HTTP request
-     * @param resp the HTTP response
-     * @throws ServletException if forwarding to the JSP fails
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         requirePermission(req, resp, User.Role.ADMIN);
@@ -42,22 +26,22 @@ public class AdminApplicationManagementServlet extends BaseServlet {
         forwardTo(req, resp, "/secure/admin/application_list.jsp");
     }
 
-    /**
-     * Handles single application status updates submitted by an administrator.
-     *
-     * <p>Accepts {@code applicationId} and {@code status} parameters. The current
-     * admin user's email is recorded as the operator for audit traceability.
-     * On success, a confirmation message is displayed. On error, an error
-     * message is shown and the application list is reloaded.</p>
-     *
-     * @param req the HTTP request containing applicationId and status parameters
-     * @param resp the HTTP response
-     * @throws ServletException if forwarding to the JSP fails
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         requirePermission(req, resp, User.Role.ADMIN);
+
+        /**
+         * Handles single application status updates from the admin dashboard.
+         * Admin users can change the status of any application. The current admin user's
+         * email address is recorded as the operator in the audit log for traceability.
+         *
+         * Request parameters:
+         *   - applicationId: the ID of the application to update
+         *   - status: target Application.Status value (e.g., "Pending", "Shortlisted", "Accepted", "Rejected")
+         *
+         * On success, updates the application and displays a success message.
+         * On error, displays an error message and reloads the application list.
+         */
 
         String applicationId = req.getParameter("applicationId");
         String status = req.getParameter("status");

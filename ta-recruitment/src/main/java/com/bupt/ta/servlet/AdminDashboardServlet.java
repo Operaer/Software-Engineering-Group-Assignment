@@ -70,20 +70,6 @@ public class AdminDashboardServlet extends BaseServlet {
         this.applicationStorage = new ApplicationStorage(getServletContext());
     }
 
-    /**
-     * Handles GET requests to display the global recruitment dashboard.
-     *
-     * <p>Reads all jobs and applications from storage, applies the admin's
-     * multi-dimensional filters (module, title, creator, deadline range,
-     * workload, status), and computes aggregated statistics including
-     * position counts, application counts, acceptance rates, module-level
-     * metrics, and workload distribution summaries.</p>
-     *
-     * @param req the HTTP request containing filter parameters
-     * @param resp the HTTP response
-     * @throws ServletException if forwarding to the dashboard JSP fails
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (!requireLogin(req, resp) || !requirePermission(req, resp, User.Role.ADMIN)) {

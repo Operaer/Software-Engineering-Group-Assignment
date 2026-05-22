@@ -126,92 +126,42 @@ public class AdminDashboardStats implements Serializable {
         private int acceptedCount;
         private double completionRate;
 
-        /**
-         * Returns the module code for this metric.
-         *
-         * @return the module code
-         */
         public String getModuleCode() {
             return moduleCode;
         }
 
-        /**
-         * Sets the module code for this metric.
-         *
-         * @param moduleCode the module code to set
-         */
         public void setModuleCode(String moduleCode) {
             this.moduleCode = moduleCode;
         }
 
-        /**
-         * Returns the number of positions created for this module.
-         *
-         * @return the position count
-         */
         public int getPositionCount() {
             return positionCount;
         }
 
-        /**
-         * Sets the number of positions created for this module.
-         *
-         * @param positionCount the position count to set
-         */
         public void setPositionCount(int positionCount) {
             this.positionCount = positionCount;
         }
 
-        /**
-         * Returns the number of applicants for this module.
-         *
-         * @return the applicant count
-         */
         public int getApplicantCount() {
             return applicantCount;
         }
 
-        /**
-         * Sets the number of applicants for this module.
-         *
-         * @param applicantCount the applicant count to set
-         */
         public void setApplicantCount(int applicantCount) {
             this.applicantCount = applicantCount;
         }
 
-        /**
-         * Returns the number of accepted applicants for this module.
-         *
-         * @return the accepted count
-         */
         public int getAcceptedCount() {
             return acceptedCount;
         }
 
-        /**
-         * Sets the number of accepted applicants for this module.
-         *
-         * @param acceptedCount the accepted count to set
-         */
         public void setAcceptedCount(int acceptedCount) {
             this.acceptedCount = acceptedCount;
         }
 
-        /**
-         * Returns the completion rate (accepted / total positions) for this module.
-         *
-         * @return the completion rate
-         */
         public double getCompletionRate() {
             return completionRate;
         }
 
-        /**
-         * Sets the completion rate for this module.
-         *
-         * @param completionRate the completion rate to set
-         */
         public void setCompletionRate(double completionRate) {
             this.completionRate = completionRate;
         }
@@ -227,92 +177,42 @@ public class AdminDashboardStats implements Serializable {
         private String modules;
         private String taName;
 
-        /**
-         * Returns the TA's email address.
-         *
-         * @return the TA email
-         */
         public String getTaEmail() {
             return taEmail;
         }
 
-        /**
-         * Sets the TA's email address.
-         *
-         * @param taEmail the TA email to set
-         */
         public void setTaEmail(String taEmail) {
             this.taEmail = taEmail;
         }
 
-        /**
-         * Returns the number of accepted positions assigned to this TA.
-         *
-         * @return the accepted position count
-         */
         public int getAcceptedPositions() {
             return acceptedPositions;
         }
 
-        /**
-         * Sets the number of accepted positions assigned to this TA.
-         *
-         * @param acceptedPositions the accepted position count to set
-         */
         public void setAcceptedPositions(int acceptedPositions) {
             this.acceptedPositions = acceptedPositions;
         }
 
-        /**
-         * Returns the total workload hours assigned to this TA.
-         *
-         * @return the total workload hours
-         */
         public int getTotalWorkload() {
             return totalWorkload;
         }
 
-        /**
-         * Sets the total workload hours assigned to this TA.
-         *
-         * @param totalWorkload the total workload hours to set
-         */
         public void setTotalWorkload(int totalWorkload) {
             this.totalWorkload = totalWorkload;
         }
 
-        /**
-         * Returns the module names assigned to this TA.
-         *
-         * @return the module names as a string
-         */
         public String getModules() {
             return modules;
         }
 
-        /**
-         * Returns the TA's display name.
-         *
-         * @return the TA name
-         */
         public String getTaName() {
             return taName;
         }
 
-        /**
-         * Sets the TA's display name.
-         *
-         * @param taName the TA name to set
-         */
         public void setTaName(String taName) {
             this.taName = taName;
         }
 
-        /**
-         * Sets the module names assigned to this TA.
-         *
-         * @param modules the module names to set
-         */
         public void setModules(String modules) {
             this.modules = modules;
         }
@@ -327,74 +227,34 @@ public class AdminDashboardStats implements Serializable {
         private int acceptedPositions;
         private int totalWorkload;
 
-        /**
-         * Returns the module code for this workload metric.
-         *
-         * @return the module code
-         */
         public String getModuleCode() {
             return moduleCode;
         }
 
-        /**
-         * Sets the module code for this workload metric.
-         *
-         * @param moduleCode the module code to set
-         */
         public void setModuleCode(String moduleCode) {
             this.moduleCode = moduleCode;
         }
 
-        /**
-         * Returns the number of TAs hired for this module.
-         *
-         * @return the hired TA count
-         */
         public int getHiredTAs() {
             return hiredTAs;
         }
 
-        /**
-         * Sets the number of TAs hired for this module.
-         *
-         * @param hiredTAs the hired TA count to set
-         */
         public void setHiredTAs(int hiredTAs) {
             this.hiredTAs = hiredTAs;
         }
 
-        /**
-         * Returns the number of accepted positions for this module.
-         *
-         * @return the accepted position count
-         */
         public int getAcceptedPositions() {
             return acceptedPositions;
         }
 
-        /**
-         * Sets the number of accepted positions for this module.
-         *
-         * @param acceptedPositions the accepted position count to set
-         */
         public void setAcceptedPositions(int acceptedPositions) {
             this.acceptedPositions = acceptedPositions;
         }
 
-        /**
-         * Returns the total workload hours for this module.
-         *
-         * @return the total workload hours
-         */
         public int getTotalWorkload() {
             return totalWorkload;
         }
 
-        /**
-         * Sets the total workload hours for this module.
-         *
-         * @param totalWorkload the total workload hours to set
-         */
         public void setTotalWorkload(int totalWorkload) {
             this.totalWorkload = totalWorkload;
         }

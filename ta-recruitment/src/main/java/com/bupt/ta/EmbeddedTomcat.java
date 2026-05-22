@@ -10,14 +10,6 @@ import java.io.File;
  */
 public class EmbeddedTomcat {
 
-    /**
-     * Application entry point. Starts an embedded Tomcat server on port 8081
-     * bound to localhost, serving the web application from the {@code src/main/webapp}
-     * directory. The server runs indefinitely until shut down.
-     *
-     * @param args command-line arguments (not used)
-     * @throws Exception if the webapp directory is missing or Tomcat fails to start
-     */
     public static void main(String[] args) throws Exception {
         // Use port 8081 by default to avoid conflicts.
         int port = 8081;
