@@ -80,6 +80,18 @@
                     </div>
                 </div>
             </div>
+
+            <% if ("mo".equals(roleName)) { %>
+                <div class="col-md-3">
+                    <div class="card mb-3 dashboard-card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">Recruitment Progress</h5>
+                            <p class="card-text">Track recruitment progress and deadline status for your TA positions.</p>
+                            <a href="<%= request.getContextPath() %>/secure/mo/progress" class="btn btn-sm btn-primary">View Progress</a>
+                        </div>
+                    </div>
+                </div>
+            <% } %>
         <% } %>
 
         <% if ("admin".equals(roleName)) { %>

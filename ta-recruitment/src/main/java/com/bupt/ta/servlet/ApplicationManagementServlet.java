@@ -36,6 +36,13 @@ public class ApplicationManagementServlet extends BaseServlet {
 
         ApplicationStorage storage = new ApplicationStorage(getServletContext());
         List<Application> applications = storage.findAll();
+        String jobId = req.getParameter("jobId");
+        if (jobId != null && !jobId.isBlank()) {
+            applications = applications.stream()
+                    .filter(application -> jobId.equals(application.getPositionId()))
+                    .collect(java.util.stream.Collectors.toList());
+            req.setAttribute("selectedJobId", jobId);
+        }
         ProfileStorage profileStorage = new ProfileStorage(getServletContext());
         Map<String, TAProfile> profilesByEmail = loadProfiles(applications, profileStorage);
         String sortBy = normalizeSortBy(req.getParameter("sortBy"));
