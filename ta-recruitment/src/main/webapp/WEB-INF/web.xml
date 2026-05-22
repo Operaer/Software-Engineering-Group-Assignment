@@ -188,4 +188,13 @@
         <url-pattern>/secure/ta/quick-apply</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>MOProgressServlet</servlet-name>
+        <servlet-class>com.bupt.ta.servlet.MOProgressServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>MOProgressServlet</servlet-name>
+        <url-pattern>/secure/mo/progress</url-pattern>
+    </servlet-mapping>
+
 </web-app>

@@ -159,4 +159,11 @@
   "actionType" : "Workload Update",
   "target" : "cde99465-0fb1-424d-a25b-0c33860dfb76",
   "description" : "Assigned workload updated to: 1 hours"
+}, {
+  "id" : "bf5b133f-2a9e-4d55-b4f4-05bf347fc9d8",
+  "timestamp" : 1779417305.418179100,
+  "operator" : "mo1@example.com",
+  "actionType" : "Application Status",
+  "target" : "52547174-e40c-4e6a-9748-258a6e9f7931",
+  "description" : "Status changed to: Shortlisted"
 } ]
