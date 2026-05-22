@@ -10,6 +10,14 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.regex.Pattern;
 
+/**
+ * Handles TA account registration.
+ *
+ * <p>Mapped to {@code /register}. The {@code doGet} method shows the registration
+ * form for unauthenticated visitors. The {@code doPost} method validates all
+ * input fields — username format, email format, password length and confirmation —
+ * checks uniqueness of username and email, and creates a new TA account on success.</p>
+ */
 @WebServlet(name = "RegisterServlet", urlPatterns = "/register")
 public class RegisterServlet extends BaseServlet {
 
@@ -19,6 +27,14 @@ public class RegisterServlet extends BaseServlet {
     private static final Pattern USERNAME_PATTERN =
             Pattern.compile("^[A-Za-z0-9_]{3,20}$");
 
+    /**
+     * Displays the registration form or redirects already-logged-in users to the dashboard.
+     *
+     * @param req  the HTTP request
+     * @param resp the HTTP response
+     * @throws ServletException if forwarding fails
+     * @throws IOException      if an I/O error occurs
+     */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (isLoggedIn(req)) {
@@ -28,6 +44,20 @@ public class RegisterServlet extends BaseServlet {
         forwardTo(req, resp, "/register.jsp");
     }
 
+    /**
+     * Processes the registration form by validating input and creating a new TA account.
+     *
+     * <p>Validates that all required fields are present, username matches the allowed
+     * pattern (3-20 alphanumeric/underscore characters), email is well-formed, password
+     * is at least 6 characters, and password confirmation matches. Also checks that
+     * neither the username nor the email is already taken.</p>
+     *
+     * @param req  the HTTP request containing {@code username}, {@code email},
+     *             {@code password}, and {@code confirmPassword} parameters
+     * @param resp the HTTP response
+     * @throws ServletException if forwarding fails
+     * @throws IOException      if an I/O error occurs
+     */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (isLoggedIn(req)) {

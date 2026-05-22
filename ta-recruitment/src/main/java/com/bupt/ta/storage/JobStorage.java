@@ -22,12 +22,23 @@ public class JobStorage {
     private final javax.servlet.ServletContext servletContext;
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
+    /**
+     * Constructs a {@code JobStorage} instance and ensures the underlying text
+     * storage file exists.
+     *
+     * @param context the ServletContext used to resolve the real path to the storage file
+     */
     public JobStorage(ServletContext context) {
         this.storageFile = new File(context.getRealPath(STORAGE_PATH));
         this.servletContext = context;
         ensureStorageExists();
     }
 
+    /**
+     * Ensures that the directory and storage file exist, creating them if necessary.
+     *
+     * @throws IllegalStateException if the directory or file cannot be created
+     */
     private void ensureStorageExists() {
         try {
             File parent = storageFile.getParentFile();
@@ -42,6 +53,14 @@ public class JobStorage {
         }
     }
 
+    /**
+     * Loads all job records from the pipe-delimited text storage file. Each line
+     * is parsed into a {@link Job}; lines with fewer than the expected number of
+     * fields or with unparseable dates are silently skipped.
+     *
+     * @return a mutable list of all stored jobs (never {@code null})
+     * @throws IllegalStateException if the storage file cannot be read
+     */
     private List<Job> loadAll() {
         List<Job> jobs = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(storageFile))) {
@@ -113,6 +132,13 @@ public class JobStorage {
         }
     }
 
+    /**
+     * Persists all jobs to the pipe-delimited text storage file, overwriting any
+     * existing content.
+     *
+     * @param jobs the list of jobs to write (must not be {@code null})
+     * @throws IllegalStateException if the file cannot be written
+     */
     private void saveAll(List<Job> jobs) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(storageFile))) {
             for (Job job : jobs) {
@@ -133,6 +159,12 @@ public class JobStorage {
         }
     }
 
+    /**
+     * Saves a new job record to persistent storage and records an audit-log entry
+     * for the creation.
+     *
+     * @param job the job to persist (must not be {@code null})
+     */
     public void save(Job job) {
         List<Job> jobs = loadAll();
         jobs.add(job);
@@ -143,6 +175,13 @@ public class JobStorage {
         } catch (Exception ignored) {}
     }
 
+    /**
+     * Updates an existing job record in storage. If the job ID is not found,
+     * the job is added as a new record. An audit-log entry is recorded on a
+     * best-effort basis.
+     *
+     * @param updatedJob the job with updated fields (must not be {@code null})
+     */
     public void update(Job updatedJob) {
         List<Job> jobs = loadAll();
         boolean replaced = false;
@@ -163,6 +202,13 @@ public class JobStorage {
         } catch (Exception ignored) {}
     }
 
+    /**
+     * Marks a job as archived by setting its status to {@link Job#STATUS_ARCHIVED}
+     * and updating its {@code updatedAt} timestamp. An audit-log entry is recorded
+     * on a best-effort basis.
+     *
+     * @param id the identifier of the job to archive
+     */
     public void archive(String id) {
         List<Job> jobs = loadAll();
         for (Job job : jobs) {
@@ -180,6 +226,18 @@ public class JobStorage {
         } catch (Exception ignored) {}
     }
 
+    /**
+     * Creates a new job record with the given parameters, persists it, and returns
+     * the fully populated {@link Job} object.
+     *
+     * @param title        the job title
+     * @param moduleCode   the associated module or course code
+     * @param workload     a description of the expected workload
+     * @param requirements a description of the position requirements
+     * @param deadline     the application deadline
+     * @param postedBy     the email or identifier of the user posting the job
+     * @return the newly created and persisted job
+     */
     public Job createNew(String title, String moduleCode, String workload, String requirements, LocalDate deadline, String postedBy) {
         Job job = new Job();
         job.setId(UUID.randomUUID().toString());
@@ -196,10 +254,21 @@ public class JobStorage {
         return job;
     }
 
+    /**
+     * Returns every job record currently stored.
+     *
+     * @return a list of all jobs (never {@code null})
+     */
     public List<Job> findAll() {
         return loadAll();
     }
 
+    /**
+     * Finds a single job by its unique identifier.
+     *
+     * @param id the job identifier to search for
+     * @return the matching job, or {@code null} if not found
+     */
     public Job findById(String id) {
         return loadAll().stream()
                 .filter(job -> job.getId().equals(id))

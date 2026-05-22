@@ -12,9 +12,25 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
+/**
+ * Servlet for creating new TA position listings by Module Organizers (MO).
+ *
+ * <p>Mapped to {@code /post-job}. Handles GET requests to display the
+ * position creation form and POST requests to validate and persist
+ * new job positions with title, module code, workload, requirements,
+ * and deadline fields.</p>
+ */
 @WebServlet("/post-job")
 public class PostJobServlet extends BaseServlet {
 
+    /**
+     * Displays the new position creation form.
+     *
+     * @param req the HTTP request
+     * @param resp the HTTP response
+     * @throws ServletException if forwarding to the JSP fails
+     * @throws IOException if an I/O error occurs
+     */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (!requireLogin(req, resp)) return;
@@ -23,6 +39,19 @@ public class PostJobServlet extends BaseServlet {
         forwardTo(req, resp, "/secure/mo/post_position.jsp");
     }
 
+    /**
+     * Processes the position creation form submission.
+     *
+     * <p>Validates all required fields (title, moduleCode, workload,
+     * requirements, deadline), checks that the deadline is a future date,
+     * standardizes field formats, and persists the new job position.
+     * Returns the creation form with an error message if validation fails.</p>
+     *
+     * @param req the HTTP request containing position data parameters
+     * @param resp the HTTP response
+     * @throws ServletException if forwarding to the JSP fails
+     * @throws IOException if an I/O error occurs
+     */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (!requireLogin(req, resp)) return;

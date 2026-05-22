@@ -10,9 +10,25 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
 
+/**
+ * Servlet for administrators to manage user accounts.
+ *
+ * <p>Mapped to {@code /secure/admin/user-management}. Handles GET requests
+ * to list all users and POST requests to create, toggle account status,
+ * reset passwords, and delete users. Enforces safeguards against
+ * disabling or deleting the last active administrator account.</p>
+ */
 @WebServlet(name = "UserManagementServlet", urlPatterns = "/secure/admin/user-management")
 public class UserManagementServlet extends BaseServlet {
 
+    /**
+     * Retrieves and displays all registered users for admin management.
+     *
+     * @param req the HTTP request
+     * @param resp the HTTP response
+     * @throws ServletException if forwarding to the JSP fails
+     * @throws IOException if an I/O error occurs
+     */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (!requirePermission(req, resp, User.Role.ADMIN)) {
@@ -26,6 +42,22 @@ public class UserManagementServlet extends BaseServlet {
         forwardTo(req, resp, "/secure/admin/user_management.jsp");
     }
 
+    /**
+     * Handles user management actions submitted by an administrator.
+     *
+     * <p>Supports the following actions via the {@code action} parameter:</p>
+     * <ul>
+     *   <li>{@code create} - Creates a new user with email, password, role, and optional username.</li>
+     *   <li>{@code toggleStatus} - Activates or deactivates a user account with safety checks.</li>
+     *   <li>{@code resetPassword} - Resets a user's password to the default value.</li>
+     *   <li>{@code delete} - Deletes a user account with safeguards for the last admin.</li>
+     * </ul>
+     *
+     * @param req the HTTP request containing action and user data parameters
+     * @param resp the HTTP response
+     * @throws ServletException if forwarding to the JSP fails
+     * @throws IOException if an I/O error occurs
+     */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (!requirePermission(req, resp, User.Role.ADMIN)) {

@@ -17,9 +17,34 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Servlet for managing TA position listings by Module Organizers (MO).
+ *
+ * <p>Mapped to {@code /secure/mo/manage-job}. Handles GET requests for viewing,
+ * editing, and browsing job history, and POST requests for archiving, rolling
+ * back, and updating job positions. All modifications are recorded in the job
+ * history storage for audit traceability.</p>
+ */
 @WebServlet("/secure/mo/manage-job")
 public class ManageJobServlet extends BaseServlet {
 
+    /**
+     * Handles GET requests for job position management.
+     *
+     * <p>Supports the following actions via the {@code action} parameter:</p>
+     * <ul>
+     *   <li>{@code edit} - Displays the edit form for a specific position.</li>
+     *   <li>{@code view} - Displays position details with rollback capability.</li>
+     *   <li>{@code history} - Shows the change history for a position.</li>
+     *   <li>{@code historyDetail} - Shows a specific historical revision.</li>
+     *   <li><em>(default)</em> - Lists all positions.</li>
+     * </ul>
+     *
+     * @param req the HTTP request containing action and jobId parameters
+     * @param resp the HTTP response
+     * @throws ServletException if forwarding to a JSP fails
+     * @throws IOException if an I/O error occurs
+     */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (!requireLogin(req, resp)) return;
@@ -95,6 +120,21 @@ public class ManageJobServlet extends BaseServlet {
         forwardTo(req, resp, "/secure/mo/manage_positions.jsp");
     }
 
+    /**
+     * Handles POST requests for job position modifications.
+     *
+     * <p>Supports the following actions via the {@code action} parameter:</p>
+     * <ul>
+     *   <li>{@code archive} - Archives a position, recording the change in history.</li>
+     *   <li>{@code rollback} - Reverts a position to its previous snapshot.</li>
+     *   <li>{@code update} - Updates position fields with validation.</li>
+     * </ul>
+     *
+     * @param req the HTTP request containing action, jobId, and position data
+     * @param resp the HTTP response
+     * @throws ServletException if forwarding to a JSP fails
+     * @throws IOException if an I/O error occurs
+     */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (!requireLogin(req, resp)) return;

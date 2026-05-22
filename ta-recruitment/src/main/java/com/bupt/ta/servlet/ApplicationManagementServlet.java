@@ -18,16 +18,29 @@ import com.bupt.ta.model.User;
 import com.bupt.ta.storage.ApplicationStorage;
 import com.bupt.ta.storage.ProfileStorage;
 
-@WebServlet(name = "ApplicationManagementServlet", urlPatterns = "/secure/mo/application-management")
 /**
  * Handles MO-side application review and applicant sorting.
  *
- * <p>Applicant GPA and skill values are loaded from {@link TAProfile} records
- * so the application list can be sorted by profile-backed attributes as well
- * as by application submission time.</p>
+ * <p>Mapped to {@code /secure/mo/application-management}. Requires MO role
+ * permission. Applicant GPA and skill values are loaded from {@link TAProfile}
+ * records so the application list can be sorted by profile-backed attributes
+ * as well as by application submission time.</p>
  */
+@WebServlet(name = "ApplicationManagementServlet", urlPatterns = "/secure/mo/application-management")
 public class ApplicationManagementServlet extends BaseServlet {
 
+    /**
+     * Retrieves all applications along with their associated TA profiles and
+     * presents a sortable list to the MO user.
+     *
+     * <p>Supports sorting by application time, GPA, and skills, in ascending or
+     * descending order.</p>
+     *
+     * @param req  the HTTP request containing optional {@code sortBy} and {@code order} parameters
+     * @param resp the HTTP response
+     * @throws ServletException if forwarding fails
+     * @throws IOException      if an I/O error occurs
+     */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (!requirePermission(req, resp, User.Role.MO)) {
@@ -49,25 +62,24 @@ public class ApplicationManagementServlet extends BaseServlet {
         forwardTo(req, resp, "/secure/mo/application_list.jsp");
     }
 
+    /**
+     * Handles bulk application status updates from the MO dashboard.
+     *
+     * <p>Accepts one or more application IDs and a target status, validates input,
+     * and applies the status change to all selected applications. The current MO
+     * user is recorded as the operator for audit purposes.</p>
+     *
+     * @param req  the HTTP request containing {@code applicationId} (array) and
+     *             {@code status} (an {@link Application.Status} value) parameters
+     * @param resp the HTTP response
+     * @throws ServletException if forwarding fails
+     * @throws IOException      if an I/O error occurs
+     */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (!requirePermission(req, resp, User.Role.MO)) {
             return;
         }
-
-        /**
-         * Handles bulk application status updates from the MO dashboard.
-         * Accepts one or more application IDs and a target status, validates input,
-         * and applies the status change to all selected applications via ApplicationStorage.
-         * The current MO user is recorded as the operator in the audit log.
-         *
-         * Request parameters:
-         *   - applicationId: array of application IDs to update (from checkboxes)
-         *   - status: target Application.Status value (e.g., "Pending", "Shortlisted", "Accepted", "Rejected")
-         *
-         * On success, redirects back to the application list with a success message.
-         * On error (missing parameters or invalid status), displays an error message.
-         */
 
         String[] applicationIds = req.getParameterValues("applicationId");
         String status = req.getParameter("status");
