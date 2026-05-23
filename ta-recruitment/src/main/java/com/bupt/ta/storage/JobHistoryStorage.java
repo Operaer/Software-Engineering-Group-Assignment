@@ -19,7 +19,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Text-backed storage for job modification history.
+ * Text file storage manager for job modification history.
+ * <p>Records job creation, update, archiving, and other operation histories in text line format,
+ * supporting querying by job ID and snapshot restoration.</p>
  */
 public class JobHistoryStorage {
     private static final String STORAGE_PATH = AppConfig.JOB_HISTORY_FILE;
@@ -28,6 +30,11 @@ public class JobHistoryStorage {
             .registerModule(new JavaTimeModule())
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
+    /**
+     * Constructs a JobHistoryStorage instance, initializes the storage file and ensures the file exists.
+     *
+     * @param context Servlet context, used to obtain the real path of the storage file
+     */
     public JobHistoryStorage(ServletContext context) {
         this.storageFile = new File(context.getRealPath(STORAGE_PATH));
         this.context = context;
@@ -36,6 +43,9 @@ public class JobHistoryStorage {
 
     private final ServletContext context;
 
+    /**
+     * Ensures the storage file and its parent directory exist; creates them if they do not.
+     */
     private void ensureStorageExists() {
         try {
             File parent = storageFile.getParentFile();
@@ -50,6 +60,11 @@ public class JobHistoryStorage {
         }
     }
 
+    /**
+     * Loads all job history records from the file.
+     *
+     * @return the list of job history records
+     */
     private List<JobHistoryEntry> loadAll() {
         List<JobHistoryEntry> entries = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(storageFile))) {
@@ -75,10 +90,27 @@ public class JobHistoryStorage {
         return entries;
     }
 
+    /**
+     * Records a job operation history (without a snapshot).
+     *
+     * @param jobId     the job ID
+     * @param action    the action type (e.g., "create", "update", "archive")
+     * @param details   the operation details
+     * @param changedBy the operator identifier
+     */
     public void record(String jobId, String action, String details, String changedBy) {
         record(jobId, action, details, null, changedBy);
     }
 
+    /**
+     * Records a job operation history (with a snapshot) and synchronously writes an audit log.
+     *
+     * @param jobId     the job ID
+     * @param action    the action type
+     * @param details   the operation details
+     * @param snapshot  the job snapshot object at the time of operation (may be null)
+     * @param changedBy the operator identifier
+     */
     public void record(String jobId, String action, String details, Job snapshot, String changedBy) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(storageFile, true))) {
             String encodedDetails = URLEncoder.encode(details == null ? "" : details, StandardCharsets.UTF_8);
@@ -94,6 +126,12 @@ public class JobHistoryStorage {
         }
     }
 
+    /**
+     * Finds the most recent snapshot data for the specified job.
+     *
+     * @param jobId the job ID
+     * @return the most recent job snapshot object, or null if none exists
+     */
     public Job findLastSnapshot(String jobId) {
         List<JobHistoryEntry> entries = loadAll();
         for (int i = entries.size() - 1; i >= 0; i--) {
@@ -109,12 +147,25 @@ public class JobHistoryStorage {
         return null;
     }
 
+    /**
+     * Queries all history records by job ID (sorted in chronological order).
+     *
+     * @param jobId the job ID
+     * @return the list of history records for the job
+     */
     public List<JobHistoryEntry> findByJobId(String jobId) {
         return loadAll().stream()
                 .filter(entry -> jobId != null && jobId.equals(entry.getJobId()))
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Queries a single history record by job ID and change time.
+     *
+     * @param jobId     the job ID
+     * @param changedAt the change timestamp
+     * @return the matching history record, or null if not found
+     */
     public JobHistoryEntry findByJobIdAndChangedAt(String jobId, Instant changedAt) {
         if (jobId == null || changedAt == null) {
             return null;

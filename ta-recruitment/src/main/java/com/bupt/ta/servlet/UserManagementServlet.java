@@ -10,6 +10,14 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
 
+/**
+ * Admin User Management Servlet.
+ *
+ * <p>Provides administrators with full user management capabilities, including: creating
+ * new users, toggling user enabled/disabled status, resetting user passwords to the
+ * default value, and deleting users. It prevents administrators from disabling or deleting
+ * their own account, as well as deleting the last administrator account.</p>
+ */
 @WebServlet(name = "UserManagementServlet", urlPatterns = "/secure/admin/user-management")
 public class UserManagementServlet extends BaseServlet {
 

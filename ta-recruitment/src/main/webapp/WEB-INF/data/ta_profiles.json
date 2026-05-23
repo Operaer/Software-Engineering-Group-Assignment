@@ -1,12 +1,32 @@
 {
+  "lzy@qq.com" : {
+    "email" : "lzy@qq.com",
+    "name" : "1",
+    "studentId" : "1",
+    "major" : "1",
+    "phone" : "1",
+    "gpa" : 1.0,
+    "skills" : [ "1" ],
+    "resumeFileName" : "lzy_1779552305673.pdf"
+  },
   "ta1@example.com" : {
     "email" : "ta1@example.com",
     "name" : "operaer",
     "studentId" : "114514",
-    "major" : "1",
+    "major" : "IST",
     "phone" : "1231321321",
     "gpa" : 4.0,
-    "skills" : [ "2" ],
-    "resumeFileName" : "ta1_1779263196670.pdf"
+    "skills" : [ "Rich work experience", "outstanding performance" ],
+    "resumeFileName" : "ta1_1779530395126.pdf"
+  },
+  "tata@example.com" : {
+    "email" : "tata@example.com",
+    "name" : "1",
+    "studentId" : "111",
+    "major" : "IST",
+    "phone" : "111",
+    "gpa" : 4.0,
+    "skills" : [ "111" ],
+    "resumeFileName" : null
   }
 }

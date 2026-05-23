@@ -12,6 +12,14 @@ import com.bupt.ta.model.Application;
 import com.bupt.ta.model.User;
 import com.bupt.ta.storage.ApplicationStorage;
 
+/**
+ * Admin Application Management Servlet.
+ *
+ * <p>Provides administrators with the ability to view all job applications and update
+ * individual application statuses. Administrators can change the application status to
+ * Pending, Shortlisted, Accepted, or Rejected. The operator's email is recorded in the
+ * audit log.</p>
+ */
 @WebServlet(name = "AdminApplicationManagementServlet", urlPatterns = "/secure/admin/application-management")
 public class AdminApplicationManagementServlet extends BaseServlet {
 
@@ -29,19 +37,6 @@ public class AdminApplicationManagementServlet extends BaseServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         requirePermission(req, resp, User.Role.ADMIN);
-
-        /**
-         * Handles single application status updates from the admin dashboard.
-         * Admin users can change the status of any application. The current admin user's
-         * email address is recorded as the operator in the audit log for traceability.
-         *
-         * Request parameters:
-         *   - applicationId: the ID of the application to update
-         *   - status: target Application.Status value (e.g., "Pending", "Shortlisted", "Accepted", "Rejected")
-         *
-         * On success, updates the application and displays a success message.
-         * On error, displays an error message and reloads the application list.
-         */
 
         String applicationId = req.getParameter("applicationId");
         String status = req.getParameter("status");

@@ -5,6 +5,7 @@ D:\桌面\Software-Engineering-Group-Assignment-main\ta-recruitment\src\main\jav
 D:\桌面\Software-Engineering-Group-Assignment-main\ta-recruitment\src\main\java\com\bupt\ta\storage\ApplicationStorage.java
 D:\桌面\Software-Engineering-Group-Assignment-main\ta-recruitment\src\main\java\com\bupt\ta\model\JobHistoryEntry.java
 D:\桌面\Software-Engineering-Group-Assignment-main\ta-recruitment\src\main\java\com\bupt\ta\model\TAProfile.java
+D:\桌面\Software-Engineering-Group-Assignment-main\ta-recruitment\src\main\java\com\bupt\ta\model\MOProgressStats.java
 D:\桌面\Software-Engineering-Group-Assignment-main\ta-recruitment\src\main\java\com\bupt\ta\storage\ProfileStorage.java
 D:\桌面\Software-Engineering-Group-Assignment-main\ta-recruitment\src\main\java\com\bupt\ta\filter\AuthFilter.java
 D:\桌面\Software-Engineering-Group-Assignment-main\ta-recruitment\src\main\java\com\bupt\ta\servlet\ResumeDownloadServlet.java
@@ -31,6 +32,7 @@ D:\桌面\Software-Engineering-Group-Assignment-main\ta-recruitment\src\main\jav
 D:\桌面\Software-Engineering-Group-Assignment-main\ta-recruitment\src\main\java\com\bupt\ta\config\AppConfig.java
 D:\桌面\Software-Engineering-Group-Assignment-main\ta-recruitment\src\main\java\com\bupt\ta\servlet\DashboardServlet.java
 D:\桌面\Software-Engineering-Group-Assignment-main\ta-recruitment\src\main\java\com\bupt\ta\servlet\LoginServlet.java
+D:\桌面\Software-Engineering-Group-Assignment-main\ta-recruitment\src\main\java\com\bupt\ta\servlet\MOProgressServlet.java
 D:\桌面\Software-Engineering-Group-Assignment-main\ta-recruitment\src\main\java\com\bupt\ta\servlet\RegisterServlet.java
 D:\桌面\Software-Engineering-Group-Assignment-main\ta-recruitment\src\main\java\com\bupt\ta\servlet\UserManagementServlet.java
 D:\桌面\Software-Engineering-Group-Assignment-main\ta-recruitment\src\main\java\com\bupt\ta\servlet\ApplicationServlet.java

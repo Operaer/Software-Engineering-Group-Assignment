@@ -13,7 +13,7 @@
 <div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center">
         <div>
-            <h2>TA Profile</h2>
+            <h2>Profile</h2>
             <p class="text-muted">Fill in your information and upload your resume for MO review.</p>
         </div>
         <div>
@@ -60,7 +60,7 @@
 
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">Student ID</label>
+                        <label class="form-label">ID</label>
                         <input type="text" name="studentId" class="form-control" value="<%= profile.getStudentId() == null ? "" : profile.getStudentId() %>" required>
                     </div>
                     <div class="col-md-6 mb-3">

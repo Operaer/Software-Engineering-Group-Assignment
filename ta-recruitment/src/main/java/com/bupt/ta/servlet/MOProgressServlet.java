@@ -22,11 +22,12 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * Handles the MO05 Recruitment Progress Dashboard.
+ * MO Recruitment Progress Dashboard Servlet.
  *
- * <p>The servlet calculates recruitment progress dynamically from the current
- * job and application records. It provides per-position applicant, shortlisted,
- * accepted, deadline countdown, and colour status data to the progress JSP.</p>
+ * <p>This Servlet dynamically calculates recruitment progress data from the current
+ * job postings and application records. For each position, it provides applicant count,
+ * shortlisted count, accepted count, deadline countdown, and status color indicators,
+ * then renders them on the progress JSP page.</p>
  *
  * @author Wenqi Guan
  * @version 1.0
@@ -58,12 +59,11 @@ public class MOProgressServlet extends BaseServlet {
     }
 
     /**
-     * Keeps the dashboard focused on the current MO's postings when postedBy is available.
-     * Older seed data may not contain postedBy consistently, so those records remain visible.
+     * Filters the list of jobs belonging to the current MO.
      *
-     * @param jobs all jobs from storage
-     * @param currentUser currently logged-in MO
-     * @return jobs relevant to the current MO
+     * @param jobs        all job listings
+     * @param currentUser the currently logged-in user
+     * @return the filtered job list
      */
     private List<Job> filterJobsForCurrentMO(List<Job> jobs, User currentUser) {
         if (currentUser == null || currentUser.getEmail() == null) {
@@ -78,11 +78,11 @@ public class MOProgressServlet extends BaseServlet {
     }
 
     /**
-     * Builds all summary cards and per-position progress rows.
+     * Builds the MO progress statistics object, iterating through all jobs to calculate totals.
      *
-     * @param jobs MO position records
-     * @param applications all application records
-     * @return calculated dashboard statistics
+     * @param jobs         the job list
+     * @param applications the application list
+     * @return the progress statistics object
      */
     private MOProgressStats buildStats(List<Job> jobs, List<Application> applications) {
         MOProgressStats stats = new MOProgressStats();
@@ -116,6 +116,12 @@ public class MOProgressServlet extends BaseServlet {
         return stats;
     }
 
+    /**
+     * Groups applications by position ID.
+     *
+     * @param applications the application list
+     * @return a mapping from position ID to application list
+     */
     private Map<String, List<Application>> groupApplicationsByPosition(List<Application> applications) {
         Map<String, List<Application>> grouped = new HashMap<>();
         for (Application application : applications) {
@@ -127,6 +133,14 @@ public class MOProgressServlet extends BaseServlet {
         return grouped;
     }
 
+    /**
+     * Builds the progress data row for a single position.
+     *
+     * @param job          the job object
+     * @param applications the application list for this position
+     * @param today        the current date
+     * @return the position progress data
+     */
     private MOProgressStats.PositionProgress buildPositionProgress(Job job, List<Application> applications, LocalDate today) {
         MOProgressStats.PositionProgress row = new MOProgressStats.PositionProgress();
         int shortlisted = countByStatus(applications, Application.Status.Shortlisted.name());
@@ -147,6 +161,13 @@ public class MOProgressServlet extends BaseServlet {
         return row;
     }
 
+    /**
+     * Counts applications matching a given status.
+     *
+     * @param applications the application list
+     * @param status       the target status
+     * @return the count of applications matching that status
+     */
     private int countByStatus(List<Application> applications, String status) {
         int count = 0;
         for (Application application : applications) {
@@ -157,6 +178,14 @@ public class MOProgressServlet extends BaseServlet {
         return count;
     }
 
+    /**
+     * Calculates the progress percentage based on applicant, shortlisted, and accepted counts.
+     *
+     * @param applicants  total applicant count
+     * @param shortlisted shortlisted count
+     * @param accepted    accepted count
+     * @return the progress percentage
+     */
     private int calculateProgressPercent(int applicants, int shortlisted, int accepted) {
         if (accepted > 0) {
             return 100;
@@ -170,6 +199,13 @@ public class MOProgressServlet extends BaseServlet {
         return 10;
     }
 
+    /**
+     * Sets the progress label and badge style based on job status, deadline, and accepted count.
+     *
+     * @param row            the progress data row
+     * @param job            the job object
+     * @param daysRemaining  the number of days remaining
+     */
     private void applyProgressStatus(MOProgressStats.PositionProgress row, Job job, long daysRemaining) {
         if (Job.STATUS_ARCHIVED.equalsIgnoreCase(job.getStatus()) || Job.STATUS_CLOSED.equalsIgnoreCase(job.getStatus()) || row.getAcceptedCount() > 0) {
             row.setProgressLabel("Completed");

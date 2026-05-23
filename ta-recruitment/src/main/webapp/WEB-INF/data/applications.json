@@ -1,36 +1,4 @@
 [ {
-  "id" : "cde99465-0fb1-424d-a25b-0c33860dfb76",
-  "taEmail" : "ta1@example.com",
-  "positionId" : "f6800de0-a483-4d92-bf13-74854f63ef7d",
-  "positionTitle" : "ææ®å°å¡ta",
-  "appliedAt" : "2026-04-07T13:11:39.592907200Z",
-  "status" : "Accepted",
-  "assignedWorkloadHours" : 1
-}, {
-  "id" : "b886ca31-0884-48b2-a111-7fe773353398",
-  "taEmail" : "ta1@example.com",
-  "positionId" : "f6800de0-a483-4d92-bf13-74854f63ef7d",
-  "positionTitle" : "ææ®å°å¡ta",
-  "appliedAt" : "2026-04-07T13:13:41.605885200Z",
-  "status" : "Accepted",
-  "assignedWorkloadHours" : null
-}, {
-  "id" : "a5848777-cbb0-4526-b83d-16e99f5b0fd0",
-  "taEmail" : "ta1@example.com",
-  "positionId" : "f6800de0-a483-4d92-bf13-74854f63ef7d",
-  "positionTitle" : "ææ®å°å¡ta",
-  "appliedAt" : "2026-04-07T13:13:44.802163600Z",
-  "status" : "Rejected",
-  "assignedWorkloadHours" : null
-}, {
-  "id" : "bfdf1dbf-5871-4497-af1d-9e75047a8d8c",
-  "taEmail" : "ta1@example.com",
-  "positionId" : "f6800de0-a483-4d92-bf13-74854f63ef7d",
-  "positionTitle" : "ææ®å°å¡ta",
-  "appliedAt" : "2026-04-07T13:26:31.354712400Z",
-  "status" : "Rejected",
-  "assignedWorkloadHours" : null
-}, {
   "id" : "606f8b50-e9e5-43dd-a50b-78d77e3e6b8f",
   "taEmail" : "ta1@example.com",
   "positionId" : "54805dc5-6fa4-4c3d-9395-75915178302e",
@@ -45,14 +13,6 @@
   "positionTitle" : "SDASDA",
   "appliedAt" : "2026-04-07T13:48:31.340167900Z",
   "status" : "Accepted",
-  "assignedWorkloadHours" : null
-}, {
-  "id" : "8f3c700e-a694-46e1-b31b-479c8ccfe832",
-  "taEmail" : "ta1@example.com",
-  "positionId" : "680affde-efbd-478c-a4ae-a233f1a5db18",
-  "positionTitle" : "Test Active Position",
-  "appliedAt" : "2026-05-20T05:46:05.557083300Z",
-  "status" : "Rejected",
   "assignedWorkloadHours" : null
 }, {
   "id" : "8420aee9-cc17-4e74-b45d-0c4ff9faba1c",
@@ -87,11 +47,51 @@
   "status" : "Pending",
   "assignedWorkloadHours" : null
 }, {
-  "id" : "52547174-e40c-4e6a-9748-258a6e9f7931",
+  "id" : "854dea79-a0ed-4204-b847-42441f052b39",
   "taEmail" : "ta1@example.com",
-  "positionId" : "d0fda8a0-5f38-4d7f-9a2b-b77a614534d7",
-  "positionTitle" : "ohhhhhhhhhhhhhhhh",
-  "appliedAt" : "2026-05-20T08:26:49.104879700Z",
-  "status" : "Shortlisted",
+  "positionId" : "c417558c-12de-45bf-8d4b-5b72354f859a",
+  "positionTitle" : "Identety V",
+  "appliedAt" : "2026-05-23T08:46:54.718213Z",
+  "status" : "Pending",
+  "assignedWorkloadHours" : null
+}, {
+  "id" : "681782d7-d064-4d50-b365-af1840e8b090",
+  "taEmail" : "ta10@example.com",
+  "positionId" : "35f3b68a-b779-409b-851b-0088d914f3c1",
+  "positionTitle" : "MATH201 - Math TA",
+  "appliedAt" : "2026-05-23T09:23:53.149539Z",
+  "status" : "Pending",
+  "assignedWorkloadHours" : null
+}, {
+  "id" : "47f42298-b77a-47fc-a160-dcf6043d5862",
+  "taEmail" : "tata@example.com",
+  "positionId" : "a8d003d3-c2ad-4f5e-afc0-349fdbe21509",
+  "positionTitle" : "kskbl",
+  "appliedAt" : "2026-05-23T09:51:49.764948200Z",
+  "status" : "Pending",
+  "assignedWorkloadHours" : null
+}, {
+  "id" : "57b3af14-2316-4561-a975-d98c4b7a8f38",
+  "taEmail" : "tta@example.com",
+  "positionId" : "a8d003d3-c2ad-4f5e-afc0-349fdbe21509",
+  "positionTitle" : "kskbl",
+  "appliedAt" : "2026-05-23T10:01:02.859963600Z",
+  "status" : "Accepted",
+  "assignedWorkloadHours" : null
+}, {
+  "id" : "ce74e56e-66e6-453a-afed-dc09115c8ded",
+  "taEmail" : "tata@example.com",
+  "positionId" : "0421628b-d686-414c-9298-e9efa6c09fab",
+  "positionTitle" : "wwwwwwwooooooo",
+  "appliedAt" : "2026-05-23T16:03:30.533497Z",
+  "status" : "Rejected",
+  "assignedWorkloadHours" : null
+}, {
+  "id" : "31828bb1-3862-489f-8f1c-cf2f318fd6d2",
+  "taEmail" : "lzy@qq.com",
+  "positionId" : "a8d003d3-c2ad-4f5e-afc0-349fdbe21509",
+  "positionTitle" : "kskbl",
+  "appliedAt" : "2026-05-23T16:05:19.504337400Z",
+  "status" : "Pending",
   "assignedWorkloadHours" : null
 } ]
