@@ -1,0 +1,61 @@
+@options
+@packages
+-classpath
+'C:/Users/28462/.m2/repository/javax/servlet/javax.servlet-api/4.0.1/javax.servlet-api-4.0.1.jar;C:/Users/28462/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar;C:/Users/28462/.m2/repository/com/fasterxml/jackson/core/jackson-databind/2.15.2/jackson-databind-2.15.2.jar;C:/Users/28462/.m2/repository/com/fasterxml/jackson/core/jackson-annotations/2.15.2/jackson-annotations-2.15.2.jar;C:/Users/28462/.m2/repository/com/fasterxml/jackson/core/jackson-core/2.15.2/jackson-core-2.15.2.jar;C:/Users/28462/.m2/repository/com/fasterxml/jackson/datatype/jackson-datatype-jsr310/2.15.2/jackson-datatype-jsr310-2.15.2.jar;C:/Users/28462/.m2/repository/org/apache/tomcat/embed/tomcat-embed-core/9.0.80/tomcat-embed-core-9.0.80.jar;C:/Users/28462/.m2/repository/org/apache/tomcat/tomcat-annotations-api/9.0.80/tomcat-annotations-api-9.0.80.jar;C:/Users/28462/.m2/repository/org/apache/tomcat/embed/tomcat-embed-jasper/9.0.80/tomcat-embed-jasper-9.0.80.jar;C:/Users/28462/.m2/repository/org/eclipse/jdt/ecj/3.26.0/ecj-3.26.0.jar;C:/Users/28462/.m2/repository/org/apache/tomcat/embed/tomcat-embed-el/9.0.80/tomcat-embed-el-9.0.80.jar'
+-encoding
+'UTF-8'
+-private
+-source
+'21'
+-sourcepath
+'D:/桌面/tcz/ta-recruitment/src/main/java'
+-author
+-bottom
+'Copyright &#169; 2026. All rights reserved.'
+-charset
+'UTF-8'
+-d
+'D:/桌面/tcz/ta-recruitment/target/site/apidocs'
+-docencoding
+'UTF-8'
+-doctitle
+'TA Recruitment 0.1.0-SNAPSHOT API'
+-use
+-version
+-windowtitle
+'TA Recruitment 0.1.0-SNAPSHOT API'
+com.bupt.ta.config
+com.bupt.ta
+com.bupt.ta.filter
+com.bupt.ta.model
+com.bupt.ta.security
+com.bupt.ta.servlet
+com.bupt.ta.storage
+C:\Users\28462\.m2\repository\javax\servlet\javax.servlet-api\4.0.1\javax.servlet-api-4.0.1.jar = 1775097445892
+C:\Users\28462\.m2\repository\javax\servlet\jstl\1.2\jstl-1.2.jar = 1775097446209
+C:\Users\28462\.m2\repository\com\fasterxml\jackson\core\jackson-databind\2.15.2\jackson-databind-2.15.2.jar = 1775097446119
+C:\Users\28462\.m2\repository\com\fasterxml\jackson\core\jackson-annotations\2.15.2\jackson-annotations-2.15.2.jar = 1775097446086
+C:\Users\28462\.m2\repository\com\fasterxml\jackson\core\jackson-core\2.15.2\jackson-core-2.15.2.jar = 1775097446196
+C:\Users\28462\.m2\repository\com\fasterxml\jackson\datatype\jackson-datatype-jsr310\2.15.2\jackson-datatype-jsr310-2.15.2.jar = 1775571711885
+C:\Users\28462\.m2\repository\org\apache\tomcat\embed\tomcat-embed-core\9.0.80\tomcat-embed-core-9.0.80.jar = 1775097446368
+C:\Users\28462\.m2\repository\org\apache\tomcat\tomcat-annotations-api\9.0.80\tomcat-annotations-api-9.0.80.jar = 1775097446150
+C:\Users\28462\.m2\repository\org\apache\tomcat\embed\tomcat-embed-jasper\9.0.80\tomcat-embed-jasper-9.0.80.jar = 1775097446206
+C:\Users\28462\.m2\repository\org\eclipse\jdt\ecj\3.26.0\ecj-3.26.0.jar = 1775097446505
+C:\Users\28462\.m2\repository\org\apache\tomcat\embed\tomcat-embed-el\9.0.80\tomcat-embed-el-9.0.80.jar = 1775097446274
+D:\桌面\tcz\ta-recruitment\src\main\java = 1779551819260
+D:\桌面\tcz\ta-recruitment\target\site\apidocs\allclasses-index.html = 1779551990240
+D:\桌面\tcz\ta-recruitment\target\site\apidocs\allpackages-index.html = 1779551990240
+D:\桌面\tcz\ta-recruitment\target\site\apidocs\constant-values.html = 1779551989972
+D:\桌面\tcz\ta-recruitment\target\site\apidocs\element-list = 1779551989895
+D:\桌面\tcz\ta-recruitment\target\site\apidocs\help-doc.html = 1779551990293
+D:\桌面\tcz\ta-recruitment\target\site\apidocs\index-all.html = 1779551990282
+D:\桌面\tcz\ta-recruitment\target\site\apidocs\index.html = 1779551990194
+D:\桌面\tcz\ta-recruitment\target\site\apidocs\member-search-index.js = 1779551990240
+D:\桌面\tcz\ta-recruitment\target\site\apidocs\module-search-index.js = 1779551990240
+D:\桌面\tcz\ta-recruitment\target\site\apidocs\overview-summary.html = 1779551990289
+D:\桌面\tcz\ta-recruitment\target\site\apidocs\overview-tree.html = 1779551990186
+D:\桌面\tcz\ta-recruitment\target\site\apidocs\package-search-index.js = 1779551990240
+D:\桌面\tcz\ta-recruitment\target\site\apidocs\search.html = 1779551990282
+D:\桌面\tcz\ta-recruitment\target\site\apidocs\serialized-form.html = 1779551989987
+D:\桌面\tcz\ta-recruitment\target\site\apidocs\tag-search-index.js = 1779551990256
+D:\桌面\tcz\ta-recruitment\target\site\apidocs\type-search-index.js = 1779551990240
