@@ -15,15 +15,6 @@
     }
     String courseKeyword = request.getParameter("courseKeyword");
     String skillKeyword = request.getParameter("skillKeyword");
-    String minimumGpaRaw = request.getParameter("minimumGpa");
-    Double minimumGpaValue = null;
-    try {
-        minimumGpaValue = minimumGpaRaw == null || minimumGpaRaw.isBlank()
-                ? null
-                : Double.parseDouble(minimumGpaRaw.trim());
-    } catch (NumberFormatException ignored) {
-        minimumGpaValue = null;
-    }
 
     List<Job> filteredJobs = new ArrayList<>();
     for (Job job : availableJobs) {
@@ -33,24 +24,13 @@
                 || moduleCode.toLowerCase(Locale.ROOT).contains(courseKeyword.trim().toLowerCase(Locale.ROOT));
         boolean matchSkill = skillKeyword == null || skillKeyword.isBlank()
                 || requirements.toLowerCase(Locale.ROOT).contains(skillKeyword.trim().toLowerCase(Locale.ROOT));
-        double parsedGpaRequirement = 0.0;
-        Matcher gpaMatcher = Pattern.compile("(?i)gpa\\s*(?:>=|>|at least|minimum|min)?\\s*([0-4](?:\\.\\d+)?)").matcher(requirements);
-        if (gpaMatcher.find()) {
-            try {
-                parsedGpaRequirement = Double.parseDouble(gpaMatcher.group(1));
-            } catch (NumberFormatException ignored) {
-                parsedGpaRequirement = 0.0;
-            }
-        }
-        boolean matchGpa = minimumGpaValue == null || parsedGpaRequirement <= minimumGpaValue;
-        if (matchCourse && matchSkill && matchGpa) {
+        if (matchCourse && matchSkill) {
             filteredJobs.add(job);
         }
     }
     request.setAttribute("availableJobs", filteredJobs);
     request.setAttribute("courseKeyword", courseKeyword);
     request.setAttribute("skillKeyword", skillKeyword);
-    request.setAttribute("minimumGpa", minimumGpaValue);
 %>
 
 <div class="container mt-5">
@@ -74,10 +54,7 @@
                 <div class="col-md-4">
                     <input type="text" class="form-control" name="skillKeyword" value="${skillKeyword}" placeholder="Skill keyword">
                 </div>
-                <div class="col-md-2">
-                    <input type="number" step="0.01" min="0" max="4.0" class="form-control" name="minimumGpa" value="${minimumGpa}" placeholder="Min GPA">
-                </div>
-                <div class="col-md-2 d-flex gap-2">
+                <div class="col-md-4 d-flex gap-2">
                     <button type="submit" class="btn btn-primary w-100">Filter</button>
                     <a class="btn btn-outline-secondary w-100" href="${pageContext.request.contextPath}/secure/ta/positions">Reset</a>
                 </div>

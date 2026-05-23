@@ -27,14 +27,14 @@ import com.bupt.ta.storage.JobStorage;
 import com.bupt.ta.storage.UserStorage;
 
 /**
- * Servlet that provides workload management capabilities for School Administrators.
+ * Admin Workload Management Servlet.
  *
- * <p>The servlet displays TA workload summaries, identifies overloaded TAs,
- * shows module workload distribution, and supports manual adjustment of assigned
- * workload hours for accepted TA applications.</p>
+ * <p>Displays TA workload summary information, identifies overloaded TAs, shows module
+ * workload distribution, supports manual adjustment of assigned workload for accepted
+ * TA applications, and provides filtering by TA name/email, module, and workload range.</p>
  *
  * @author Operaer
- * @date 2026-05-17
+ * @since 2026-05-17
  */
 public class AdminWorkloadServlet extends BaseServlet {
     private static final int DEFAULT_SAFE_WEEKLY_LIMIT = 20;
@@ -173,6 +173,12 @@ public class AdminWorkloadServlet extends BaseServlet {
         resp.sendRedirect(req.getContextPath() + "/secure/admin/workload-management");
     }
 
+    /**
+     * Builds a user display name index, mapping emails to usernames.
+     *
+     * @return the email-to-username mapping table
+     * @throws IOException if reading user storage fails
+     */
     private Map<String, String> buildUserNameIndex() throws IOException {
         Map<String, String> result = new HashMap<>();
         for (Map.Entry<String, User> entry : userStorage.getAllUsers().entrySet()) {
@@ -184,6 +190,15 @@ public class AdminWorkloadServlet extends BaseServlet {
         return result;
     }
 
+    /**
+     * Checks whether a TA workload metric passes the filter criteria (name/email keyword, workload range).
+     *
+     * @param metric      the TA workload metric
+     * @param taFilter    the TA name or email keyword
+     * @param minWorkload the minimum workload
+     * @param maxWorkload the maximum workload
+     * @return true if it passes all filter criteria
+     */
     private boolean passesTAFilters(AdminDashboardStats.TAWorkloadMetric metric, String taFilter, Integer minWorkload, Integer maxWorkload) {
         if (taFilter != null && !taFilter.isBlank()) {
             String normalized = taFilter.toLowerCase(Locale.ROOT);
@@ -202,6 +217,14 @@ public class AdminWorkloadServlet extends BaseServlet {
         return true;
     }
 
+    /**
+     * Calculates the effective workload for an application. Uses the application-specific
+     * assigned workload if available; otherwise parses the workload from the job description.
+     *
+     * @param application the application object
+     * @param job         the job object
+     * @return the effective workload
+     */
     private int calculateEffectiveWorkload(Application application, Job job) {
         if (application == null) {
             return 0;
@@ -213,6 +236,12 @@ public class AdminWorkloadServlet extends BaseServlet {
         return parseWorkload(job == null ? null : job.getWorkload());
     }
 
+    /**
+     * Converts a TA accumulator to a TA workload metric object.
+     *
+     * @param accumulator the TA accumulator
+     * @return the TA workload metric
+     */
     private AdminDashboardStats.TAWorkloadMetric toTAWorkloadMetric(TAAccumulator accumulator) {
         AdminDashboardStats.TAWorkloadMetric metric = new AdminDashboardStats.TAWorkloadMetric();
         metric.setTaEmail(accumulator.taEmail);
@@ -223,6 +252,12 @@ public class AdminWorkloadServlet extends BaseServlet {
         return metric;
     }
 
+    /**
+     * Converts a module accumulator to a module workload metric object.
+     *
+     * @param accumulator the module accumulator
+     * @return the module workload metric
+     */
     private AdminDashboardStats.ModuleWorkloadMetric toModuleWorkloadMetric(ModuleAccumulator accumulator) {
         AdminDashboardStats.ModuleWorkloadMetric metric = new AdminDashboardStats.ModuleWorkloadMetric();
         metric.setModuleCode(accumulator.moduleCode);
@@ -232,6 +267,12 @@ public class AdminWorkloadServlet extends BaseServlet {
         return metric;
     }
 
+    /**
+     * Extracts a deduplicated and sorted list of module codes from all jobs for the frontend filter dropdown.
+     *
+     * @param jobs all job listings
+     * @return the sorted list of module codes
+     */
     private List<String> buildModuleOptions(List<Job> jobs) {
         return jobs.stream()
                 .map(job -> normalizeModuleCode(job.getModuleCode()))
@@ -240,6 +281,12 @@ public class AdminWorkloadServlet extends BaseServlet {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Normalizes the module filter parameter; returns "ALL" when null or "ALL".
+     *
+     * @param selectedModule the raw module parameter
+     * @return the normalized module code or "ALL"
+     */
     private String normalizeSelectedModule(String selectedModule) {
         if (selectedModule == null || selectedModule.isBlank() || "ALL".equalsIgnoreCase(selectedModule)) {
             return "ALL";
@@ -247,6 +294,12 @@ public class AdminWorkloadServlet extends BaseServlet {
         return selectedModule.trim().toUpperCase(Locale.ROOT);
     }
 
+    /**
+     * Normalizes optional text: trims whitespace, returns null for null/blank values.
+     *
+     * @param value the raw text
+     * @return the normalized text, or null if blank
+     */
     private String normalizeOptionalText(String value) {
         if (value == null || value.isBlank()) {
             return null;
@@ -254,6 +307,12 @@ public class AdminWorkloadServlet extends BaseServlet {
         return value.trim();
     }
 
+    /**
+     * Normalizes a module code: trims whitespace and converts to uppercase; returns "Unknown" for blank values.
+     *
+     * @param moduleCode the raw module code
+     * @return the normalized module code
+     */
     private String normalizeModuleCode(String moduleCode) {
         if (moduleCode == null || moduleCode.isBlank()) {
             return "Unknown";
@@ -261,6 +320,12 @@ public class AdminWorkloadServlet extends BaseServlet {
         return moduleCode.trim().toUpperCase(Locale.ROOT);
     }
 
+    /**
+     * Parses an optional integer parameter, returns null for invalid formats.
+     *
+     * @param value the integer string
+     * @return the parsed Integer, or null if parsing fails
+     */
     private Integer parseOptionalInteger(String value) {
         if (value == null || value.isBlank()) {
             return null;
@@ -272,11 +337,24 @@ public class AdminWorkloadServlet extends BaseServlet {
         }
     }
 
+    /**
+     * Parses an optional integer parameter, returns the default value for invalid formats.
+     *
+     * @param value    the integer string
+     * @param fallback the default value
+     * @return the parsed integer, or the default value if parsing fails
+     */
     private int parseOptionalInteger(String value, int fallback) {
         Integer parsed = parseOptionalInteger(value);
         return parsed != null ? parsed : fallback;
     }
 
+    /**
+     * Parses the numeric part from a workload description string.
+     *
+     * @param workload the workload description string (e.g., "20 hours/week")
+     * @return the parsed workload value, or 0 if parsing fails
+     */
     private int parseWorkload(String workload) {
         if (workload == null || workload.isBlank()) {
             return 0;
@@ -292,6 +370,13 @@ public class AdminWorkloadServlet extends BaseServlet {
         }
     }
 
+    /**
+     * Normalizes text: trims whitespace, returns fallback for null/blank values.
+     *
+     * @param value    the raw text
+     * @param fallback the default value
+     * @return the normalized text
+     */
     private String normalizeText(String value, String fallback) {
         if (value == null || value.isBlank()) {
             return fallback;
@@ -299,10 +384,21 @@ public class AdminWorkloadServlet extends BaseServlet {
         return value.trim();
     }
 
+    /**
+     * Compares two strings for equality, ignoring case.
+     *
+     * @param expected the expected value
+     * @param actual   the actual value
+     * @return true if they are equal ignoring case
+     */
     private boolean equalsIgnoreCase(String expected, String actual) {
         return expected != null && actual != null && expected.equalsIgnoreCase(actual);
     }
 
+    /**
+     * TA workload accumulator, used to count the number of accepted positions, total workload,
+     * and associated module set for each TA.
+     */
     private static class TAAccumulator {
         private final String taEmail;
         private final String taName;
@@ -310,23 +406,41 @@ public class AdminWorkloadServlet extends BaseServlet {
         private int totalWorkload;
         private final Set<String> modules = new TreeSet<>();
 
+        /**
+         * Constructs a TA accumulator.
+         *
+         * @param taEmail the TA email
+         * @param taName  the TA name
+         */
         private TAAccumulator(String taEmail, String taName) {
             this.taEmail = taEmail;
             this.taName = taName;
         }
     }
 
+    /**
+     * Module workload accumulator, used to count the number of accepted positions, total workload,
+     * and hired TA set for each module.
+     */
     private static class ModuleAccumulator {
         private final String moduleCode;
         private int acceptedPositions;
         private int totalWorkload;
         private final Set<String> hiredTAs = new HashSet<>();
 
+        /**
+         * Constructs a module accumulator.
+         *
+         * @param moduleCode the module code
+         */
         private ModuleAccumulator(String moduleCode) {
             this.moduleCode = moduleCode;
         }
     }
 
+    /**
+     * Workload assignment entry, recording the assignment details of a single TA for a position.
+     */
     public static class AssignmentEntry {
         private String applicationId;
         private String taEmail;

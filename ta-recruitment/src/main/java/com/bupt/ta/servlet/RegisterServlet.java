@@ -10,6 +10,15 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.regex.Pattern;
 
+/**
+ * Servlet handling TA user registration requests.
+ * <p>
+ * Mapped URL: /register<br>
+ * GET request: Displays the registration page; redirects to dashboard if user is already logged in.<br>
+ * POST request: Validates registration information (email format, username format and uniqueness,
+ * password strength, etc.), creates a new TA account, and redirects to the login page.
+ * </p>
+ */
 @WebServlet(name = "RegisterServlet", urlPatterns = "/register")
 public class RegisterServlet extends BaseServlet {
 
@@ -19,6 +28,18 @@ public class RegisterServlet extends BaseServlet {
     private static final Pattern USERNAME_PATTERN =
             Pattern.compile("^[A-Za-z0-9_]{3,20}$");
 
+    /**
+     * Handles GET requests to display the registration page.
+     * <p>
+     * If the user is already logged in, redirects directly to the dashboard;
+     * otherwise forwards to the registration page.
+     * </p>
+     *
+     * @param req  HTTP request
+     * @param resp HTTP response
+     * @throws ServletException if a Servlet exception occurs during forwarding
+     * @throws IOException      if an IO error occurs during forwarding or redirect
+     */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (isLoggedIn(req)) {
@@ -28,6 +49,21 @@ public class RegisterServlet extends BaseServlet {
         forwardTo(req, resp, "/register.jsp");
     }
 
+    /**
+     * Handles POST requests to perform user registration.
+     * <p>
+     * Receives username, email, password, and confirmPassword parameters. Sequentially validates:
+     * required fields are not empty, username format (3-20 characters, letters/digits/underscores),
+     * email format, password length (at least 6 characters), password confirmation match,
+     * username uniqueness, and email uniqueness. Upon successful validation, creates the user and
+     * redirects to the login page.
+     * </p>
+     *
+     * @param req  HTTP request containing username, email, password, confirmPassword parameters
+     * @param resp HTTP response
+     * @throws ServletException if a Servlet exception occurs during forwarding
+     * @throws IOException      if an IO error occurs during forwarding or redirect
+     */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (isLoggedIn(req)) {
@@ -100,6 +136,15 @@ public class RegisterServlet extends BaseServlet {
         }
     }
 
+    /**
+     * Safely trims whitespace from both ends of a string.
+     * <p>
+     * Returns an empty string instead of throwing an exception if the input value is null.
+     * </p>
+     *
+     * @param value The original string to process
+     * @return The trimmed string, or an empty string if null
+     */
     private String safeTrim(String value) {
         return value == null ? "" : value.trim();
     }

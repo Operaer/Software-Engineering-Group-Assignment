@@ -12,42 +12,19 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.bupt.ta.config.AppConfig;
 import com.bupt.ta.model.User;
+import com.bupt.ta.storage.UserStorage;
 
 /**
- * Streams resume files for ADMIN/MO users to preview (display inline, not download).
+ * Resume Preview Servlet (for ADMIN/MO use).
  *
- * <p>Only users with ADMIN or MO roles can access this endpoint. This servlet
- * validates both user role and file ownership via sanitized TA email/username prefixes
- * in the filename to prevent unauthorized file access.</p>
+ * <p>Only allows users with ADMIN and MO roles to preview TA resume files. It verifies
+ * file ownership by checking that the file name starts with the sanitized TA username
+ * or email prefix via the TA email parameter, preventing unauthorized access. The PDF
+ * content is displayed inline in the browser.</p>
  */
 @WebServlet(name = "ResumePreviewServlet", urlPatterns = "/secure/resume-preview")
 public class ResumePreviewServlet extends BaseServlet {
 
-    /**
-     * Handles GET requests to preview a TA's resume file for administrative review.
-     *
-     * <p>Request parameters:</p>
-     * <ul>
-     *   <li>file: the sanitized filename of the resume to stream</li>
-     *   <li>ta: the email address of the TA whose resume is being viewed</li>
-     * </ul>
-     *
-     * <p>Validates that:</p>
-     * <ul>
-     *   <li>user is logged in (requireLogin enforced)</li>
-     *   <li>user has ADMIN or MO role</li>
-     *   <li>filename ends with .pdf and starts with sanitized TA email/username prefix</li>
-     *   <li>file exists in the configured upload directory</li>
-     * </ul>
-     *
-     * <p>Returns 400 if parameters are missing, 403 if unauthorized or filename invalid,
-     * 404 if file not found. PDF is served inline (displayed in browser, not downloaded).</p>
-     *
-     * @param req the HTTP request with 'file' and 'ta' parameters
-     * @param resp the HTTP response for streaming the PDF inline
-     * @throws ServletException on servlet failure
-     * @throws IOException on input/output failure during file streaming
-     */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         requireLogin(req, resp);
@@ -55,7 +32,7 @@ public class ResumePreviewServlet extends BaseServlet {
         User user = getCurrentUser(req);
         String fileName = req.getParameter("file");
         String taEmail = req.getParameter("ta");
-        
+
         if (fileName == null || fileName.isBlank() || taEmail == null || taEmail.isBlank()) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
             return;
@@ -67,11 +44,33 @@ public class ResumePreviewServlet extends BaseServlet {
             return;
         }
 
-        // Verify file name is safe (should start with sanitized TA username or email prefix).
-        String sanitizedEmail = taEmail.replaceAll("[^a-zA-Z0-9]", "_");
-        String sanitizedUserId = taEmail.contains("@") ? taEmail.substring(0, taEmail.indexOf('@')).replaceAll("[^a-zA-Z0-9]", "_") : sanitizedEmail;
-        if (!fileName.toLowerCase().endsWith(".pdf") ||
-                !(fileName.startsWith(sanitizedUserId) || fileName.startsWith(sanitizedEmail))) {
+        // Verify file ownership: the filename uses the TA's username (from ProfileServlet),
+        // which may differ from the email prefix. Check both email-derived and username-derived prefixes.
+        boolean fileOwnershipVerified = false;
+        if (fileName.toLowerCase().endsWith(".pdf")) {
+            String sanitizedEmail = taEmail.replaceAll("[^a-zA-Z0-9]", "_");
+            String sanitizedUserId = taEmail.contains("@")
+                    ? taEmail.substring(0, taEmail.indexOf('@')).replaceAll("[^a-zA-Z0-9]", "_")
+                    : sanitizedEmail;
+            if (fileName.startsWith(sanitizedUserId) || fileName.startsWith(sanitizedEmail)) {
+                fileOwnershipVerified = true;
+            }
+            if (!fileOwnershipVerified) {
+                try {
+                    UserStorage userStorage = new UserStorage(getServletContext());
+                    User taUser = userStorage.findByEmail(taEmail);
+                    if (taUser != null) {
+                        String sanitizedUsername = taUser.getUsername().replaceAll("[^a-zA-Z0-9]", "_");
+                        if (fileName.startsWith(sanitizedUsername)) {
+                            fileOwnershipVerified = true;
+                        }
+                    }
+                } catch (Exception ignored) {
+                    // UserStorage lookup failure: fall through to 403 below
+                }
+            }
+        }
+        if (!fileOwnershipVerified) {
             resp.sendError(HttpServletResponse.SC_FORBIDDEN);
             return;
         }

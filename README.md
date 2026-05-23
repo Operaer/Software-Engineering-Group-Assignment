@@ -1,277 +1,258 @@
-# 软件工程小组作业 - TA招聘系统
+# Software Engineering Group Project - TA Recruitment System
 
-**项目类型**: 大学软件工程课程小组作业  
-**技术栈**: Java Servlet + JSP + 嵌入式Tomcat  
-**最后更新**: 2026年4月4日
+**Project Type**: University Software Engineering Course Group Project (EBU6304)  
+**Tech Stack**: Java 21 + Servlet + JSP + Embedded Tomcat 9 + Bootstrap 5  
+**Build Tool**: Maven 3.6+  
+**Last Updated**: May 2026
 
-## 项目目标
+## Project Introduction
 
-实现一个校园TA（教学助理）招聘管理系统，包含用户权限管理、申请流程等核心功能。支持用户自助注册和账户管理。
+This project is a **TA (Teaching Assistant) Recruitment Management System** developed for BUPT International College. The system supports three roles:
 
-## 如何运行项目
+| Role | Description |
+|------|------|
+| **TA** (Teaching Assistant) | Register account, fill in personal profile, upload CV, browse open positions, one-click apply, check application status |
+| **MO** (Module Organizer) | All TA permissions + post/manage recruitment positions + review TA applications + view applicant profiles |
+| **ADMIN** (Administrator) | All permissions + user management + account enable/disable + audit logs + system data overview |
 
-### 环境要求
-- Java 21+
-- Maven 3.6+
+Core Business Flow: MO posts position → TA browses and applies → MO reviews (Shortlist/Accept/Reject) → Applications automatically archived upon expiry.
 
-### 运行步骤
-1. 进入项目目录:
-   ```bash
-   cd ta-recruitment
-   ```
+## Local Environment Setup
 
-2. 运行应用:
-   ```bash
-   # 使用Maven 
-   mvn clean compile exec:java
+### 1. Install Java 21+
 
-3. 访问系统:
-   打开浏览器: http://localhost:8081
+Download and install JDK 21 or higher:
 
-### 测试账户
-| 角色 | 邮箱 | 密码 | 权限说明 |
-|------|------|------|----------|
-| TA | ta1@example.com | 123456 | 用户注册 + 个人资料 + 申请管理 |
-| MO | mo1@example.com | 123456 | TA权限 + 申请审核 + 职位发布 |
-| ADMIN | admin@example.com | admin123 | 所有权限 + 用户管理 + 账户禁用 |
+- **Oracle JDK**: https://www.oracle.com/java/technologies/downloads/
+- **OpenJDK**: https://adoptium.net/download/
 
-**新增功能**:
+Verify after installation:
 
-***1. 登录后进入资料创建页面***
-- 修改了 DashboardServlet，TA用户登录后如果未填写资料，会自动重定向到 /secure/ta/profile 页面
-- 确保新用户必须先完成资料填写才能访问其他功能
+```bash
+java -version
+# Should output something like: openjdk version "21.0.x" ...
+```
 
-***2. 支持后续编辑所有字段***
-- 资料页面支持完整的编辑功能
-- 所有字段（姓名、学号、专业、电话、技能）都可以修改
-- 简历可以重新上传
+### 2. Install Maven 3.6+
 
-***3. 必填字段验证***
-- 姓名：不能为空
-- 学号：不能为空
-- 联系信息（电话）：不能为空
-- 提交时服务器端验证，如果失败显示错误信息
+- **Official Download**: https://maven.apache.org/download.cgi
+- Download the Binary zip archive, extract it to a local directory (e.g., `C:\maven`)
+- Add Maven's `bin` directory to the system environment variable `PATH`
 
-***4. 实时数据格式验证***
-- 学号：必须至少8位数字
-- 电话：必须10-11位数字
-- 前端JavaScript实时验证，输入时显示绿色（有效）或红色（无效）边框
-- 提交前客户端验证，阻止无效数据提交
+How to set Windows environment variables:
+1. Right-click "This PC" → Properties → Advanced system settings → Environment Variables
+2. Under "System variables", create a new variable `MAVEN_HOME` with the value set to the Maven extraction path (e.g., `C:\maven`)
+3. Edit the `Path` variable and add `%MAVEN_HOME%\bin`
+4. Click OK to save
 
-***5. MO快速预览功能***
-- 在MO的应用列表页面添加了"View Profile"按钮
-- 创建了 ViewProfileServlet 允许MO查看TA资料
-- 预览页面以只读模式显示，禁用所有输入框和提交按钮
-- MO可以查看TA的完整资料信息
+Verify installation:
 
-***6. MO职位发布功能***
-- 为MO用户添加了发布TA招聘职位的功能
-- 包含职位名称、模块代码、工作量、截止日期、任职要求等字段
-- 支持数据验证和持久化存储到jobs.txt文件
-- 与现有系统UI风格保持一致
+```bash
+mvn -version
+# Should output Maven version and the Java version being used
+```
 
-***7. 一键申请功能 (Quick Apply)***
-- 在Available Positions页面每个职位旁边添加了"Quick Apply"按钮
-- 创建了 QuickApplyServlet 处理一键申请逻辑
-- 申请前自动检查个人档案完整性
-- 如果档案不完整，自动跳转到Profile页面并显示提示
+### 3. Download Project Code
 
-***8. 申请状态管理***
-- 支持五种状态：Pending Review、Shortlisted、Accepted、Rejected、Expired
-- 创建了 ApplicationStorage 中的状态更新方法
-- 支持批量状态更新和审计日志记录
+```bash
+git clone <https://github.com/Operaer/Software-Engineering-Group-Assignment.git>
+cd ta-recruitment
+```
 
-***9. 自动过期机制***
-- 申请提交后7天如果状态仍不是Accepted或Rejected，自动变为Expired状态
-- 每次加载申请列表时自动检查过期状态
-- 过期申请在列表中以灰色状态显示
+### 4. Start the Project
 
-***10. 申请成功提示***
-- 申请提交成功后显示绿色成功消息
-- 弹出模态框提示申请已提交
-- 显示申请当前状态和预计审核时间
+**Method 1: Double-click to run (Windows)**
 
-***11. 重复申请检测***
-- 检测用户是否已申请某个职位
-- 如果已申请，显示黄色警告提示
-- 引导用户查看现有申请状态
+Simply double-click the `run.bat` script in the project root directory to automatically compile and start the service.
 
-## 项目结构说明
+**Method 2: Command-line run**
+
+```bash
+# Enter the project directory
+cd ta-recruitment
+
+# Compile and start the embedded Tomcat
+mvn clean compile exec:java
+```
+
+The first run will have Maven automatically download dependencies (about 1-2 minutes). Please ensure a stable network connection.
+
+## How to Access the System
+
+### After Successful Startup
+
+Open your browser and visit the following address:
+
+```
+http://<your-lan-ip>:8081
+```
+
+> Note: The system now binds to all network interfaces (`0.0.0.0`) and can be accessed from other computers on the same LAN, using the host machine's local IP address.
+
+![Login Page](./screenshots/login.png)
+
+### Test Accounts
+
+The system has three built-in demo accounts. Log in to experience the features of different roles:
+
+| Role | Email | Password |
+|------|------|------|
+| TA | ta1@example.com | 123456 |
+| MO | mo1@example.com | 123456 |
+| ADMIN | admin@example.com | admin123 |
+
+### New User Registration
+
+Click the "Create one" link on the login page, fill in your email and password to register. Newly registered users are assigned the **TA** role by default.
+
+## Project Directory Structure
 
 ```
 ta-recruitment/
+├── pom.xml                               # Maven project configuration
+├── run.bat                               # Windows one-click startup script
 ├── src/main/java/com/bupt/ta/
-│   ├── config/AppConfig.java          # 配置文件
-│   ├── filter/AuthFilter.java         # 认证过滤器
-│   ├── model/                         # 数据模型 (User, Application, etc.)
-│   ├── security/PermissionChecker.java # 权限检查工具
-│   ├── servlet/
-│   │   ├── BaseServlet.java           # Servlet基类
-│   │   ├── RegisterServlet.java       # 用户注册处理
-│   │   ├── LoginServlet.java          # 用户登录
-│   │   ├── ChangePasswordServlet.java # 修改密码
-│   │   ├── DashboardServlet.java      # 仪表板
-│   │   ├── ProfileServlet.java        # 个人资料
-│   │   └── ...                        # 其他功能Servlet
-│   └── storage/                       # 数据存储层
+│   ├── EmbeddedTomcat.java               # Embedded Tomcat launcher (port 8081)
+│   ├── config/AppConfig.java             # Application configuration constants
+│   ├── filter/
+│   │   ├── AuthFilter.java               # Login authentication filter (/secure/* path)
+│   │   └── EncodingFilter.java           # UTF-8 encoding filter
+│   ├── model/                            # Data models
+│   │   ├── User.java                     # User (TA/MO/ADMIN roles)
+│   │   ├── TAProfile.java               # TA personal profile
+│   │   ├── Job.java                      # Recruitment position
+│   │   ├── Application.java             # Application record
+│   │   ├── AdminDashboardStats.java     # Administrator dashboard statistics
+│   │   ├── JobHistoryEntry.java         # Job history entry
+│   │   └── AuditLogEntry.java           # Audit log entry
+│   ├── security/PermissionChecker.java   # Page-level permission check
+│   ├── servlet/                          # Controller layer (Servlets)
+│   │   ├── BaseServlet.java             # Base Servlet (provides login verification/forwarding utility methods)
+│   │   ├── LoginServlet.java            # Login processing
+│   │   ├── LogoutServlet.java           # Logout processing
+│   │   ├── RegisterServlet.java         # User registration
+│   │   ├── DashboardServlet.java        # Dashboard (routed by role)
+│   │   ├── ProfileServlet.java          # TA profile editing
+│   │   ├── ChangePasswordServlet.java   # Change password
+│   │   ├── ApplicationServlet.java      # TA application management
+│   │   ├── QuickApplyServlet.java       # One-click apply
+│   │   ├── PostJobServlet.java          # MO post job
+│   │   ├── ManageJobServlet.java        # MO manage jobs
+│   │   ├── ResumePreviewServlet.java    # Resume preview
+│   │   ├── ResumeDownloadServlet.java   # Resume download
+│   │   ├── AdminDashboardServlet.java   # Administrator dashboard
+│   │   ├── AdminWorkloadServlet.java    # Workload management
+│   │   ├── AdminApplicationManagementServlet.java  # Administrator application management
+│   │   ├── AdminAuditLogsServlet.java   # Audit log viewing
+│   │   └── UserManagementServlet.java   # User management (enable/disable accounts)
+│   └── storage/                          # Data persistence layer (JSON/text file storage)
+│       ├── UserStorage.java
+│       ├── ProfileStorage.java
+│       ├── JobStorage.java
+│       ├── ApplicationStorage.java
+│       ├── JobHistoryStorage.java
+│       └── AuditLogStorage.java
 ├── src/main/webapp/
-│   ├── index.jsp                      # 登录页面
-│   ├── register.jsp                   # 注册页面（新增）
-│   ├── WEB-INF/includes/              # JSP模板
-│   │   ├── header.jsp                 # 页面头部
-│   │   ├── base_dashboard.jsp         # 统一仪表板 
-│   │   └── footer.jsp                 # 页面底部
-│   ├── secure/                        # 受保护页面
-│   │   ├── account/
-│   │   │   └── change_password.jsp    # 修改密码页面（新增）
-│   │   ├── ta/                        # TA页面
-│   │   ├── mo/                        # MO页面
-│   │   └── admin/                     # 管理员页面
-│   └── assets/                        # CSS/JS资源
-├── pom.xml                            # Maven配置
-└── run.bat                            # 运行脚本
+│   ├── index.jsp                         # Login page
+│   ├── register.jsp                      # Registration page
+│   ├── WEB-INF/
+│   │   ├── includes/
+│   │   │   ├── header.jsp               # Page header (navigation bar)
+│   │   │   ├── base_dashboard.jsp       # Unified dashboard
+│   │   │   └── footer.jsp               # Page footer
+│   │   ├── data/                         # Data files (JSON/txt)
+│   │   └── uploads/                      # Resume upload directory
+│   ├── secure/                           # Pages requiring login
+│   │   ├── account/change_password.jsp   # Change password
+│   │   ├── ta/                           # TA-specific pages
+│   │   │   ├── dashboard.jsp
+│   │   │   ├── available_positions.jsp  # Browse open positions
+│   │   │   ├── position_details.jsp     # Position details
+│   │   │   ├── applications.jsp         # My applications
+│   │   │   └── profile.jsp             # Personal profile
+│   │   ├── mo/                           # MO-specific pages
+│   │   │   ├── dashboard.jsp
+│   │   │   ├── post_position.jsp        # Post position
+│   │   │   ├── manage_positions.jsp     # Position management
+│   │   │   ├── application_list.jsp     # Application review
+│   │   │   ├── job_history.jsp          # Job history
+│   │   │   └── edit_position.jsp        # Edit position
+│   │   └── admin/                        # Administrator-specific pages
+│   │       ├── dashboard.jsp
+│   │       ├── user_management.jsp       # User management
+│   │       ├── application_list.jsp     # Global application management
+│   │       ├── audit_logs.jsp           # Audit logs
+│   │       └── system_settings.jsp      # System settings
+│   └── assets/css/style.css              # Custom styles
+└── tomcat.8080/                          # Tomcat runtime working directory (auto-generated, do not modify manually)
 ```
 
-## 核心功能详解
+## Main Features Overview
 
-### 1. 用户注册 (RegisterServlet)
-- **入口**: GET `/register` 显示注册表单
-- **提交**: POST `/register` 处理注册数据
-- **验证**: 
-  - 邮箱格式: `^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$`
-  - 用户名: `^[A-Za-z0-9_]{3,20}$`（3-20字符）
-- **防护**: 已登录用户直接跳转到仪表板
-- **角色**: 新注册用户默认为 TA 角色
+![TA Dashboard](./screenshots/ta_dashboard.png)
 
-### 2. 修改密码 (ChangePasswordServlet)
-- **入口**: GET `/secure/account/change-password` 显示表单
-- **提交**: POST `/secure/account/change-password` 处理修改
-- **验证**: 
-  - 当前密码正确性验证
-  - 新密码确认匹配
-  - 新密码是否与当前密码相同
-- **权限**: 仅已登录用户可访问
-- **安全**: 支持密码重置和加密存储
+### TA User
+- Register account, login/logout
+- Fill/edit personal profile (name, student ID, major, phone, skills)
+- Upload/update resume (PDF)
+- Browse open position list
+- View position details
+- **One-click apply** (Quick Apply) — automatically checks profile completeness
+- Check application status (Pending → Shortlisted → Accepted/Rejected → Expired)
+- Change password
 
-### 3. 权限管理体系
-- **TA 角色**: 可以注册、登录、修改个人密码、管理自己的申请
-- **MO 角色**: 拥有TA的全部权限，外加应用审核、职位发布等功能
-- **ADMIN 角色**: 拥有系统全部功能，包括用户管理、账户禁用等
+![MO Post Job](./screenshots/mo_post_job.png)
 
-## 后续开发指南
+### MO User
+- All TA features
+- Post new recruitment positions (job title, module code, workload, deadline, requirements)
+- View/edit/delete posted positions
+- Review TA applications (Shortlist / Accept / Reject)
+- View applicant full profiles and resumes
+- View job history records
 
-### 添加新功能的一般步骤
+![Admin User Management](./screenshots/admin_users.png)
 
-1. **确定功能需求** (如: 添加消息通知功能)
+### ADMIN User
+- Global dashboard (user count, job count, application count statistics)
+- User management (view all users, enable/disable accounts)
+- Global application management
+- Workload allocation
+- Audit logs (records all critical operations)
+- System settings
 
-2. **创建数据模型** (如果需要)
-   ```java
-   // 在 model/ 包下创建新类
-   public class Message {
-       // 字段和方法
-   }
-   ```
+## Frequently Asked Questions (FAQ)
 
-3. **实现数据存储** (如果需要)
-   ```java
-   // 在 storage/ 包下创建新类
-   public class MessageStorage {
-       // 继承或参考现有Storage类
-   }
-   ```
+**Q: `Address already in use` error on startup?**
+A: Port 8081 is occupied. Modify the `port` variable value on line 15 of `src/main/java/com/bupt/ta/EmbeddedTomcat.java` (e.g., change to 8082), then recompile and start.
 
-4. **创建Servlet控制器**
-   ```java
-   // 继承BaseServlet
-   @WebServlet("/secure/messages")
-   public class MessageServlet extends BaseServlet {
-       @Override
-       protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
-           requireLogin(req, resp);  // 检查登录
-           // 你的业务逻辑
-       }
-   }
-   ```
+**Q: `mvn` command not found?**
+A: Maven is not configured correctly. Check two things:
+1. Whether the `MAVEN_HOME` environment variable points to Maven's extraction directory
+2. Whether `%MAVEN_HOME%\bin` has been added to `Path`
+After configuration, reopen a new command-line window and try again.
 
-5. **添加权限检查** (如果需要)
-   ```java
-   requirePermission(req, resp, User.Role.MO);  // 检查权限
-   ```
+**Q: Chinese characters display as garbled text on the page?**
+A: Check if the IDE's file encoding is set to UTF-8. If using IDEA, check `Settings → Editor → File Encodings` and set all encodings to UTF-8.
 
-6. **创建JSP页面**
-   ```jsp
-   <%@ include file="/WEB-INF/includes/header.jsp" %>
-   <!-- 你的页面内容 -->
-   <%@ include file="/WEB-INF/includes/footer.jsp" %>
-   ```
+**Q: Data from before is gone after `mvn clean`?**
+A: The project uses file storage, with data located under `src/main/webapp/WEB-INF/data/`. `mvn clean` deletes compilation artifacts, but the data files are not in the target directory so they will not be lost. If they are truly lost, check if the data directory was manually deleted.
 
-7. **更新导航** (在base_dashboard.jsp中添加链接)
+**Q: How to add new test users?**
+A: Click "Create one" on the login page to self-register, which assigns the TA role by default. For MO or ADMIN roles, an existing ADMIN account needs to modify the role on the user management page.
 
-### 常用开发模式
+**Q: Dependency download failure on first startup?**
+A: The Maven Central Repository network may be unstable. Try the following:
+1. Check network connection (especially on campus networks)
+2. Delete the corresponding failed cache in `~/.m2/repository` and retry
+3. Configure a Maven mirror (such as Aliyun or other domestic mirrors) in `~/.m2/settings.xml`
 
-#### 添加新页面
-```java
-// 1. 创建Servlet (参考RegisterServlet 或 ChangePasswordServlet)
-@WebServlet("/secure/new-feature")
-public class NewFeatureServlet extends BaseServlet {
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
-        requireLogin(req, resp);
-        // 业务逻辑
-        forwardTo(req, resp, "/secure/new-feature.jsp");
-    }
-}
+## Notes
 
-// 2. 创建JSP页面
-// 3. 在dashboard中添加链接
-```
-
-#### 验证用户输入
-```java
-// 使用正则表达式，参考RegisterServlet的方式
-private static final Pattern EMAIL_PATTERN = 
-    Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
-
-if (!EMAIL_PATTERN.matcher(email).matches()) {
-    // 处理验证错误
-}
-```
-
-#### 处理密码操作
-```java
-// 参考ChangePasswordServlet的实现步骤：
-// 1.验证当前密码
-// 2.检查确认密码匹配
-// 3.检查新密码与当前密码不同
-// 4.更新存储
-```
-
-#### 修改数据存储
-```java
-// 当前使用JSON存储，要换成数据库：
-// 修改Storage类的实现
-// 参考 ApplicationStorage / UserStorage / ProfileStorage
-```
-
-## 新增功能对比 (US01 vs 基础版本)
-
-| 功能 | 基础版本 | US01 |
-|------|---------|------|
-| 用户登录 | ✓ | ✓ |
-| 用户注册 | ✗ | ✓ |
-| 修改密码 | ✗ | ✓ |
-| TA管理申请 | ✓ | ✓ |
-| MO审核申请 | ✓ | ✓ |
-| ADMIN用户管理 | ✓ | ✓ |
-| 账户状态管理 | 基础 | 完整 |
-| 数据隔离 | ✓ | ✓ |
-
-## 已知限制与改进方向
-
-1. **当前数据存储**: 使用JSON文件，重启后数据不持久化（可改为数据库）
-2. **密码安全**: 建议添加密码强度检查和加密存储
-3. **验证机制**: 可增加邮箱验证和两因素认证
-4. **UI/UX**: 当前使用基础JSP，可升级为前端框架
-5. **测试覆盖**: 建议添加单元测试和集成测试
+1. **Data Storage**: Currently uses JSON/text files for data storage, located in the `src/main/webapp/WEB-INF/data/` directory. `mvn clean` will not affect these data files, but manually deleting files in the data directory will cause data loss.
+2. **Port Conflict**: If port 8081 is occupied, modify the `port` variable in `EmbeddedTomcat.java`.
+3. **LAN Access**: The system is bound to all available network interfaces, so other computers on the same LAN can access it using the host machine's IP address, for example `http://192.168.1.100:8081`.
+4. **Resume Upload**: Uploaded resumes are stored in the `WEB-INF/uploads/` directory.
 
 ---
 

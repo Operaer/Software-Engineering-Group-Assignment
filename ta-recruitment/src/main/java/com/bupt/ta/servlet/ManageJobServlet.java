@@ -1,25 +1,50 @@
 package com.bupt.ta.servlet;
 
+import java.io.IOException;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+import java.util.List;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import com.bupt.ta.model.Job;
 import com.bupt.ta.model.JobHistoryEntry;
 import com.bupt.ta.model.User;
 import com.bupt.ta.storage.JobHistoryStorage;
 import com.bupt.ta.storage.JobStorage;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.List;
-
+/**
+ * Servlet handling MO requests for managing existing positions.
+ * <p>
+ * Mapped URL: /secure/mo/manage-job<br>
+ * Provides MO users with comprehensive management of published positions, including viewing the
+ * position list, viewing position details, editing positions, updating position information,
+ * archiving positions, rolling back to historical versions, and viewing position change history.
+ * </p>
+ */
 @WebServlet("/secure/mo/manage-job")
 public class ManageJobServlet extends BaseServlet {
 
+    /**
+     * Handles GET requests to manage position information.
+     * <p>
+     * Differentiates operation types based on the action parameter:<br>
+     * - edit: Navigates to the position editing page<br>
+     * - view: Views position details, determines whether rollback is possible<br>
+     * - history: Views the position change history list<br>
+     * - historyDetail: Views details of a specific historical change<br>
+     * - No action or unknown action: Displays the full position list
+     * </p>
+     *
+     * @param req  HTTP request containing action, jobId, index and other parameters
+     * @param resp HTTP response
+     * @throws ServletException if a Servlet exception occurs during forwarding
+     * @throws IOException      if an IO error occurs during forwarding or redirect
+     */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (!requireLogin(req, resp)) return;
@@ -95,6 +120,21 @@ public class ManageJobServlet extends BaseServlet {
         forwardTo(req, resp, "/secure/mo/manage_positions.jsp");
     }
 
+    /**
+     * Handles POST requests to perform position management operations.
+     * <p>
+     * Differentiates operation types based on the action parameter:<br>
+     * - archive: Archives the specified position (records the operator)<br>
+     * - rollback: Rolls back to the previous historical version<br>
+     * - update: Updates position information (title, module code, workload, requirements, deadline),
+     *   recording field-level change logs
+     * </p>
+     *
+     * @param req  HTTP request containing action, jobId, and various update field parameters
+     * @param resp HTTP response
+     * @throws ServletException if a Servlet exception occurs during forwarding
+     * @throws IOException      if an IO error occurs during forwarding or redirect
+     */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (!requireLogin(req, resp)) return;
@@ -222,6 +262,17 @@ public class ManageJobServlet extends BaseServlet {
         resp.sendRedirect(req.getContextPath() + "/secure/mo/manage-job");
     }
 
+    /**
+     * Deep clones a Job object to save a snapshot before modification.
+     * <p>
+     * Copies all fields of the Job (ID, title, module code, workload, requirements, deadline,
+     * posted by, posted time, updated time, status), ensuring that the history record maintains
+     * an independent copy.
+     * </p>
+     *
+     * @param job The job object to clone
+     * @return A new cloned Job object
+     */
     private Job cloneJob(Job job) {
         Job clone = new Job();
         clone.setId(job.getId());
@@ -237,4 +288,3 @@ public class ManageJobServlet extends BaseServlet {
         return clone;
     }
 }
-

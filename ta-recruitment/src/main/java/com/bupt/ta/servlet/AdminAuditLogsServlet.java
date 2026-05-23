@@ -13,6 +13,13 @@ import java.time.Instant;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 
+/**
+ * Admin Audit Log Viewing Servlet.
+ *
+ * <p>Provides administrators with the ability to view system operation audit logs. It
+ * supports filtering by operator, action type, and time range (start and end time)
+ * to help track critical operations in the system.</p>
+ */
 @WebServlet(name = "AdminAuditLogsServlet", urlPatterns = "/secure/admin/audit-logs")
 public class AdminAuditLogsServlet extends BaseServlet {
 

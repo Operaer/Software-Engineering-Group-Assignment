@@ -12,6 +12,11 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * JSON file storage manager for user data.
+ * <p>Responsible for persisting user accounts in the TA recruitment system, supporting user
+ * CRUD operations, authentication, and admin count statistics.</p>
+ */
 public class UserStorage {
     private static final String USERS_FILE = AppConfig.USERS_FILE;
 
@@ -19,6 +24,12 @@ public class UserStorage {
     private final File usersFile;
     private final javax.servlet.ServletContext servletContext;
 
+    /**
+     * Constructs a UserStorage instance, initializes the storage file path and ensures the parent
+     * directory exists.
+     *
+     * @param context Servlet context, used to obtain the real path of the storage file
+     */
     public UserStorage(ServletContext context) {
         this.objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
         this.usersFile = new File(context.getRealPath(USERS_FILE));
@@ -30,6 +41,13 @@ public class UserStorage {
         }
     }
 
+    /**
+     * Loads all user data from the file (internal method).
+     * <p>Automatically repairs the email and username fields of user objects to ensure data integrity.</p>
+     *
+     * @return a mapping from email to User object
+     * @throws IOException if reading the file fails
+     */
     private Map<String, User> loadUsersInternal() throws IOException {
         if (!usersFile.exists() || usersFile.length() == 0) {
             return new LinkedHashMap<>();
@@ -61,14 +79,33 @@ public class UserStorage {
         return users;
     }
 
+    /**
+     * Writes all user data to the storage file (internal method).
+     *
+     * @param users the mapping from email to User object
+     * @throws IOException if writing the file fails
+     */
     private void saveUsersInternal(Map<String, User> users) throws IOException {
         objectMapper.writeValue(usersFile, users);
     }
 
+    /**
+     * Retrieves all users.
+     *
+     * @return a mapping from email to User object
+     * @throws IOException if reading the file fails
+     */
     public Map<String, User> getAllUsers() throws IOException {
         return loadUsersInternal();
     }
 
+    /**
+     * Finds a user by email.
+     *
+     * @param email the user's email address
+     * @return the matching User object, or null if not found
+     * @throws IOException if reading the file fails
+     */
     public User findByEmail(String email) throws IOException {
         if (email == null || email.isBlank()) {
             return null;
@@ -76,6 +113,13 @@ public class UserStorage {
         return loadUsersInternal().get(email.trim().toLowerCase());
     }
 
+    /**
+     * Checks whether the specified email is already registered.
+     *
+     * @param email the email address to check
+     * @return true if the email already exists; false otherwise
+     * @throws IOException if reading the file fails
+     */
     public boolean emailExists(String email) throws IOException {
         if (email == null || email.isBlank()) {
             return false;
@@ -83,6 +127,13 @@ public class UserStorage {
         return loadUsersInternal().containsKey(email.trim().toLowerCase());
     }
 
+    /**
+     * Checks whether the specified username is already in use.
+     *
+     * @param username the username to check
+     * @return true if the username already exists; false otherwise
+     * @throws IOException if reading the file fails
+     */
     public boolean usernameExists(String username) throws IOException {
         if (username == null || username.isBlank()) {
             return false;
@@ -98,6 +149,14 @@ public class UserStorage {
         return false;
     }
 
+    /**
+     * Authenticates user login credentials.
+     *
+     * @param email    the user's email
+     * @param password the user's password
+     * @return the User object if authentication succeeds; null otherwise
+     * @throws IOException if reading the file fails
+     */
     public User authenticate(String email, String password) throws IOException {
         if (email == null || password == null) {
             return null;
@@ -115,6 +174,14 @@ public class UserStorage {
         return user.passwordMatches(password) ? user : null;
     }
 
+    /**
+     * Creates a new user and logs an audit entry.
+     * <p>Checks whether the email and username are already taken; throws an exception if they are.</p>
+     *
+     * @param user the user object to create
+     * @throws IOException              if reading or writing the file fails
+     * @throws IllegalArgumentException if the email/username already exists or the email is empty
+     */
     public void createUser(User user) throws IOException {
         if (user == null || user.getEmail() == null || user.getEmail().isBlank()) {
             throw new IllegalArgumentException("User email cannot be empty.");
@@ -146,6 +213,13 @@ public class UserStorage {
         } catch (Exception ignored) {}
     }
 
+    /**
+     * Updates user information and logs an audit entry.
+     *
+     * @param user the updated user object
+     * @throws IOException              if reading or writing the file fails
+     * @throws IllegalArgumentException if the user email is empty
+     */
     public void updateUser(User user) throws IOException {
         if (user == null || user.getEmail() == null || user.getEmail().isBlank()) {
             throw new IllegalArgumentException("User email cannot be empty.");
@@ -162,6 +236,12 @@ public class UserStorage {
         } catch (Exception ignored) {}
     }
 
+    /**
+     * Deletes the specified user and logs an audit entry.
+     *
+     * @param email the email address of the user to delete
+     * @throws IOException if reading or writing the file fails
+     */
     public void deleteUser(String email) throws IOException {
         if (email == null || email.isBlank()) {
             return;
@@ -176,6 +256,12 @@ public class UserStorage {
         } catch (Exception ignored) {}
     }
 
+    /**
+     * Counts the total number of administrators (ADMIN role) in the system.
+     *
+     * @return the number of admin users
+     * @throws IOException if reading the file fails
+     */
     public int countAdmins() throws IOException {
         int count = 0;
         for (User user : loadUsersInternal().values()) {
@@ -186,6 +272,12 @@ public class UserStorage {
         return count;
     }
 
+    /**
+     * Counts the number of active administrators (ADMIN role) in the system.
+     *
+     * @return the number of active admins
+     * @throws IOException if reading the file fails
+     */
     public int countActiveAdmins() throws IOException {
         int count = 0;
         for (User user : loadUsersInternal().values()) {

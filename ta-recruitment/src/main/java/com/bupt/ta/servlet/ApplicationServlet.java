@@ -18,20 +18,37 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+/**
+ * Servlet handling TA-side application and position browsing requests.
+ * <p>
+ * Mapped URLs: /secure/ta/applications, /secure/ta/positions, /secure/ta/positions/*<br>
+ * Provides TA users with functionalities for viewing their application list, browsing available
+ * positions, filtering positions (by course/skills/GPA), viewing position details, and
+ * submitting applications.
+ * </p>
+ */
 @WebServlet(name = "ApplicationServlet", urlPatterns = {
         "/secure/ta/applications",
         "/secure/ta/positions",
         "/secure/ta/positions/*"
 })
-/**
- * Handles TA-facing application actions and available-position browsing.
- *
- * <p>The servlet reuses the same applicable-position filtering pipeline for
- * both the application page and the dedicated available-positions page. It also
- * serves position-detail requests under {@code /secure/ta/positions/*}.</p>
- */
 public class ApplicationServlet extends BaseServlet {
 
+    /**
+     * Handles GET requests to display the application list or available positions.
+     * <p>
+     * Functionality differs based on request path:<br>
+     * - /secure/ta/positions/*: Browses the available position list or views position details<br>
+     * - /secure/ta/applications: Views the current TA's application list, supports filtering
+     *   available positions by course, skills, and GPA conditions, and handles success or
+     *   already-applied notification messages.
+     * </p>
+     *
+     * @param req  HTTP request, may contain filter parameters such as courseKeyword, skillKeyword, minimumGpa
+     * @param resp HTTP response
+     * @throws ServletException if a Servlet exception occurs during forwarding
+     * @throws IOException      if an IO error occurs during forwarding or redirect
+     */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (!requireLogin(req, resp)) {
@@ -83,13 +100,13 @@ public class ApplicationServlet extends BaseServlet {
             req.setAttribute("success", "Application submitted successfully: " + positionName);
             req.setAttribute("showSuccessModal", true);
         }
-        
+
         // Handle already applied message from URL parameter
         String alreadyAppliedParam = req.getParameter("alreadyApplied");
         if ("true".equals(alreadyAppliedParam)) {
             req.setAttribute("alreadyApplied", "You have already submitted an application for this position. You can view your application status in the 'My Applications' section.");
         }
-        
+
         req.setAttribute("applications", applications);
         req.setAttribute("availableJobs", filteredJobs);
         req.setAttribute("courseKeyword", courseKeyword);
@@ -98,6 +115,18 @@ public class ApplicationServlet extends BaseServlet {
         forwardTo(req, resp, "/secure/ta/applications.jsp");
     }
 
+    /**
+     * Handles POST requests to submit a new position application.
+     * <p>
+     * Receives the jobId parameter, verifies that the position exists and is applicable,
+     * checks for duplicate applications, and then creates a new application record.
+     * </p>
+     *
+     * @param req  HTTP request containing the jobId parameter
+     * @param resp HTTP response
+     * @throws ServletException if a Servlet exception occurs during forwarding
+     * @throws IOException      if an IO error occurs during forwarding or redirect
+     */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (!requireLogin(req, resp)) {
@@ -121,14 +150,14 @@ public class ApplicationServlet extends BaseServlet {
         }
 
         ApplicationStorage storage = new ApplicationStorage(getServletContext());
-        
+
         // Check if user has already applied for this position
         if (storage.hasApplied(user.getEmail(), jobId)) {
             req.setAttribute("alreadyApplied", "You have already submitted an application for this position. You can view your application status in the 'My Applications' section.");
             doGet(req, resp);
             return;
         }
-        
+
         Application application = storage.createNew(user.getEmail(), jobId, job.getTitle());
 
         req.setAttribute("success", "Application submitted successfully: " + application.getPositionTitle());
@@ -137,10 +166,10 @@ public class ApplicationServlet extends BaseServlet {
     }
 
     /**
-     * Loads all positions that are currently visible to TA users.
+     * Retrieves all currently applicable positions from JobStorage.
      *
-     * @param jobStorage storage used to retrieve persisted positions
-     * @return positions that are open and not past their deadline
+     * @param jobStorage The job data storage object
+     * @return A list of applicable positions
      */
     private List<Job> findApplicableJobs(JobStorage jobStorage) {
         return jobStorage.findAll().stream()
@@ -149,10 +178,10 @@ public class ApplicationServlet extends BaseServlet {
     }
 
     /**
-     * Determines whether a position may still be shown and applied for by a TA.
+     * Determines whether a position is applicable: status is open and deadline is not before today.
      *
-     * @param job position to inspect
-     * @return {@code true} when the position is open and its deadline has not passed
+     * @param job The job object to evaluate
+     * @return true if applicable, false otherwise
      */
     private boolean isApplicable(Job job) {
         return job != null
@@ -162,27 +191,23 @@ public class ApplicationServlet extends BaseServlet {
     }
 
     /**
-     * Checks whether the current authenticated user is exactly a TA user.
+     * Determines whether the user has the TA role.
      *
-     * @param user authenticated user
-     * @return {@code true} only for TA-role accounts
+     * @param user The user object to evaluate
+     * @return true if the user is a TA, false otherwise
      */
     private boolean isTaUser(User user) {
         return user != null && user.getRole() == User.Role.TA;
     }
 
     /**
-     * Applies the TA-side advanced filters using AND semantics.
+     * Filters the job list by course keyword, skill keyword, and minimum GPA.
      *
-     * <p>The course keyword is matched against the module code, the skill
-     * keyword is matched against the requirements text, and the supplied GPA is
-     * compared with the GPA requirement parsed from the requirements text.</p>
-     *
-     * @param jobs candidate applicable positions
-     * @param courseKeyword optional module-code keyword
-     * @param skillKeyword optional requirements keyword
-     * @param minimumGpa optional GPA available to the TA
-     * @return positions matching every provided filter
+     * @param jobs          The list of jobs to filter
+     * @param courseKeyword Course keyword (optional)
+     * @param skillKeyword  Skill keyword (optional)
+     * @param minimumGpa    Minimum GPA requirement (optional)
+     * @return The filtered list of jobs
      */
     private List<Job> filterApplicableJobs(List<Job> jobs, String courseKeyword, String skillKeyword, Double minimumGpa) {
         return jobs.stream()
@@ -193,10 +218,10 @@ public class ApplicationServlet extends BaseServlet {
     }
 
     /**
-     * Normalizes an optional keyword submitted from a filter form.
+     * Normalizes a keyword: trims leading/trailing spaces, returns null if empty.
      *
-     * @param value raw form value
-     * @return trimmed value, or {@code null} when blank
+     * @param value The original keyword
+     * @return The normalized keyword, or null if empty
      */
     private String normalizeKeyword(String value) {
         if (value == null || value.isBlank()) {
@@ -206,10 +231,10 @@ public class ApplicationServlet extends BaseServlet {
     }
 
     /**
-     * Parses an optional decimal form value without failing the request.
+     * Parses a string into a Double, returning null if parsing fails.
      *
-     * @param value raw form value
-     * @return parsed decimal value, or {@code null} when absent or invalid
+     * @param value The numeric string to parse
+     * @return The parsed Double value, or null if parsing fails
      */
     private Double parseOptionalDouble(String value) {
         if (value == null || value.isBlank()) {
@@ -223,25 +248,25 @@ public class ApplicationServlet extends BaseServlet {
     }
 
     /**
-     * Performs a null-safe, case-insensitive substring check.
+     * Checks whether a string contains the specified keyword (case-insensitive).
      *
-     * @param value source text
-     * @param keyword keyword to search for
-     * @return {@code true} when the source contains the keyword
+     * @param value   The string to search
+     * @param keyword The keyword to find
+     * @return true if the keyword is found, false otherwise
      */
     private boolean containsIgnoreCase(String value, String keyword) {
         return value != null && value.toLowerCase(Locale.ROOT).contains(keyword.toLowerCase(Locale.ROOT));
     }
 
     /**
-     * Extracts a numeric GPA requirement from free-form requirement text.
+     * Extracts the minimum GPA requirement from a position's requirement description.
+     * <p>
+     * Uses a regular expression to match patterns such as "GPA >= 3.0", "GPA min 3.5", etc.
+     * Returns 0.0 if no match is found.
+     * </p>
      *
-     * <p>Supported examples include {@code "GPA 3.0"},
-     * {@code "GPA >= 3.0"}, and {@code "minimum GPA 3.0"}. Positions without a
-     * parsable GPA requirement are treated as requiring {@code 0.0}.</p>
-     *
-     * @param requirements free-form position requirements
-     * @return parsed GPA requirement, or {@code 0.0} when none is present
+     * @param requirements The position requirement description text
+     * @return The parsed minimum GPA value, or 0.0 if not found
      */
     private double extractMinimumGpa(String requirements) {
         if (requirements == null || requirements.isBlank()) {
@@ -259,10 +284,10 @@ public class ApplicationServlet extends BaseServlet {
     }
 
     /**
-     * Detects whether the current request targets the available-position flow.
+     * Determines whether the current request is a position browsing request.
      *
-     * @param req current HTTP request
-     * @return {@code true} for {@code /secure/ta/positions} routes
+     * @param req HTTP request
+     * @return true if the request path starts with /secure/ta/positions
      */
     private boolean isPositionsRequest(HttpServletRequest req) {
         String servletPath = req.getServletPath();
@@ -270,10 +295,10 @@ public class ApplicationServlet extends BaseServlet {
     }
 
     /**
-     * Extracts a position identifier from the path-info suffix of a detail URL.
+     * Extracts the position ID from the request path.
      *
-     * @param req current HTTP request
-     * @return position id, or {@code null} for the list route
+     * @param req HTTP request whose path info contains the position ID
+     * @return The position ID string, or null if no valid path info is present
      */
     private String extractPositionId(HttpServletRequest req) {
         String pathInfo = req.getPathInfo();
@@ -284,14 +309,14 @@ public class ApplicationServlet extends BaseServlet {
     }
 
     /**
-     * Writes diagnostic output for TA-side position filtering.
+     * Logs TA-side position filter diagnostic information to the console for debugging and traceability.
      *
-     * @param req current HTTP request
-     * @param courseKeyword submitted course keyword
-     * @param skillKeyword submitted skill keyword
-     * @param minimumGpa submitted GPA value
-     * @param availableJobs positions before advanced filtering
-     * @param filteredJobs positions after advanced filtering
+     * @param req           The current HTTP request
+     * @param courseKeyword The submitted course keyword
+     * @param skillKeyword  The submitted skill keyword
+     * @param minimumGpa    The submitted minimum GPA value
+     * @param availableJobs The position list before advanced filtering
+     * @param filteredJobs  The position list after advanced filtering
      */
     private void logAvailablePositionFilter(HttpServletRequest req, String courseKeyword, String skillKeyword,
                                             Double minimumGpa, List<Job> availableJobs, List<Job> filteredJobs) {

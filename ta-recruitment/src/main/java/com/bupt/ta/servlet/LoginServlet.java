@@ -10,9 +10,29 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
+/**
+ * Servlet handling user login requests.
+ * <p>
+ * Mapped URL: /login<br>
+ * GET request: Displays the login page; redirects to dashboard if user is already logged in.<br>
+ * POST request: Validates email and password, creates a user session, and redirects to dashboard.
+ * </p>
+ */
 @WebServlet(name = "LoginServlet", urlPatterns = "/login")
 public class LoginServlet extends BaseServlet {
 
+    /**
+     * Handles GET requests to display the login page.
+     * <p>
+     * If the user is already logged in, redirects directly to the dashboard page;
+     * otherwise forwards to the login page.
+     * </p>
+     *
+     * @param req  HTTP request
+     * @param resp HTTP response
+     * @throws ServletException if a Servlet exception occurs during forwarding
+     * @throws IOException      if an IO error occurs during forwarding or redirect
+     */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (isLoggedIn(req)) {
@@ -22,6 +42,20 @@ public class LoginServlet extends BaseServlet {
         forwardTo(req, resp, "/index.jsp");
     }
 
+    /**
+     * Handles POST requests to perform user login verification.
+     * <p>
+     * Receives email and password parameters, sequentially verifying whether the account exists,
+     * whether the account is active, and whether the password is correct. Upon successful verification,
+     * invalidates the old session, creates a new session, stores user information in the session,
+     * and finally redirects to the dashboard.
+     * </p>
+     *
+     * @param req  HTTP request containing email and password parameters
+     * @param resp HTTP response
+     * @throws ServletException if a Servlet exception occurs during forwarding
+     * @throws IOException      if an IO error occurs during forwarding or redirect
+     */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String email = req.getParameter("email");

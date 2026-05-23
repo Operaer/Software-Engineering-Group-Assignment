@@ -1,5 +1,11 @@
 package com.bupt.ta.config;
 
+/**
+ * Application-wide configuration class.
+ * Centralizes constants used throughout the system, including default password,
+ * upload directory, data directory, and path definitions for various data files,
+ * facilitating unified maintenance and modification.
+ */
 public class AppConfig {
     public static final String DEFAULT_PASSWORD = "default123";
     public static final String UPLOAD_DIR = "/WEB-INF/uploads";

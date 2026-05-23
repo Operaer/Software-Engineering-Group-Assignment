@@ -14,7 +14,9 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Text file-backed storage for jobs.
+ * Text file storage manager for job data.
+ * <p>Stores job information in pipe-delimited text line format, supporting job creation, update,
+ * archiving, and lookup, along with date and timestamp parsing.</p>
  */
 public class JobStorage {
     private static final String STORAGE_PATH = AppConfig.JOBS_FILE;
@@ -22,12 +24,20 @@ public class JobStorage {
     private final javax.servlet.ServletContext servletContext;
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
+    /**
+     * Constructs a JobStorage instance, initializes the storage file and ensures the file exists.
+     *
+     * @param context Servlet context, used to obtain the real path of the storage file
+     */
     public JobStorage(ServletContext context) {
         this.storageFile = new File(context.getRealPath(STORAGE_PATH));
         this.servletContext = context;
         ensureStorageExists();
     }
 
+    /**
+     * Ensures the storage file and its parent directory exist; creates them if they do not.
+     */
     private void ensureStorageExists() {
         try {
             File parent = storageFile.getParentFile();
@@ -42,6 +52,11 @@ public class JobStorage {
         }
     }
 
+    /**
+     * Loads all job records from the file.
+     *
+     * @return the list of job records
+     */
     private List<Job> loadAll() {
         List<Job> jobs = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(storageFile))) {
@@ -80,10 +95,10 @@ public class JobStorage {
     }
 
     /**
-     * Parses a persisted deadline while tolerating malformed stored records.
+     * Parses a deadline date string into a LocalDate object.
      *
-     * @param rawDeadline raw deadline text from storage
-     * @return parsed deadline, or {@code null} when the value is missing or invalid
+     * @param rawDeadline the raw deadline date string (format: yyyy-MM-dd)
+     * @return the parsed LocalDate object, or null if parsing fails
      */
     private LocalDate parseDeadline(String rawDeadline) {
         if (rawDeadline == null || rawDeadline.isBlank()) {
@@ -97,10 +112,10 @@ public class JobStorage {
     }
 
     /**
-     * Parses a persisted timestamp while tolerating malformed stored records.
+     * Parses a timestamp string into an Instant object.
      *
-     * @param rawInstant raw timestamp text from storage
-     * @return parsed timestamp, or {@code null} when the value is missing or invalid
+     * @param rawInstant the raw timestamp string (ISO-8601 format)
+     * @return the parsed Instant object, or null if parsing fails
      */
     private Instant parseInstant(String rawInstant) {
         if (rawInstant == null || rawInstant.isBlank()) {
@@ -113,6 +128,11 @@ public class JobStorage {
         }
     }
 
+    /**
+     * Writes all job records to the storage file.
+     *
+     * @param jobs the list of jobs to save
+     */
     private void saveAll(List<Job> jobs) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(storageFile))) {
             for (Job job : jobs) {
@@ -133,6 +153,11 @@ public class JobStorage {
         }
     }
 
+    /**
+     * Saves a new job record and logs an audit entry.
+     *
+     * @param job the job object to save
+     */
     public void save(Job job) {
         List<Job> jobs = loadAll();
         jobs.add(job);
@@ -143,6 +168,11 @@ public class JobStorage {
         } catch (Exception ignored) {}
     }
 
+    /**
+     * Updates a job record (adds it if it does not exist) and logs an audit entry.
+     *
+     * @param updatedJob the updated job object
+     */
     public void update(Job updatedJob) {
         List<Job> jobs = loadAll();
         boolean replaced = false;
@@ -163,6 +193,11 @@ public class JobStorage {
         } catch (Exception ignored) {}
     }
 
+    /**
+     * Archives the specified job (marks status as ARCHIVED) and logs an audit entry.
+     *
+     * @param id the job ID
+     */
     public void archive(String id) {
         List<Job> jobs = loadAll();
         for (Job job : jobs) {
@@ -180,6 +215,17 @@ public class JobStorage {
         } catch (Exception ignored) {}
     }
 
+    /**
+     * Creates a new job record with the default status "OPEN".
+     *
+     * @param title        the job title
+     * @param moduleCode   the module code
+     * @param workload     the workload description
+     * @param requirements the job requirements
+     * @param deadline     the application deadline
+     * @param postedBy     the poster identifier
+     * @return the created job object
+     */
     public Job createNew(String title, String moduleCode, String workload, String requirements, LocalDate deadline, String postedBy) {
         Job job = new Job();
         job.setId(UUID.randomUUID().toString());
@@ -196,10 +242,21 @@ public class JobStorage {
         return job;
     }
 
+    /**
+     * Retrieves all job records.
+     *
+     * @return the list of all jobs
+     */
     public List<Job> findAll() {
         return loadAll();
     }
 
+    /**
+     * Finds a job record by ID.
+     *
+     * @param id the job ID
+     * @return the matching job object, or null if not found
+     */
     public Job findById(String id) {
         return loadAll().stream()
                 .filter(job -> job.getId().equals(id))
