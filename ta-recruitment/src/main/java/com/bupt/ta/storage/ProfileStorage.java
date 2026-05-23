@@ -15,7 +15,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Simple JSON-based storage for TA profiles.
+ * JSON file storage manager for TA profiles.
+ * <p>Stores TA personal information in key-value (email -&gt; TAProfile) JSON format,
+ * supporting profile loading, saving, and lookup by email.</p>
  */
 public class ProfileStorage {
     private static final String PROFILE_FILE_NAME = AppConfig.PROFILES_FILE;
@@ -23,11 +25,20 @@ public class ProfileStorage {
 
     private final File storageFile;
 
+    /**
+     * Constructs a ProfileStorage instance, initializes the storage file and ensures the file exists.
+     *
+     * @param servletContext Servlet context, used to obtain the real path of the storage file
+     */
     public ProfileStorage(ServletContext servletContext) {
         this.storageFile = new File(servletContext.getRealPath(PROFILE_FILE_NAME));
         ensureStorageExists();
     }
 
+    /**
+     * Ensures the storage file and its parent directory exist; creates them if they do not.
+     * Writes an empty JSON object on first creation.
+     */
     private void ensureStorageExists() {
         try {
             File parent = storageFile.getParentFile();
@@ -42,6 +53,11 @@ public class ProfileStorage {
         }
     }
 
+    /**
+     * Loads all TA profiles from the file.
+     *
+     * @return a mapping from email to TAProfile
+     */
     private Map<String, TAProfile> loadAll() {
         try {
             TypeFactory typeFactory = mapper.getTypeFactory();
@@ -53,6 +69,11 @@ public class ProfileStorage {
         }
     }
 
+    /**
+     * Writes all TA profiles to the storage file.
+     *
+     * @param profiles the mapping from email to TAProfile
+     */
     private void saveAll(Map<String, TAProfile> profiles) {
         try {
             mapper.writerWithDefaultPrettyPrinter().writeValue(storageFile, profiles);
@@ -61,6 +82,12 @@ public class ProfileStorage {
         }
     }
 
+    /**
+     * Loads a TA profile by email.
+     *
+     * @param email the TA's email address
+     * @return the corresponding TAProfile object, or null if not found
+     */
     public TAProfile load(String email) {
         if (email == null) {
             return null;
@@ -69,6 +96,11 @@ public class ProfileStorage {
         return all.get(email.toLowerCase());
     }
 
+    /**
+     * Saves or updates a TA profile (keyed by email).
+     *
+     * @param profile the TAProfile object to save
+     */
     public void save(TAProfile profile) {
         if (profile == null || profile.getEmail() == null) {
             return;

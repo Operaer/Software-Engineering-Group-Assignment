@@ -9,9 +9,29 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * Servlet handling user password change requests.
+ * <p>
+ * Mapped URL: /secure/account/change-password<br>
+ * GET request: Displays the password change page (requires login).<br>
+ * POST request: Validates the current password correctness, new password length and confirmation
+ * match, updates the password, and refreshes the user information in the session.
+ * </p>
+ */
 @WebServlet(name = "ChangePasswordServlet", urlPatterns = "/secure/account/change-password")
 public class ChangePasswordServlet extends BaseServlet {
 
+    /**
+     * Handles GET requests to display the password change page.
+     * <p>
+     * Requires the user to be logged in, otherwise redirects to the home page.
+     * </p>
+     *
+     * @param req  HTTP request
+     * @param resp HTTP response
+     * @throws ServletException if a Servlet exception occurs during forwarding
+     * @throws IOException      if an IO error occurs during forwarding or redirect
+     */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (!requireLogin(req, resp)) {
@@ -20,6 +40,21 @@ public class ChangePasswordServlet extends BaseServlet {
         forwardTo(req, resp, "/secure/account/change_password.jsp");
     }
 
+    /**
+     * Handles POST requests to perform the password change operation.
+     * <p>
+     * Receives currentPassword, newPassword, and confirmPassword parameters. Sequentially validates:
+     * required fields are not empty, current password is correct, new password is at least 6
+     * characters long, new password differs from the current password, and both new password entries
+     * match. Upon successful validation, updates the user password and refreshes the user information
+     * in the session.
+     * </p>
+     *
+     * @param req  HTTP request containing currentPassword, newPassword, confirmPassword parameters
+     * @param resp HTTP response
+     * @throws ServletException if a Servlet exception occurs during forwarding
+     * @throws IOException      if an IO error occurs during forwarding or redirect
+     */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (!requireLogin(req, resp)) {

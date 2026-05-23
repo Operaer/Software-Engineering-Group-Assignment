@@ -14,6 +14,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * TA Quick Apply Servlet.
+ *
+ * <p>Handles only POST requests. TAs submit a quick application for a position through
+ * this Servlet. Before submitting, it verifies that the TA profile is complete (name,
+ * student ID, major, phone, and resume must all be filled in) and that the position is
+ * still open. It also prevents duplicate applications for the same position.</p>
+ */
 @WebServlet(name = "QuickApplyServlet", urlPatterns = "/secure/ta/quick-apply")
 public class QuickApplyServlet extends BaseServlet {
 
@@ -48,17 +56,23 @@ public class QuickApplyServlet extends BaseServlet {
         }
 
         ApplicationStorage appStorage = new ApplicationStorage(getServletContext());
-        
+
         if (appStorage.hasApplied(user.getEmail(), jobId)) {
             resp.sendRedirect(req.getContextPath() + "/secure/ta/applications?alreadyApplied=true");
             return;
         }
-        
+
         Application application = appStorage.createNew(user.getEmail(), jobId, job.getTitle());
 
         resp.sendRedirect(req.getContextPath() + "/secure/ta/applications?success=true&position=" + application.getPositionTitle());
     }
 
+    /**
+     * Checks whether the TA profile is complete (name, student ID, major, phone, and resume must all be filled in).
+     *
+     * @param profile the TA profile object
+     * @return true if all required fields are filled in
+     */
     private boolean isProfileComplete(TAProfile profile) {
         return profile.getName() != null && !profile.getName().isBlank()
                 && profile.getStudentId() != null && !profile.getStudentId().isBlank()

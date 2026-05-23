@@ -12,9 +12,29 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
+/**
+ * Servlet handling MO requests to post new positions.
+ * <p>
+ * Mapped URL: /post-job<br>
+ * GET request: Displays the position posting page (requires MO permission).<br>
+ * POST request: Receives position information (title, module code, workload, requirements, deadline),
+ * validates required fields and deadline validity, saves the position, and confirms successful posting.
+ * </p>
+ */
 @WebServlet("/post-job")
 public class PostJobServlet extends BaseServlet {
 
+    /**
+     * Handles GET requests to display the position posting page.
+     * <p>
+     * Requires the user to be logged in and have the MO role permission, otherwise access is blocked.
+     * </p>
+     *
+     * @param req  HTTP request
+     * @param resp HTTP response
+     * @throws ServletException if a Servlet exception occurs during forwarding
+     * @throws IOException      if an IO error occurs during forwarding or redirect
+     */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (!requireLogin(req, resp)) return;
@@ -23,6 +43,20 @@ public class PostJobServlet extends BaseServlet {
         forwardTo(req, resp, "/secure/mo/post_position.jsp");
     }
 
+    /**
+     * Handles POST requests to create a new position.
+     * <p>
+     * Receives title, moduleCode, workload, requirements, and deadline parameters.
+     * Validates that required fields are not empty, parses and checks that the deadline is a future date.
+     * Upon successful validation, standardizes the position information (trims whitespace, uppercases
+     * the module code) and saves it.
+     * </p>
+     *
+     * @param req  HTTP request containing title, moduleCode, workload, requirements, deadline parameters
+     * @param resp HTTP response
+     * @throws ServletException if a Servlet exception occurs during forwarding
+     * @throws IOException      if an IO error occurs during forwarding or redirect
+     */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (!requireLogin(req, resp)) return;

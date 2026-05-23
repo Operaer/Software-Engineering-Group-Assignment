@@ -19,11 +19,11 @@ import com.bupt.ta.model.User;
 import com.bupt.ta.storage.ProfileStorage;
 
 /**
- * Servlet for TA profile management, including profile viewing, resume upload validation,
- * resume removal, and profile persistence.
+ * TA Profile Management Servlet.
  *
- * <p>Supports file upload constraints for resume format and size, and provides
- * real-time upload guidance on the profile page.</p>
+ * <p>Provides viewing, editing, and saving of TA profiles, with support for resume
+ * PDF file upload (including format and size validation), deletion, and persistent
+ * storage. Uploaded resume files are stored in the server upload directory.</p>
  *
  * @author Operaer
  * @since 2026-05-19
@@ -32,16 +32,6 @@ import com.bupt.ta.storage.ProfileStorage;
 @MultipartConfig(fileSizeThreshold = 1024 * 512, maxFileSize = 5 * 1024 * 1024, maxRequestSize = 6 * 1024 * 1024)
 public class ProfileServlet extends BaseServlet {
 
-    /**
-     * Handle GET requests for the TA profile page.
-     *
-     * <p>Loads the current user's profile from storage and forwards to the JSP.</p>
-     *
-     * @param req the HTTP request
-     * @param resp the HTTP response
-     * @throws ServletException on servlet failure
-     * @throws IOException on input/output failure
-     */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         requireLogin(req, resp);
@@ -65,17 +55,6 @@ public class ProfileServlet extends BaseServlet {
     private static final long MAX_RESUME_SIZE = 5 * 1024 * 1024;
     private static final String[] ALLOWED_RESUME_EXTENSIONS = {".pdf"};
 
-    /**
-     * Handle POST requests to save profile changes or manage resume upload/removal.
-     *
-     * <p>Validates resume file type and size, persists profile updates, and supports
-     * resume removal action.</p>
-     *
-     * @param req the HTTP request
-     * @param resp the HTTP response
-     * @throws ServletException on servlet failure
-     * @throws IOException on input/output failure
-     */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         requireLogin(req, resp);
@@ -191,10 +170,10 @@ public class ProfileServlet extends BaseServlet {
     }
 
     /**
-     * Returns true when the given file extension is an allowed resume type.
+     * Checks whether the file extension is an allowed resume format (PDF only).
      *
-     * @param extension the file extension to check, including dot
-     * @return true if extension is permitted
+     * @param extension the file extension
+     * @return true if the extension is allowed
      */
     private boolean isAllowedResumeExtension(String extension) {
         for (String allowed : ALLOWED_RESUME_EXTENSIONS) {
@@ -206,9 +185,9 @@ public class ProfileServlet extends BaseServlet {
     }
 
     /**
-     * Remove the stored resume association and delete the physical file.
+     * Removes the TA resume and deletes the stored resume file.
      *
-     * @param profile the TA profile containing the resume reference
+     * @param profile the TA profile object
      */
     private void removeResume(TAProfile profile) {
         String fileName = profile.getResumeFileName();
@@ -219,9 +198,9 @@ public class ProfileServlet extends BaseServlet {
     }
 
     /**
-     * Delete a resume file from server storage if it exists.
+     * Deletes the specified resume file from the upload directory.
      *
-     * @param fileName the stored resume file name
+     * @param fileName the resume file name
      */
     private void deleteStoredResume(String fileName) {
         File uploads = new File(getServletContext().getRealPath(AppConfig.UPLOAD_DIR));

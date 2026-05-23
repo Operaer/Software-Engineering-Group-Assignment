@@ -33,5 +33,47 @@
     "password" : "123456",
     "role" : "TA",
     "active" : true
+  },
+  "wangchuan2@example.com" : {
+    "username" : "wangchuan2",
+    "email" : "wangchuan2@example.com",
+    "password" : "123456",
+    "role" : "TA",
+    "active" : true
+  },
+  "ta11@example.com" : {
+    "username" : "ta11",
+    "email" : "ta11@example.com",
+    "password" : "123456",
+    "role" : "TA",
+    "active" : true
+  },
+  "ta10@example.com" : {
+    "username" : "name",
+    "email" : "ta10@example.com",
+    "password" : "123456",
+    "role" : "TA",
+    "active" : true
+  },
+  "tta@example.com" : {
+    "username" : "111",
+    "email" : "tta@example.com",
+    "password" : "123456",
+    "role" : "TA",
+    "active" : true
+  },
+  "momo@example.com" : {
+    "username" : "11111111111111",
+    "email" : "momo@example.com",
+    "password" : "111111",
+    "role" : "TA",
+    "active" : true
+  },
+  "lzy@qq.com" : {
+    "username" : "lzy",
+    "email" : "lzy@qq.com",
+    "password" : "123456",
+    "role" : "TA",
+    "active" : true
   }
 }

@@ -24,13 +24,11 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 /**
- * JSON-backed storage for TA applications.
- *
- * <p>This class manages persisted application records in the embedded file-based
- * storage used by the TA recruitment system.</p>
+ * JSON file storage manager for TA application data.
+ * <p>Responsible for persisting, loading, and querying application records in the TA recruitment system.
+ * Data is stored in JSON format in server-side files, with automatic expiration handling of application status.</p>
  *
  * @author Operaer
- * @date 2026-05-17
  */
 public class ApplicationStorage {
     private static final String STORAGE_PATH = AppConfig.APPLICATIONS_FILE;
@@ -40,12 +38,21 @@ public class ApplicationStorage {
     private final File storageFile;
     private final javax.servlet.ServletContext servletContext;
 
+    /**
+     * Constructs an ApplicationStorage instance, initializes the storage file path and ensures the storage file exists.
+     *
+     * @param context Servlet context, used to obtain the real path of the storage file
+     */
     public ApplicationStorage(ServletContext context) {
         this.storageFile = new File(context.getRealPath(STORAGE_PATH));
         this.servletContext = context;
         ensureStorageExists();
     }
 
+    /**
+     * Ensures the storage file and its parent directory exist; creates them if they do not.
+     * Writes an empty JSON array on first creation.
+     */
     private void ensureStorageExists() {
         try {
             File parent = storageFile.getParentFile();
@@ -62,6 +69,11 @@ public class ApplicationStorage {
 
     private static final Duration EXPIRATION_PERIOD = Duration.ofDays(7);
 
+    /**
+     * Loads all application records from the file.
+     *
+     * @return the list of application records, or an empty list if the file is empty
+     */
     private List<Application> loadAll() {
         try {
             TypeFactory factory = mapper.getTypeFactory();
@@ -80,17 +92,24 @@ public class ApplicationStorage {
         }
     }
 
+    /**
+     * Checks and updates expired application records.
+     * <p>Automatically marks the status of applications that have not been processed for more than 7 days
+     * (other than Accepted, Rejected, Expired) as Expired.</p>
+     *
+     * @param applications the list of application records to check
+     */
     private void checkAndUpdateExpiredApplications(List<Application> applications) {
         Instant now = Instant.now();
         boolean hasChanges = false;
-        
+
         for (Application app : applications) {
             if (app.getAppliedAt() != null && app.getStatus() != null) {
                 String status = app.getStatus();
-                if (!status.equals(Application.Status.Accepted.name()) 
+                if (!status.equals(Application.Status.Accepted.name())
                     && !status.equals(Application.Status.Rejected.name())
                     && !status.equals(Application.Status.Expired.name())) {
-                    
+
                     Duration age = Duration.between(app.getAppliedAt(), now);
                     if (age.compareTo(EXPIRATION_PERIOD) > 0) {
                         app.setStatus(Application.Status.Expired.name());
@@ -99,12 +118,17 @@ public class ApplicationStorage {
                 }
             }
         }
-        
+
         if (hasChanges) {
             saveAll(applications);
         }
     }
 
+    /**
+     * Writes all application records to the storage file.
+     *
+     * @param list the list of application records to save
+     */
     private void saveAll(List<Application> list) {
         try {
             mapper.writerWithDefaultPrettyPrinter().writeValue(storageFile, list);
@@ -113,6 +137,12 @@ public class ApplicationStorage {
         }
     }
 
+    /**
+     * Finds application records by TA email.
+     *
+     * @param email the TA's email address
+     * @return the list of matching application records, or an empty list if the email is null
+     */
     public List<Application> findByTaEmail(String email) {
         if (email == null) {
             return new ArrayList<>();
@@ -123,6 +153,11 @@ public class ApplicationStorage {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Saves a new application record and logs an audit entry.
+     *
+     * @param application the application object to save
+     */
     public void save(Application application) {
         List<Application> apps = loadAll();
         apps.add(application);
@@ -133,6 +168,13 @@ public class ApplicationStorage {
         } catch (Exception ignored) {}
     }
 
+    /**
+     * Checks whether the specified TA has already applied for the specified position.
+     *
+     * @param taEmail    the TA's email address
+     * @param positionId the position ID
+     * @return true if an application already exists; false otherwise
+     */
     public boolean hasApplied(String taEmail, String positionId) {
         if (taEmail == null || positionId == null) {
             return false;
@@ -142,6 +184,14 @@ public class ApplicationStorage {
                 .anyMatch(app -> normalizedEmail.equals(app.getTaEmail()) && positionId.equals(app.getPositionId()));
     }
 
+    /**
+     * Creates a new application record with the default status "Pending".
+     *
+     * @param taEmail       the TA's email address
+     * @param positionId    the position ID
+     * @param positionTitle the position title
+     * @return the created application object
+     */
     public Application createNew(String taEmail, String positionId, String positionTitle) {
         Application app = new Application();
         app.setId(UUID.randomUUID().toString());
@@ -155,37 +205,32 @@ public class ApplicationStorage {
     }
 
     /**
-     * Updates the status of a single application using the default "system" operator.
-     * This method delegates to {@link #updateStatus(String, Application.Status, String)}.
+     * Updates the status of the specified application (operator defaults to "system").
      *
-     * @param applicationId the unique identifier of the application to update
-     * @param status the new status for the application
+     * @param applicationId the application ID
+     * @param status        the new application status
      */
     public void updateStatus(String applicationId, Application.Status status) {
         updateStatus(applicationId, status, "system");
     }
 
     /**
-     * Updates the status of a single application and records the change in the audit log.
-     * This method delegates to the bulk update method for consistency.
+     * Updates the status of the specified application and records the operator.
      *
-     * @param applicationId the unique identifier of the application to update
-     * @param status the new status for the application
-     * @param operator the user email or identifier performing this operation (recorded in audit log)
+     * @param applicationId the application ID
+     * @param status        the new application status
+     * @param operator      the operator identifier
      */
     public void updateStatus(String applicationId, Application.Status status, String operator) {
         updateStatus(Collections.singletonList(applicationId), status, operator);
     }
 
     /**
-     * Bulk updates the status for multiple applications in a single operation.
-     * All status changes are persisted to storage and an audit log entry is created
-     * for each application updated, with the given operator identifier.
+     * Batch updates the status of multiple applications and logs audit entries.
      *
-     * @param applicationIds list of application identifiers to update; if null or empty, operation is skipped
-     * @param status the new status to apply to all selected applications
-     * @param operator the user email or identifier performing this bulk update (recorded in audit log);
-     *                 defaults to "system" if null
+     * @param applicationIds the list of application IDs to update
+     * @param status         the new application status
+     * @param operator       the operator identifier
      */
     public void updateStatus(List<String> applicationIds, Application.Status status, String operator) {
         if (applicationIds == null || applicationIds.isEmpty()) {
@@ -210,6 +255,13 @@ public class ApplicationStorage {
         } catch (Exception ignored) {}
     }
 
+    /**
+     * Updates the assigned workload of the specified application and logs an audit entry.
+     *
+     * @param applicationId          the application ID
+     * @param assignedWorkloadHours  the assigned workload (in hours); null indicates clearing
+     * @param operator               the operator identifier
+     */
     public void updateAssignedWorkload(String applicationId, Integer assignedWorkloadHours, String operator) {
         if (applicationId == null || applicationId.isBlank()) {
             return;
@@ -236,8 +288,12 @@ public class ApplicationStorage {
         } catch (Exception ignored) {}
     }
 
+    /**
+     * Retrieves all application records.
+     *
+     * @return the list of all applications
+     */
     public List<Application> findAll() {
         return loadAll();
     }
 }
-

@@ -30,31 +30,20 @@ import com.bupt.ta.storage.ApplicationStorage;
 import com.bupt.ta.storage.JobStorage;
 
 /**
- * Servlet for the US03 Admin Global Recruitment Dashboard.
+ * Admin Global Recruitment Dashboard Servlet (US03).
  *
- * <p>
- * This servlet provides a centralized dashboard for school administrators to
- * monitor the overall TA recruitment process. It aggregates data from job
- * storage and application storage, then generates school-wide metrics,
- * module-level applicant statistics, and workload distribution summaries.
- * </p>
+ * <p>Provides school administrators with a centralized monitoring dashboard for the
+ * overall TA recruitment process. It aggregates data from job storage and application
+ * storage to generate institution-wide statistical indicators, module-level applicant
+ * statistics, and workload distribution summaries.</p>
  *
- * <p>
- * The dashboard supports filtering by module. When a module is selected, all
- * statistics are recalculated based only on the jobs and applications belonging
- * to that module.
- * </p>
- *
- * <p>
- * The servlet reads the latest JSON storage data on every request. Therefore,
- * when a Module Organizer marks an application as accepted, the admin dashboard
- * reflects the updated hiring result after refresh without using a separate
- * cache.
- * </p>
+ * <p>Supports filtering by module. When a specific module is selected, all statistics
+ * are recalculated based solely on that module's positions and applications. Each request
+ * reads the latest data from JSON storage, so MO status updates are reflected in the
+ * admin dashboard upon refresh without needing an additional caching mechanism.</p>
  *
  * @author Wenqi Guan
  * @author Operaer
- * @date 2026-05-17
  * @version 1.0
  * @since 2026-05-09
  */
@@ -114,8 +103,9 @@ public class AdminDashboardServlet extends BaseServlet {
     }
 
     /**
-     * Prevents the browser from showing stale dashboard values after an MO
-     * updates an application status to Accepted.
+     * Disables HTTP caching for the dashboard page, ensuring the latest data is fetched on each request.
+     *
+     * @param resp the HTTP response object
      */
     private void disableDashboardCaching(HttpServletResponse resp) {
         resp.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
@@ -123,13 +113,11 @@ public class AdminDashboardServlet extends BaseServlet {
         resp.setDateHeader("Expires", 0);
     }
 
-
     /**
-     * Normalizes the module filter value submitted from the dashboard form.
+     * Normalizes the module filter parameter; returns "ALL" when null or "ALL".
      *
-     * <p>An empty value or "ALL" means that the Admin wants to view all modules.
-     * Otherwise the value is normalized to uppercase so it can be compared with
-     * module codes stored in different letter cases.</p>
+     * @param selectedModule the raw module parameter
+     * @return the normalized module code or "ALL"
      */
     private String normalizeSelectedModule(String selectedModule) {
         if (selectedModule == null || selectedModule.isBlank() || "ALL".equalsIgnoreCase(selectedModule)) {
@@ -139,7 +127,10 @@ public class AdminDashboardServlet extends BaseServlet {
     }
 
     /**
-     * Builds the available module choices for the filter dropdown.
+     * Extracts a deduplicated and sorted list of module codes from all jobs for the frontend filter dropdown.
+     *
+     * @param jobs all job listings
+     * @return the sorted list of module codes
      */
     private List<String> buildModuleOptions(List<Job> jobs) {
         return jobs.stream()
@@ -150,17 +141,17 @@ public class AdminDashboardServlet extends BaseServlet {
     }
 
     /**
-     * Applies the admin multi-dimensional position filters using AND semantics.
+     * Applies multi-dimensional admin job filtering (AND semantics).
      *
-     * @param jobs all persisted positions
-     * @param selectedModule selected course/module filter
-     * @param jobTitle optional title keyword
-     * @param createdBy optional MO creator keyword
-     * @param deadlineAfter optional inclusive lower deadline bound
-     * @param deadlineBefore optional inclusive upper deadline bound
-     * @param workload optional workload keyword
-     * @param status optional effective-status filter
-     * @return positions matching every provided filter
+     * @param jobs           all persisted jobs
+     * @param selectedModule the selected course/module filter
+     * @param jobTitle       optional title keyword
+     * @param createdBy      optional MO creator keyword
+     * @param deadlineAfter  optional deadline lower bound (inclusive)
+     * @param deadlineBefore optional deadline upper bound (inclusive)
+     * @param workload       optional workload keyword
+     * @param status         optional effective status filter
+     * @return the list of jobs matching all provided filter criteria
      */
     private List<Job> filterJobs(List<Job> jobs, String selectedModule, String jobTitle, String createdBy,
                                  LocalDate deadlineAfter, LocalDate deadlineBefore, String workload, String status) {
@@ -177,7 +168,11 @@ public class AdminDashboardServlet extends BaseServlet {
     }
 
     /**
-     * Keeps only applications belonging to the jobs currently visible in the dashboard.
+     * Filters the application list based on the set of visible job IDs.
+     *
+     * @param applications  all applications
+     * @param visibleJobIds the set of visible job IDs
+     * @return the filtered application list
      */
     private List<Application> filterApplicationsByJobIds(List<Application> applications, Set<String> visibleJobIds) {
         return applications.stream()
@@ -186,11 +181,12 @@ public class AdminDashboardServlet extends BaseServlet {
     }
 
     /**
-     * Aggregates school-wide recruitment metrics from current job and application data.
+     * Builds admin dashboard statistics, including job statistics, application statistics,
+     * module metrics, and TA workload metrics.
      *
-     * @param jobs all TA positions in the system
-     * @param applications all applications submitted by TAs
-     * @return dashboard statistics for the Admin view
+     * @param jobs         the job list
+     * @param applications the application list
+     * @return the dashboard statistics object
      */
     private AdminDashboardStats buildStats(List<Job> jobs, List<Application> applications) {
         AdminDashboardStats stats = new AdminDashboardStats();
@@ -207,18 +203,39 @@ public class AdminDashboardServlet extends BaseServlet {
         return stats;
     }
 
+    /**
+     * Counts jobs matching a given status.
+     *
+     * @param jobs   the job list
+     * @param status the target status
+     * @return the count of jobs matching that status
+     */
     private int countJobsByStatus(List<Job> jobs, String status) {
         return (int) jobs.stream()
                 .filter(job -> equalsIgnoreCase(status, job.getStatus()))
                 .count();
     }
 
+    /**
+     * Counts applications matching a given status.
+     *
+     * @param applications the application list
+     * @param status       the target status
+     * @return the count of applications matching that status
+     */
     private int countApplicationsByStatus(List<Application> applications, String status) {
         return (int) applications.stream()
                 .filter(application -> equalsIgnoreCase(status, application.getStatus()))
                 .count();
     }
 
+    /**
+     * Builds per-module statistics (position count, applicant count, accepted count, completion rate).
+     *
+     * @param jobs         the job list
+     * @param applications the application list
+     * @return the list of module metrics
+     */
     private List<AdminDashboardStats.ModuleMetric> buildModuleMetrics(List<Job> jobs, List<Application> applications) {
         Map<String, Job> jobsById = jobs.stream()
                 .collect(Collectors.toMap(Job::getId, job -> job, (first, second) -> first));
@@ -248,13 +265,13 @@ public class AdminDashboardServlet extends BaseServlet {
         return metrics;
     }
 
-
     /**
-     * Builds the per-TA workload distribution required by US03.
+     * Builds TA workload metrics, counting the number of positions, total workload, and
+     * associated modules for each accepted TA.
      *
-     * <p>Only accepted applications are counted because they represent TAs who
-     * have actually been hired. Duplicate accepted records for the same TA and
-     * the same position are ignored to avoid double-counting test data.</p>
+     * @param jobs         the job list
+     * @param applications the application list
+     * @return the list of TA workload metrics
      */
     private List<AdminDashboardStats.TAWorkloadMetric> buildTAWorkloadMetrics(List<Job> jobs, List<Application> applications) {
         Map<String, Job> jobsById = jobs.stream()
@@ -292,7 +309,12 @@ public class AdminDashboardServlet extends BaseServlet {
     }
 
     /**
-     * Builds the per-module workload distribution required by US03.
+     * Builds module workload metrics, counting accepted positions, total workload, and
+     * hired TA count for each module.
+     *
+     * @param jobs         the job list
+     * @param applications the application list
+     * @return the list of module workload metrics
      */
     private List<AdminDashboardStats.ModuleWorkloadMetric> buildModuleWorkloadMetrics(List<Job> jobs, List<Application> applications) {
         Map<String, Job> jobsById = jobs.stream()
@@ -328,6 +350,13 @@ public class AdminDashboardServlet extends BaseServlet {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Converts a TA accumulator to a TA workload metric object.
+     *
+     * @param taEmail     the TA email
+     * @param accumulator the TA workload accumulator
+     * @return the TA workload metric
+     */
     private AdminDashboardStats.TAWorkloadMetric toTAWorkloadMetric(String taEmail, TAWorkloadAccumulator accumulator) {
         AdminDashboardStats.TAWorkloadMetric metric = new AdminDashboardStats.TAWorkloadMetric();
         metric.setTaEmail(taEmail);
@@ -337,6 +366,13 @@ public class AdminDashboardServlet extends BaseServlet {
         return metric;
     }
 
+    /**
+     * Converts a module accumulator to a module workload metric object.
+     *
+     * @param moduleCode  the module code
+     * @param accumulator the module workload accumulator
+     * @return the module workload metric
+     */
     private AdminDashboardStats.ModuleWorkloadMetric toModuleWorkloadMetric(String moduleCode, ModuleWorkloadAccumulator accumulator) {
         AdminDashboardStats.ModuleWorkloadMetric metric = new AdminDashboardStats.ModuleWorkloadMetric();
         metric.setModuleCode(moduleCode);
@@ -347,10 +383,10 @@ public class AdminDashboardServlet extends BaseServlet {
     }
 
     /**
-     * Extracts the first integer from the workload field.
+     * Parses the numeric part from a workload description string.
      *
-     * <p>This supports both simple values such as "24" and descriptive values
-     * such as "10 hours per week".</p>
+     * @param workload the workload description string (e.g., "20 hours/week")
+     * @return the parsed workload value, or 0 if parsing fails
      */
     private int parseWorkload(String workload) {
         if (workload == null || workload.isBlank()) {
@@ -367,6 +403,14 @@ public class AdminDashboardServlet extends BaseServlet {
         }
     }
 
+    /**
+     * Calculates the effective workload for an application. Uses the application-specific
+     * assigned workload if available; otherwise parses the workload from the job description.
+     *
+     * @param application the application object
+     * @param job         the job object
+     * @return the effective workload
+     */
     private int calculateEffectiveWorkload(Application application, Job job) {
         if (application == null) {
             return 0;
@@ -378,6 +422,13 @@ public class AdminDashboardServlet extends BaseServlet {
         return parseWorkload(job == null ? null : job.getWorkload());
     }
 
+    /**
+     * Normalizes text: trims whitespace, returns fallback for null/blank values.
+     *
+     * @param value    the raw text
+     * @param fallback the default value
+     * @return the normalized text
+     */
     private String normalizeText(String value, String fallback) {
         if (value == null || value.isBlank()) {
             return fallback;
@@ -386,10 +437,10 @@ public class AdminDashboardServlet extends BaseServlet {
     }
 
     /**
-     * Normalizes an optional text filter from the admin dashboard.
+     * Normalizes optional text: trims whitespace, returns null for null/blank values.
      *
-     * @param value raw form value
-     * @return trimmed value, or {@code null} when blank
+     * @param value the raw text
+     * @return the normalized text, or null if blank
      */
     private String normalizeOptionalText(String value) {
         if (value == null || value.isBlank()) {
@@ -399,10 +450,10 @@ public class AdminDashboardServlet extends BaseServlet {
     }
 
     /**
-     * Parses an optional admin date-filter field without failing the request.
+     * Parses an optional date parameter, returns null for invalid formats.
      *
-     * @param value raw form value
-     * @return parsed date, or {@code null} when absent or invalid
+     * @param value the date string
+     * @return the parsed LocalDate, or null if parsing fails
      */
     private LocalDate parseOptionalDate(String value) {
         if (value == null || value.isBlank()) {
@@ -416,24 +467,22 @@ public class AdminDashboardServlet extends BaseServlet {
     }
 
     /**
-     * Performs a null-safe, case-insensitive substring check for admin filters.
+     * Checks whether a string contains a keyword, ignoring case.
      *
-     * @param value source text
-     * @param keyword keyword to search for
-     * @return {@code true} when the source contains the keyword
+     * @param value   the target string
+     * @param keyword the keyword
+     * @return true if the target contains the keyword
      */
     private boolean containsIgnoreCase(String value, String keyword) {
         return value != null && keyword != null && value.toLowerCase(Locale.ROOT).contains(keyword.toLowerCase(Locale.ROOT));
     }
 
     /**
-     * Returns the effective display status used by admin filters.
+     * Gets the effective status of a job. Archived jobs return archived status;
+     * jobs past their deadline are considered closed; otherwise the actual status is returned.
      *
-     * <p>Expired non-archived jobs are treated as closed even if their stored
-     * status is still open.</p>
-     *
-     * @param job position to inspect
-     * @return effective position status
+     * @param job the job object
+     * @return the effective status string
      */
     private String getEffectiveStatus(Job job) {
         if (job == null) {
@@ -448,24 +497,44 @@ public class AdminDashboardServlet extends BaseServlet {
         return job.getStatus();
     }
 
+    /**
+     * TA workload accumulator, used to count the number of accepted positions, total workload,
+     * and associated module set for each TA.
+     */
     private static class TAWorkloadAccumulator {
         private int acceptedPositions;
         private int totalWorkload;
         private final Set<String> modules = new TreeSet<>();
     }
 
+    /**
+     * Module workload accumulator, used to count the number of accepted positions, total workload,
+     * and hired TA set for each module.
+     */
     private static class ModuleWorkloadAccumulator {
         private int acceptedPositions;
         private int totalWorkload;
         private final Set<String> hiredTAs = new HashSet<>();
     }
 
+    /**
+     * Creates a new module metric object and sets its module code.
+     *
+     * @param moduleCode the module code
+     * @return a new module metric object
+     */
     private AdminDashboardStats.ModuleMetric newModuleMetric(String moduleCode) {
         AdminDashboardStats.ModuleMetric metric = new AdminDashboardStats.ModuleMetric();
         metric.setModuleCode(moduleCode);
         return metric;
     }
 
+    /**
+     * Normalizes a module code: trims whitespace and converts to uppercase; returns "Unknown" for blank values.
+     *
+     * @param moduleCode the raw module code
+     * @return the normalized module code
+     */
     private String normalizeModuleCode(String moduleCode) {
         if (moduleCode == null || moduleCode.isBlank()) {
             return "Unknown";
@@ -473,6 +542,13 @@ public class AdminDashboardServlet extends BaseServlet {
         return moduleCode.trim().toUpperCase(Locale.ROOT);
     }
 
+    /**
+     * Calculates the completion rate (completed / total * 100).
+     *
+     * @param completed the completed count
+     * @param total     the total count
+     * @return the completion rate as a percentage
+     */
     private double calculateRate(int completed, int total) {
         if (total <= 0) {
             return 0.0;
@@ -480,6 +556,13 @@ public class AdminDashboardServlet extends BaseServlet {
         return completed * 100.0 / total;
     }
 
+    /**
+     * Compares two strings for equality, ignoring case.
+     *
+     * @param expected the expected value
+     * @param actual   the actual value
+     * @return true if they are equal ignoring case
+     */
     private boolean equalsIgnoreCase(String expected, String actual) {
         return expected != null && actual != null && expected.equalsIgnoreCase(actual);
     }
